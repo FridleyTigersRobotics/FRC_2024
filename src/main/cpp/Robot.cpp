@@ -6,7 +6,7 @@
 #include <frc/TimedRobot.h>
 #include <frc/XboxController.h>
 #include <frc/filter/SlewRateLimiter.h>
-
+#include <Shooter.h>
 #include "Drivetrain.h"
 
 class Robot : public frc::TimedRobot {
