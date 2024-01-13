@@ -8,6 +8,8 @@
 #include <frc/filter/SlewRateLimiter.h>
 #include <Shooter.h>
 #include "Drivetrain.h"
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <string>
 
 class Robot : public frc::TimedRobot {
  public:
@@ -16,12 +18,41 @@ class Robot : public frc::TimedRobot {
     m_swerve.UpdateOdometry();
   }
 
-  void TeleopPeriodic() override { DriveWithJoystick(true); }
-
+  void TeleopPeriodic() override 
+  { 
+    DriveWithJoystick(false); 
+    //frc::SmartDashboard::PutNumber("Eli's brain power",m_Count);
+   /* if (m_controller.GetAButton())
+    {
+      m_Count = m_Count * 5;
+    }
+    if (m_controller.GetBButton())
+    {
+      m_Count=0;
+    }
+    if (m_controller.GetXButton())
+    {
+      m_Count++;
+    }
+    frc::SmartDashboard::PutString("Is Eli super smart??",m_smart);
+    if (m_controller.GetLeftBumperPressed())
+    {
+      m_smart="yes";
+    }
+   if (m_controller.GetRightBumperPressed())
+    {
+      m_smart="no";
+    }
+ if (m_controller.GetYButton())
+    {
+      m_smart="idk";
+    }*/
+  }
  private:
   frc::XboxController m_controller{0};
   Drivetrain m_swerve;
-
+  //int m_Count=0;
+ // std::string m_smart="idk";
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0
   // to 1.
   frc::SlewRateLimiter<units::scalar> m_xspeedLimiter{3 / 1_s};

@@ -5,7 +5,7 @@
 #pragma once
 
 #include <numbers>
-
+#include <frc/Analoginput.h>
 #include <frc/Encoder.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
@@ -17,6 +17,7 @@
 #include <units/time.h>
 #include <units/velocity.h>
 #include <units/voltage.h>
+#include <rev/cansparkmax.h>
 
 class SwerveModule {
  public:
@@ -36,12 +37,12 @@ class SwerveModule {
   static constexpr auto kModuleMaxAngularAcceleration =
       std::numbers::pi * 2_rad_per_s / 1_s;  // radians per second^2
 
-  frc::PWMSparkMax m_driveMotor;
-  frc::PWMSparkMax m_turningMotor;
+  rev::CANSparkMax m_driveMotor;
+  rev::CANSparkMax m_turningMotor;
 
-  frc::Encoder m_driveEncoder;
-  frc::Encoder m_turningEncoder;
-
+  rev::SparkRelativeEncoder m_driveEncoder=m_driveMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor);
+  frc::AnalogInput m_turningEncoder;
+//Line fourty-five??? That's CRAZY
   frc::PIDController m_drivePIDController{1.0, 0, 0};
   frc::ProfiledPIDController<units::radians> m_turningPIDController{
       1.0,
