@@ -13,15 +13,18 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
                            const int turningEncoderChannel)
     : m_driveMotor(driveMotorChannel,rev::CANSparkLowLevel::MotorType::kBrushless),
       m_turningMotor(turningMotorChannel,rev::CANSparkLowLevel::MotorType::kBrushless),
-      //Somebody once told me the world is going to roll me I aint the sharpest tool in the shed. She was looking kind of dumb with her finger nad her thumb in the shape of an L on her forehead
 
       
       m_turningEncoder(turningEncoderChannel) {
   // Set the distance per pulse for the drive encoder. We can simply use the
   // distance traveled for one rotation of the wheel divided by the encoder
   // resolution.
-  m_driveEncoder.SetPosition(0); .SetPositionConversionFactor(2 * std::numbers::pi * kWheelRadius /
-                                     kEncoderResolution);
+  m_driveEncoder.SetPosition(0); 
+  double positonConversionFactor = 3.9*std::numbers::pi/8.14*0.0254;
+  m_driveEncoder.SetPositionConversionFactor(positonConversionFactor);
+  m_driveEncoder.SetVelocityConversionFactor((1.0/60.0) * positonConversionFactor);
+  double velocityConversionFactor = (1.0/60.0) * positonConversionFactor;
+
 
   // Set the distance (in this case, angle) per pulse for the turning encoder.
   // This is the the angle through an entire rotation (2 * std::numbers::pi)
