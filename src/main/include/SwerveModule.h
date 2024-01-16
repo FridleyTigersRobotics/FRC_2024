@@ -5,7 +5,7 @@
 #pragma once
 
 #include <numbers>
-#include <frc/Analoginput.h>
+#include <frc/AnalogEncoder.h>
 #include <frc/Encoder.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
@@ -22,8 +22,7 @@
 class SwerveModule {
  public:
   SwerveModule(int driveMotorChannel, int turningMotorChannel,
-               int driveEncoderChannelA, int driveEncoderChannelB,
-               int turningEncoderChannelA, int turningEncoderChannelB);
+               int turningEncoderChannel);
   frc::SwerveModuleState GetState() const;
   frc::SwerveModulePosition GetPosition() const;
   void SetDesiredState(const frc::SwerveModuleState& state);
@@ -41,7 +40,7 @@ class SwerveModule {
   rev::CANSparkMax m_turningMotor;
 
   rev::SparkRelativeEncoder m_driveEncoder=m_driveMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor);
-  frc::AnalogInput m_turningEncoder;
+  frc::AnalogEncoder m_turningEncoder;
 //Line fourty-five??? That's CRAZY
   frc::PIDController m_drivePIDController{1.0, 0, 0};
   frc::ProfiledPIDController<units::radians> m_turningPIDController{

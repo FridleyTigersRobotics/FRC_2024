@@ -31,15 +31,15 @@ class Drivetrain {
       std::numbers::pi};  // 1/2 rotation per second
 
  private:
-  frc::Translation2d m_frontLeftLocation{+0.381_m, +0.381_m};
+  frc::Translation2d m_frontLeftLocation {+0.381_m, +0.381_m};
   frc::Translation2d m_frontRightLocation{+0.381_m, -0.381_m};
-  frc::Translation2d m_backLeftLocation{-0.381_m, +0.381_m};
-  frc::Translation2d m_backRightLocation{-0.381_m, -0.381_m};
+  frc::Translation2d m_backLeftLocation  {-0.381_m, +0.381_m};
+  frc::Translation2d m_backRightLocation {-0.381_m, -0.381_m};
 
-  SwerveModule m_frontLeft{11, 10, 0, 1, 0, 3};
-  SwerveModule m_frontRight{12, 13, 4, 5, 1, 7};
-  SwerveModule m_backLeft{14, 15, 8, 9, 2, 11};
-  SwerveModule m_backRight{16, 17, 12, 13, 3, 15};
+  SwerveModule m_frontLeft {10, 11, 0};
+  SwerveModule m_frontRight{12, 13, 1};
+  SwerveModule m_backLeft  {14, 15, 2};
+  SwerveModule m_backRight {16, 17, 3};
 
   frc::AnalogGyro m_gyro{0};
 
