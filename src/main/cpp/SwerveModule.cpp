@@ -10,7 +10,8 @@
 
 SwerveModule::SwerveModule(const int driveMotorChannel,
                            const int turningMotorChannel,
-                           const int turningEncoderChannel)
+                           const int turningEncoderChannel,
+                           const double turningEncoderOffset)
     : m_driveMotor(driveMotorChannel,rev::CANSparkLowLevel::MotorType::kBrushless),
       m_turningMotor(turningMotorChannel,rev::CANSparkLowLevel::MotorType::kBrushless),
 
@@ -30,6 +31,7 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
   // This is the the angle through an entire rotation (2 * std::numbers::pi)
   // divided by the encoder resolution.
   m_turningEncoder.SetDistancePerRotation(2 * std::numbers::pi);
+  m_turningEncoder.SetPositionOffset(turningEncoderOffset);
 
   // Limit the PID Controller's input range between -pi and pi and set the input
   // to be continuous.
