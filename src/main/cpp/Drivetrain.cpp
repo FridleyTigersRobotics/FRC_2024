@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "Drivetrain.h"
+#include <frc/smartdashboard/SmartDashboard.h>
 
 void Drivetrain::Drive(units::meters_per_second_t xSpeed,
                        units::meters_per_second_t ySpeed,
@@ -11,12 +12,12 @@ void Drivetrain::Drive(units::meters_per_second_t xSpeed,
   auto states =
       m_kinematics.ToSwerveModuleStates(frc::ChassisSpeeds::Discretize(
           fieldRelative ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-                              xSpeed, ySpeed, rot, frc::Rotation2d{units::radian_t {0}})
+                              xSpeed, ySpeed, rot, frc::Rotation2d{units::degree_t {m_imu.GetYaw()}})
                         : frc::ChassisSpeeds{xSpeed, ySpeed, rot},
           period));
 
   m_kinematics.DesaturateWheelSpeeds(&states, kMaxSpeed);
-
+frc::SmartDashboard::PutNumber("Yaw", m_imu.GetYaw());
   auto [fl, fr, bl, br] = states;
 
   m_frontLeft.SetDesiredState(fl);
@@ -26,7 +27,7 @@ void Drivetrain::Drive(units::meters_per_second_t xSpeed,
 }
 
 void Drivetrain::UpdateOdometry() {
-  m_odometry.Update(frc::Rotation2d{units::radian_t {0}},
+  m_odometry.Update(frc::Rotation2d{units::degree_t {m_imu.GetYaw()}},
                     {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
                      m_backLeft.GetPosition(), m_backRight.GetPosition()});
 }

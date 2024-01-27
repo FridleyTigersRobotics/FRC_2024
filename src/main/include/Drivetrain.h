@@ -10,9 +10,10 @@
 #include <frc/geometry/Translation2d.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
-
+#include <AHRS.h>
 #include "SwerveModule.h"
 #include "frc/geometry/Rotation2d.h"
+#include <frc/SPI.h>
 
 /**
  * Represents a swerve drive style drivetrain.
@@ -22,7 +23,7 @@
 
 class Drivetrain {
  public:
-  Drivetrain() { /*m_gyro.Reset();*/ }
+  Drivetrain() {m_imu.ResetDisplacement(); }
 
   void Drive(units::meters_per_second_t xSpeed,
              units::meters_per_second_t ySpeed, units::radians_per_second_t rot,
@@ -63,12 +64,14 @@ class Drivetrain {
 //0.255626 Drive motor #14
 //4.980153 Drive motor #16
 
-  SwerveModule m_frontLeft {10, 11, 0, (1.230863/(2*std::numbers::pi))};
+  SwerveModule m_backRight {10, 11, 0, (1.230863/(2*std::numbers::pi))};
   SwerveModule m_frontRight{12, 13, 1, 0.5+(0.909437/(2*std::numbers::pi))};
   SwerveModule m_backLeft  {14, 15, 2, 0.255626/(2*std::numbers::pi)};
-  SwerveModule m_backRight {16, 17, 3, 4.980153/(2*std::numbers::pi)};
+  SwerveModule m_frontLeft {16, 17, 3, 4.980153/(2*std::numbers::pi)};
 
   //frc::AnalogGyro m_gyro{4};
+
+  AHRS m_imu { frc::SPI::Port::kMXP};
 
   frc::SwerveDriveKinematics<4> m_kinematics{
       m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation,
@@ -76,7 +79,7 @@ class Drivetrain {
 
   frc::SwerveDriveOdometry<4> m_odometry{
       m_kinematics,
-      frc::Rotation2d{units::radian_t {0}},//m_gyro.GetRotation2d(),
+      frc::Rotation2d{units::degree_t {m_imu.GetYaw()}},//m_gyro.GetRotation2d(),
       {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
        m_backLeft.GetPosition(), m_backRight.GetPosition()}};
 };
