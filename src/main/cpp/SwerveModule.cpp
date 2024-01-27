@@ -5,8 +5,11 @@
 #include "SwerveModule.h"
 
 #include <numbers>
-//#include <Cameron's Brain> [ERROR:NONEXISTANT]
+//#include <Cameron's Brain> [ERROR:NONEXISTANT] HAHA FUNNY
 #include <frc/geometry/Rotation2d.h>
+#include <string>
+#include <fmt/printf.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 SwerveModule::SwerveModule(const int driveMotorChannel,
                            const int turningMotorChannel,
@@ -25,6 +28,8 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
   m_driveEncoder.SetPositionConversionFactor(positonConversionFactor);
   m_driveEncoder.SetVelocityConversionFactor((1.0/60.0) * positonConversionFactor);
   double velocityConversionFactor = (1.0/60.0) * positonConversionFactor;
+  m_drivechannel=driveMotorChannel;
+  m_encodername=fmt::sprintf("turnencoder %d",m_drivechannel);
 
 
   // Set the distance (in this case, angle) per pulse for the turning encoder.
@@ -79,4 +84,9 @@ void SwerveModule::SetDesiredState(
   // Set the motor outputs.
   m_driveMotor.SetVoltage(units::volt_t{driveOutput} + driveFeedforward);
   m_turningMotor.SetVoltage(units::volt_t{turnOutput} + turnFeedforward);
+
+
+frc::SmartDashboard::PutNumber(m_encodername, m_turningEncoder.GetDistance());
+
+
 }

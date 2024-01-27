@@ -40,12 +40,16 @@ class SwerveModule {
   rev::CANSparkMax m_driveMotor;
   rev::CANSparkMax m_turningMotor;
 
+int m_drivechannel;
+std::string m_encodername;
+
+
   rev::SparkRelativeEncoder m_driveEncoder=m_driveMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor);
   frc::AnalogEncoder m_turningEncoder;
-//Line fourty-five??? That's CRAZY
+//Line fourty-nine??? That's CRAZY
   frc::PIDController m_drivePIDController{1.0, 0, 0};
   frc::ProfiledPIDController<units::radians> m_turningPIDController{
-      1.0,
+      2.3,
       0.0,
       0.0,
       {kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration}};
@@ -54,4 +58,8 @@ class SwerveModule {
                                                                 3_V / 1_mps};
   frc::SimpleMotorFeedforward<units::radians> m_turnFeedforward{
       1_V, 0.5_V / 1_rad_per_s};
+
+
+
+
 };
