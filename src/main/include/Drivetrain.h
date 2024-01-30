@@ -31,24 +31,24 @@ class Drivetrain {
   void UpdateOdometry();
 
   static constexpr units::meters_per_second_t kMaxSpeed =
-      3.0_mps;  // 3 meters per second
+      1.0_mps;  // 3 meters per second
   static constexpr units::radians_per_second_t kMaxAngularSpeed{
       std::numbers::pi};  // 1/2 rotation per second
 
- private:
+ 
 
 
    //-----------|Front|------------
   //  16----------------------12
+  //  |----YAY CODE TEAM!------|
   //  |------------------------|
   //  |------------------------|
-  //  |------------------------|
-  //  |------------------------|
-  //  |------------------------|
-  //  |------------------------|
-  //  |------------------------|
-  //  |------------------------|
-  //  |------------------------|
+  //  |------Tom is smart------|
+  //  |------Eli is smart------|
+  //  |-----Mina is smart------|
+  //  |----Kewsar is smart-----|
+  //  |----Hail Bing Skrong----|
+  //  |-Bing Skrong is strong--|
   //  14----------------------10
   //------------|back|-------------
   /// 32 in diagonal

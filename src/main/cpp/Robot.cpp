@@ -13,40 +13,124 @@
 
 class Robot : public frc::TimedRobot {
  public:
-  void TestPeriodic() override {
-    DriveWithJoystick(true);
+
+ void AutonomousInit() override {
+    TeleopInit(); 
+    m_autoTimer.Stop();
+    m_autoTimer.Reset();
+    m_autoTimer.Start();
+    
+    m_autoSequence = 0;
+    m_initState = true;
+    m_autoState = 0; 
+    m_initialAngle = 0;
+   
+    m_atRotateSetpointCount = 0;
+
+ }
+
+void Drivetrain_Drive(units::meters_per_second_t xSpeed,
+                             units::radians_per_second_t rot) {
+  m_swerve.Drive(xSpeed, 0.0_mps, rot, false, GetPeriod());
+}
+
+
+void Drivetrain_Stop() {
+   m_swerve.Drive(0.0_mps, 0.0_mps, units::radians_per_second_t{0.0}, false, GetPeriod());
+}
+
+
+ bool DriveForDistance( units::meters_per_second_t speed, units::meter_t distance, units::time::second_t maxTime=5.0_s )
+  {
+    frc::Pose2d pose = m_swerve.m_odometry.GetPose();
+    frc::SmartDashboard::PutNumber("pose.X()",double{pose.X()});
+    frc::SmartDashboard::PutNumber("m_startDistance",double{m_startDistance});
+    frc::SmartDashboard::PutNumber("distance",double{distance});
+    if ( ( ( ( speed > 0.0_mps ) && ( (pose.X() - m_startDistance) < distance ) ) ||
+           ( ( speed < 0.0_mps ) && ( (pose.X() - m_startDistance) > distance ) ) ) &&
+         ( m_autoTimer.Get() < maxTime ) )
+    {
+      Drivetrain_Drive( speed, 0.0_rad_per_s );
+      return false;
+    }
+    else
+    {
+      Drivetrain_Stop();
+      return true;
+    }
+  }
+
+
+  bool RunDriveAuto()
+{
+ frc::Pose2d pose = m_swerve.m_odometry.GetPose();
+    bool sequenceDone = false;
+    bool stateDone = false;
+
+    switch( m_autoState )
+    {
+      case 0:
+      {
+        if ( m_initState )
+        {
+          m_autoTimer.Stop();
+          m_autoTimer.Reset();
+          m_autoTimer.Start();
+          m_initialAngle = m_swerve.m_imu.GetAngle();
+          m_startDistance = pose.X();
+        }
+        //SetLiftSetpoints( LIFT_POSITION_DRIVING );
+        stateDone = DriveForDistance( 0.5_mps, 1.0_m, 6.0_s );
+        break;
+      }
+
+      default:
+      {
+        Drivetrain_Stop();
+        sequenceDone = true;
+
+        // Done, do nothing
+        break;
+      }
+    }
+
+    if ( m_initState )
+    {
+      m_initState = false;
+    }
+
+    if ( stateDone )
+    {
+      //fmt::print( "stateDone {}\n", m_autoState );
+      m_autoState++;
+      m_initState = true;
+    }
+
+    return sequenceDone;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  void AutonomousPeriodic() override {
+    RunDriveAuto();
     m_swerve.UpdateOdometry();
   }
 
   void TeleopPeriodic() override 
   { 
     DriveWithJoystick(false); 
-    //frc::SmartDashboard::PutNumber("Eli's brain power",m_Count);
-   /* if (m_controller.GetAButton())
-    {
-      m_Count = m_Count * 5;
-    }
-    if (m_controller.GetBButton())
-    {
-      m_Count=0;
-    }
-    if (m_controller.GetXButton())
-    {
-      m_Count++;
-    }
-    frc::SmartDashboard::PutString("Is Eli super smart??",m_smart);
-    if (m_controller.GetLeftBumperPressed())
-    {
-      m_smart="yes";
-    }
-   if (m_controller.GetRightBumperPressed())
-    {
-      m_smart="no";
-    }
- if (m_controller.GetYButton())
-    {
-      m_smart="idk";
-    }*/
+
   }
  private:
   frc::XboxController m_controller{0};
@@ -58,7 +142,20 @@ class Robot : public frc::TimedRobot {
   frc::SlewRateLimiter<units::scalar> m_xspeedLimiter{3 / 1_s};
   frc::SlewRateLimiter<units::scalar> m_yspeedLimiter{3 / 1_s};
   frc::SlewRateLimiter<units::scalar> m_rotLimiter{3 / 1_s};
-
+frc::Timer   m_autoTimer;
+  //std::string  m_autoSelected { kAutoNameDefault };
+  int          m_autoSequence { 0 };
+  bool         m_initState    { true };
+  unsigned int m_autoState    { 0 }; 
+  double       m_initialAngle { 0 };
+  double m_prevAngle             { 0 };
+  double m_currentAngle          { 0 };
+  double m_angleDelta            { 0 };
+  double m_currentAvgAngle       { 0 };
+  double m_avgAngleDelta         { 0 };
+  double m_prevAvgAngle          { 0 };
+  int m_atRotateSetpointCount    { 0 };
+  units::meter_t m_startDistance { 0 };
 
 
   void DriveWithJoystick(bool fieldRelative) {
