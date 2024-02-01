@@ -10,7 +10,7 @@
 #include "Drivetrain.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <string>
-
+#include <frc/DutyCycleEncoder.h>
 class Robot : public frc::TimedRobot {
  public:
 
@@ -20,6 +20,7 @@ class Robot : public frc::TimedRobot {
     m_autoTimer.Reset();
     m_autoTimer.Start();
     
+
     m_autoSequence = 0;
     m_initState = true;
     m_autoState = 0; 
@@ -28,6 +29,12 @@ class Robot : public frc::TimedRobot {
     m_atRotateSetpointCount = 0;
 
  }
+
+ void TeleopInit() override {
+encoder.SetDistancePerRotation(4.0);
+
+ }
+
 
 void Drivetrain_Drive(units::meters_per_second_t xSpeed,
                              units::radians_per_second_t rot) {
@@ -156,7 +163,7 @@ frc::Timer   m_autoTimer;
   double m_prevAvgAngle          { 0 };
   int m_atRotateSetpointCount    { 0 };
   units::meter_t m_startDistance { 0 };
-
+  frc::DutyCycleEncoder encoder  { 0 };
 
   void DriveWithJoystick(bool fieldRelative) {
     // Get the x speed. We are inverting this because Xbox controllers return
@@ -188,6 +195,7 @@ frc::SmartDashboard::PutNumber("m_controller.GetRightX()",double{m_controller.Ge
 frc::SmartDashboard::PutNumber("Xspeed",double{xSpeed});
 frc::SmartDashboard::PutNumber("Yspeed",double{ySpeed});
 frc::SmartDashboard::PutNumber("Rot",double{rot});
+frc::SmartDashboard::PutNumber("Distance",encoder.GetDistance());
 
     m_swerve.Drive(xSpeed, ySpeed, rot, fieldRelative, GetPeriod());
   }
