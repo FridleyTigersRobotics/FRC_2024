@@ -1,5 +1,6 @@
 #include <Arm.h>
 #include <rev/cansparkmax.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 //#include <arms> *flexes, cutely*
 void Arm::SetArmPosition (arm_position_t DesiredPosition)
 {
@@ -41,7 +42,16 @@ void Arm::updateArm()
             break;
         }
     }
+//PIDdly thing
+const auto ArmControllOutput = m_ArmPIDController.Calculate(
+      units::radian_t{m_ArmEncoder.GetDistance()}, units::radian_t{ArmAngle});
+m_ArmMotorLeft.Set(ArmControllOutput);
+m_ArmMotorRight.Set(ArmControllOutput);
+frc::SmartDashboard::PutNumber("Arm_ArmControllOutput", ArmControllOutput);
+frc::SmartDashboard::PutNumber("ArmAngle", ArmAngle);
+frc::SmartDashboard::PutNumber("ArmPosition", m_ArmPosition);
 }
+
 //Change to work for wrist???
 void Arm::updateWrist()
 {
@@ -74,9 +84,5 @@ void Arm::updateWrist()
         }
     }
 
-//PIDdly thing
-const auto ArmControllOutput = m_ArmPIDController.Calculate(
-      units::radian_t{m_ArmEncoder.GetDistance()}, units::radian_t{ArmAngle});
-m_ArmMotorLeft.Set(ArmControllOutput);
-m_ArmMotorRight.Set(ArmControllOutput);
+
 }
