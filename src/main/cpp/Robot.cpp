@@ -163,7 +163,7 @@ frc::Timer   m_autoTimer;
   double m_prevAvgAngle          { 0 };
   int m_atRotateSetpointCount    { 0 };
   units::meter_t m_startDistance { 0 };
-  frc::DutyCycleEncoder encoder  { 0 };
+
 
   void DriveWithJoystick(bool fieldRelative) {
     // Get the x speed. We are inverting this because Xbox controllers return
