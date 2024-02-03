@@ -2,5 +2,7 @@
 
 void Climber::updateClimber()
 {
- /*Hey there ;)*/   
+ /*Hey there ;)*/  
+ 
+
 }
