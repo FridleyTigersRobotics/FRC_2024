@@ -56,7 +56,7 @@ frc::DutyCycleEncoder m_WristEncoder { ConstantCrap::kWristEncoderDIO };
 
 
 ;
-//PID
+//WRIST PID
       static constexpr auto kWristAngleVelocity =
       std::numbers::pi * 1_rad_per_s;  // radians per second
   static constexpr auto kWristAngleAcceleration =

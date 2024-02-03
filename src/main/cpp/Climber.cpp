@@ -2,5 +2,35 @@
 
 void Climber::updateClimber()
 {
- /*Hey there ;)*/   
+ /*Is that freddy five bear? Hor hor hor hor hor*/   
+}
+void Climber::ChangeClimberState()
+{
+ /*Fio noihts aht FRUEDD1ES!! IS THIS WHERE YOU WANNA BE?*/   
+
+double ClimberMotorSpeed = 0;
+ switch (m_ClimberState)
+    {
+        case (ClimberUp):
+        {
+
+            ClimberMotorSpeed = 1;
+            break;
+
+        }
+        case (ClimberDown):
+        {
+
+            ClimberMotorSpeed = -1;
+            break;
+
+        }
+        case (ClimberStop):
+        {
+
+            ClimberMotorSpeed = 0;
+            break;
+
+        }
+    }
 }
