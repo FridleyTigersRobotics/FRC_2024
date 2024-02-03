@@ -3,6 +3,7 @@ namespace ConstantCrap
 //Can IDs
 constexpr int kArmMotorRightcanID = 20;
 constexpr int kArmMotorLeftcanID = 21;
+constexpr int kIntakeMotorcanID = 22;
 
 
 //DIO IDs

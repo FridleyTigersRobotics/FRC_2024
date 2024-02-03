@@ -1,5 +1,6 @@
 #include <rev/cansparkmax.h>
 #include <Constants.h>
+#include <frc/DutyCycleEncoder.h>
 class Arm
 {
 void updateArm (/*Arm? I hove those!*/);
