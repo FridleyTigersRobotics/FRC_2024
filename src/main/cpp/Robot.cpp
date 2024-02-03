@@ -10,7 +10,6 @@
 #include "Drivetrain.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <string>
-#include <frc/DutyCycleEncoder.h>
 class Robot : public frc::TimedRobot {
  public:
 
@@ -31,7 +30,6 @@ class Robot : public frc::TimedRobot {
  }
 
  void TeleopInit() override {
-encoder.SetDistancePerRotation(4.0);
 
  }
 
@@ -195,7 +193,6 @@ frc::SmartDashboard::PutNumber("m_controller.GetRightX()",double{m_controller.Ge
 frc::SmartDashboard::PutNumber("Xspeed",double{xSpeed});
 frc::SmartDashboard::PutNumber("Yspeed",double{ySpeed});
 frc::SmartDashboard::PutNumber("Rot",double{rot});
-frc::SmartDashboard::PutNumber("Distance",encoder.GetDistance());
 
     m_swerve.Drive(xSpeed, ySpeed, rot, fieldRelative, GetPeriod());
   }
