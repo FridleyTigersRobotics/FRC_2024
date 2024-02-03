@@ -41,42 +41,57 @@ void Arm::updateArm()
             break;
         }
     }
-}
-//Change to work for wrist???
-void Arm::updateWrist()
-{
- switch (m_WristPosition)
-    {
-        case (WRIST_GROUND_PICKUP):
-        {
-
-            break;
-        }
-        case (WRIST_SOURCE):
-        {
-
-            break;
-        }
-        case (WRIST_SHOOT):
-        {
-
-            break;
-        }
-        case (WRIST_AMP):
-        {
-
-            break;
-        }
-        case (WRIST_TRAP):
-        {
-
-            break;
-        }
-    }
-
 //PIDdly thing
 const auto ArmControllOutput = m_ArmPIDController.Calculate(
       units::radian_t{m_ArmEncoder.GetDistance()}, units::radian_t{ArmAngle});
 m_ArmMotorLeft.Set(ArmControllOutput);
 m_ArmMotorRight.Set(ArmControllOutput);
+}
+
+//Change to work for wrist???
+void Arm::updateWrist()
+{
+    double WristAngle = 0;
+ switch (m_WristPosition)
+    {
+        case (WRIST_GROUND_PICKUP):
+        {
+
+            WristAngle = 1;
+            break;
+
+        }
+        case (WRIST_SOURCE):
+        {
+
+            WristAngle = 0.3;
+            break;
+
+        }
+        case (WRIST_SHOOT):
+        {
+
+            WristAngle = 0;
+            break;
+
+        }
+        case (WRIST_AMP):
+        {
+
+            WristAngle = 0.7;
+            break;
+
+        }
+        case (WRIST_TRAP):
+        {
+
+            WristAngle = 0.5;
+            break;
+
+        }
+    }
+//PIDdly thing FOR WRIST THIS TIME
+const auto WristControllOutput = m_WristPIDController.Calculate(
+      units::radian_t{m_WristEncoder.GetDistance()}, units::radian_t{WristAngle});
+m_WristMotor.Set(WristControllOutput);
 }
