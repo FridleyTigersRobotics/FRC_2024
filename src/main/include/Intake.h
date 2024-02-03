@@ -5,6 +5,6 @@
 
 class Intake
 {
-    void updateIntake (/*Phoenix!??!?!?! Harry Potter reference?????????*/);
+    void updateIntake (/*Phoenix!??!?!?! Harry Potter reference?????????*/); //Yo thats crazy
 rev::CANSparkMax m_IntakeMotor { ConstantCrap::kIntakeMotorcanID,rev::CANSparkLowLevel::MotorType::kBrushless };
 };
