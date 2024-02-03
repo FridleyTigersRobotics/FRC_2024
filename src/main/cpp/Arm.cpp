@@ -41,6 +41,38 @@ void Arm::updateArm()
             break;
         }
     }
+}
+//Change to work for wrist???
+void Arm::updateWrist()
+{
+ switch (m_WristPosition)
+    {
+        case (WRIST_GROUND_PICKUP):
+        {
+
+            break;
+        }
+        case (WRIST_SOURCE):
+        {
+
+            break;
+        }
+        case (WRIST_SHOOT):
+        {
+
+            break;
+        }
+        case (WRIST_AMP):
+        {
+
+            break;
+        }
+        case (WRIST_TRAP):
+        {
+
+            break;
+        }
+    }
 
 //PIDdly thing
 const auto ArmControllOutput = m_ArmPIDController.Calculate(

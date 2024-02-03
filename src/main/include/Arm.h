@@ -17,13 +17,22 @@ typedef enum arm_positon_e
     TRAP
 } arm_position_t;
 
-
+typedef enum wrist_positon_e
+{
+    WRIST_GROUND_PICKUP,
+    WRIST_SOURCE,
+    WRIST_SHOOT,
+    WRIST_AMP,
+    WRIST_TRAP
+} wrist_position_t;
 
 class Arm
 {
-    arm_position_t m_ArmPosition {GROUND_PICKUP};
+    arm_position_t m_ArmPosition {arm_position_t::GROUND_PICKUP};
+    wrist_position_t m_WristPosition {wrist_position_t::WRIST_GROUND_PICKUP};
 void SetArmPosition (arm_position_t DesiredPosition);
 void updateArm (/*Arm? I have those!*/);
+void updateWrist (/*How you hands :)*/);
 //Arm
 rev::CANSparkMax m_ArmMotorLeft { ConstantCrap::kArmMotorLeftcanID,rev::CANSparkLowLevel::MotorType::kBrushless };
 rev::CANSparkMax m_ArmMotorRight { ConstantCrap::kArmMotorRightcanID,rev::CANSparkLowLevel::MotorType::kBrushless };
