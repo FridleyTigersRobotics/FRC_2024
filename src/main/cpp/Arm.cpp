@@ -55,34 +55,47 @@ frc::SmartDashboard::PutNumber("ArmPosition", m_ArmPosition);
 //Change to work for wrist???
 void Arm::updateWrist()
 {
+    double WristAngle = 0;
  switch (m_WristPosition)
     {
         case (WRIST_GROUND_PICKUP):
         {
 
+            WristAngle = 1;
             break;
+
         }
         case (WRIST_SOURCE):
         {
 
+            WristAngle = 0.3;
             break;
+
         }
         case (WRIST_SHOOT):
         {
 
+            WristAngle = 0;
             break;
+
         }
         case (WRIST_AMP):
         {
 
+            WristAngle = 0.7;
             break;
+
         }
         case (WRIST_TRAP):
         {
 
+            WristAngle = 0.5;
             break;
+
         }
     }
-
-
+//PIDdly thing FOR WRIST THIS TIME
+const auto WristControllOutput = m_WristPIDController.Calculate(
+      units::radian_t{m_WristEncoder.GetDistance()}, units::radian_t{WristAngle});
+m_WristMotor.Set(WristControllOutput);
 }

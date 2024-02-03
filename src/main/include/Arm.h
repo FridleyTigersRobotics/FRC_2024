@@ -55,4 +55,18 @@ frc::DutyCycleEncoder m_WristEncoder { ConstantCrap::kWristEncoderDIO };
       {kArmAngleVelocity, kArmAngleAcceleration}};
 
 
+;
+//PID
+      static constexpr auto kWristAngleVelocity =
+      std::numbers::pi * 1_rad_per_s;  // radians per second
+  static constexpr auto kWristAngleAcceleration =
+      std::numbers::pi * 2_rad_per_s / 1_s;  // radians per second^2  
+     
+      frc::ProfiledPIDController<units::radians> m_WristPIDController{
+      1.0,
+      0.0,
+      0.0,
+      {kWristAngleVelocity, kWristAngleAcceleration}};
+
+
 };
