@@ -27,7 +27,7 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
   double positonConversionFactor = 3.9*std::numbers::pi/8.14*0.0254;
   m_driveEncoder.SetPositionConversionFactor(positonConversionFactor);
   m_driveEncoder.SetVelocityConversionFactor((1.0/60.0) * positonConversionFactor);
-  double velocityConversionFactor = (1.0/60.0) * positonConversionFactor;
+
   m_drivechannel=driveMotorChannel;
   m_encodername=fmt::sprintf("turnencoder %d",m_drivechannel);
 
