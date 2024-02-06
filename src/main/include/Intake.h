@@ -1,3 +1,4 @@
+#pragma once
 
 #include <Phoenix5.h>
 #include <rev/cansparkmax.h>

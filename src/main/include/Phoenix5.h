@@ -1,3 +1,5 @@
+#pragma once
+
 #include "wpi/deprecated.h"
 
 // Used to prevent deprecation warnings

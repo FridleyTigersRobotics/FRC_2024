@@ -10,6 +10,8 @@
 #include "Drivetrain.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <string>
+#include <Arm.h>
+#include <Climber.h>
 class Robot : public frc::TimedRobot {
  public:
 
@@ -136,11 +138,14 @@ void Drivetrain_Stop() {
   void TeleopPeriodic() override 
   { 
     DriveWithJoystick(false); 
+     m_Arm.updateArm();
 
   }
  private:
   frc::XboxController m_controller{0};
   Drivetrain m_swerve;
+  Arm m_Arm;
+  Climber m_Climber;
   //int m_Count=0;
  // std::string m_smart="idk";
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0
@@ -189,6 +194,102 @@ frc::Timer   m_autoTimer;
 frc::SmartDashboard::PutNumber("m_controller.GetLeftY",double{m_controller.GetLeftY()});
 frc::SmartDashboard::PutNumber("m_controller.GetLeftX()",double{m_controller.GetLeftX()});
 frc::SmartDashboard::PutNumber("m_controller.GetRightX()",double{m_controller.GetRightX()});
+
+//Arm and intake code
+if (m_controller.GetLeftBumperPressed())
+{
+  if (m_Arm.m_ArmPosition==GROUND_PICKUP)
+  {
+    m_Arm.SetArmPosition(SOURCE);
+  }
+  else
+  {
+    if (m_Arm.m_ArmPosition==SOURCE)
+    {
+     m_Arm.SetArmPosition(SPEAKER);
+    }
+    else
+    {
+        if (m_Arm.m_ArmPosition==SPEAKER)
+       {
+          m_Arm.SetArmPosition(AMP);
+       }
+        else
+        {
+          if (m_Arm.m_ArmPosition==AMP)
+          {
+            m_Arm.SetArmPosition(TRAP);
+          }
+          else
+          {
+            if (m_Arm.m_ArmPosition==TRAP)
+            {
+               m_Arm.SetArmPosition(GROUND_PICKUP);
+            }
+            
+          }
+        }
+    }
+  }
+}
+
+if (m_controller.GetRightBumperPressed())
+{
+  if (m_Arm.m_ArmPosition==SOURCE)
+  {
+    m_Arm.SetArmPosition(GROUND_PICKUP);
+  }
+  else
+  {
+    if (m_Arm.m_ArmPosition==SPEAKER)
+    {
+     m_Arm.SetArmPosition(SOURCE);
+    }
+    else
+    {
+        if (m_Arm.m_ArmPosition==AMP)
+       {
+          m_Arm.SetArmPosition(SPEAKER);
+       }
+        else
+        {
+          if (m_Arm.m_ArmPosition==TRAP)
+          {
+            m_Arm.SetArmPosition(AMP);
+          }
+          else
+          {
+            if (m_Arm.m_ArmPosition==GROUND_PICKUP)
+            {
+               m_Arm.SetArmPosition(TRAP);
+            }
+            
+          }
+        }
+    }
+  }
+}
+
+if (m_controller.GetAButton())
+{
+  m_Climber.m_ClimberState=ClimberUp;
+  
+}
+else
+  {
+    if (m_controller.GetBButton())
+    {
+      m_Climber.m_ClimberState=ClimberDown;
+      
+    }
+    else
+      {
+        m_Climber.m_ClimberState=ClimberStop;
+      }
+  }
+
+
+
 
 
 frc::SmartDashboard::PutNumber("Xspeed",double{xSpeed});

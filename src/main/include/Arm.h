@@ -1,3 +1,5 @@
+#pragma once
+
 #include <rev/cansparkmax.h>
 #include <Constants.h>
 #include <frc/DutyCycleEncoder.h>
@@ -28,6 +30,7 @@ typedef enum wrist_positon_e
 
 class Arm
 {
+public:
     arm_position_t m_ArmPosition {arm_position_t::GROUND_PICKUP};
     wrist_position_t m_WristPosition {wrist_position_t::WRIST_GROUND_PICKUP};
 void SetArmPosition (arm_position_t DesiredPosition);
@@ -55,7 +58,7 @@ frc::DutyCycleEncoder m_WristEncoder { ConstantCrap::kWristEncoderDIO };
       {kArmAngleVelocity, kArmAngleAcceleration}};
 
 
-;
+
 //WRIST PID
       static constexpr auto kWristAngleVelocity =
       std::numbers::pi * 1_rad_per_s;  // radians per second

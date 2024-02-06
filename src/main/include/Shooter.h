@@ -1,3 +1,5 @@
+#pragma once
+
 #include <rev/cansparkmax.h>
 #include <Constants.h>
 class Shooter

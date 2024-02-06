@@ -1,4 +1,4 @@
-
+#pragma once
 
 #include <Phoenix5.h>
 typedef enum ClimberState_e
@@ -11,13 +11,14 @@ typedef enum ClimberState_e
 
 class Climber
 {
+    public:
     void updateClimber (/*Me when the me when... *Literally combusts* */);
     void ChangeClimberState (/*Arises from ashes because epic pheonix*/);
 
 ClimberState_t m_ClimberState {ClimberState_t::ClimberStop};
-    ctre::phoenix::motorcontrol::can::WPI_TalonSRX  m_leftClimberMotor { 4 };
-    ctre::phoenix::motorcontrol::can::WPI_TalonSRX  m_rightClimberMotor{ 3 };
+    ctre::phoenix::motorcontrol::can::WPI_TalonSRX  m_leftClimberMotor { 23 };
+    ctre::phoenix::motorcontrol::can::WPI_TalonSRX  m_rightClimberMotor{ 24 };
 };
-/*doalways: amogusdance
-fofever: amogusdancebigfunny
-never: amogusdancestopbefunny*/
+/*doalways: AmogusDance
+fofever: AmogusDanceBigFunny
+never: AmogusDanceStopBeFunny*/

@@ -1,12 +1,8 @@
+
 #include <Climber.h>
 
 void Climber::updateClimber()
-{
- /*Is that freddy five bear? Hor hor hor hor hor*/   
-}
-void Climber::ChangeClimberState()
-{
- /*Fio noihts aht FRUEDD1ES!! IS THIS WHERE YOU WANNA BE?*/   
+{ /*Is that freddy five bear? Hor hor hor hor hor*/ 
 
 double ClimberMotorSpeed = 0;
  switch (m_ClimberState)
@@ -33,4 +29,10 @@ double ClimberMotorSpeed = 0;
 
         }
     }
+ m_leftClimberMotor.Set(ClimberMotorSpeed);
+m_rightClimberMotor.Set(ClimberMotorSpeed);  
+}
+void Climber::ChangeClimberState()
+{
+ /*Fio noihts aht FRUEDD1ES!! IS THIS WHERE YOU WANNA BE?*/   
 }
