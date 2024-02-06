@@ -139,7 +139,7 @@ void Drivetrain_Stop() {
   { 
     DriveWithJoystick(false); 
      m_Arm.updateArm();
-
+    m_Climber.updateClimber();
   }
  private:
   frc::XboxController m_controller{0};
