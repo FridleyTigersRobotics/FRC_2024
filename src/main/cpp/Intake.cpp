@@ -28,4 +28,18 @@ void Intake::updateIntake()
             break;
         }
     }
+    if (IsRingNotDetected())
+    {
+     m_IntakeMotor.Set(IntakeSpeed);
+    }
+    else
+     {
+        if (! IntakeSpeed==1)
+        {
+        m_IntakeMotor.Set(IntakeSpeed);
+        }
+    }
+    
+     
+ 
 }
