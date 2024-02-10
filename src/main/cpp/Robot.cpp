@@ -31,10 +31,81 @@ class Robot : public frc::TimedRobot {
 
  }
 
- void TeleopInit() override {
+ void TestInit() override {
+
+ 
+     if (m_controller.GetAButton())
+  {
+    m_Climber.m_ClimberState=ClimberUp;
+
+  }
+  else
+    {
+      if (m_controller.GetBButton())
+      {
+        m_Climber.m_ClimberState=ClimberDown;
+
+      }
+      else
+        {
+          m_Climber.m_ClimberState=ClimberStop;
+        }
+    }
+
+  if (m_controller.GetXButton())
+  {
+    m_Arm.m_ArmMotorLeft.Set(1);
+    m_Arm.m_ArmMotorRight.Set(1);
+  }
+  else
+  {
+    if (m_controller.GetYButton())
+    {
+      m_Arm.m_ArmMotorLeft.Set(-1);
+      m_Arm.m_ArmMotorRight.Set(-1);
+    }
+    else
+    {
+      m_Arm.m_ArmMotorLeft.Set(0);
+      m_Arm.m_ArmMotorRight.Set(0);
+    }
+  }
 
 
- }
+if (m_controller.GetLeftBumper())
+{
+  m_Arm.m_WristMotor.Set(1);
+}
+else
+{
+  if (m_controller.GetRightBumper())
+  {
+    m_Arm.m_WristMotor.Set(-1);
+  }
+  else
+  {
+    m_Arm.m_WristMotor.Set(0);
+  }
+}
+
+if (m_secondcontroller.GetAButton())
+{
+  m_Shooter.m_ShooterMotor.Set(1);
+}
+else
+{
+  if(m_secondcontroller.GetBButton())
+  {
+  m_Shooter.m_ShooterMotor.Set(-1);
+  }
+  else
+  {
+    m_Shooter.m_ShooterMotor.Set(0);
+  }
+}
+
+
+}
 
 
 void Drivetrain_Drive(units::meters_per_second_t xSpeed,
@@ -143,9 +214,11 @@ void Drivetrain_Stop() {
   }
  private:
   frc::XboxController m_controller{0};
+  frc::XboxController m_secondcontroller{1};
   Drivetrain m_swerve;
   Arm m_Arm;
   Climber m_Climber;
+  Shooter m_Shooter;
   //int m_Count=0;
  // std::string m_smart="idk";
   // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0
@@ -302,6 +375,8 @@ frc::SmartDashboard::PutNumber("Rot",double{rot});
 
 #ifndef RUNNING_FRC_TESTS
 int main() {
+ 
   return frc::StartRobot<Robot>();
+
 }
 #endif
