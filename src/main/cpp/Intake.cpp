@@ -3,7 +3,7 @@
  /*Hey there ;)*/
 void Intake::ChangeIntakeState(intake_movement_t IntakeState)
 {
-m_intake_movement=IntakeState;
+    m_intake_movement=IntakeState;
 
 }
 
@@ -28,15 +28,16 @@ void Intake::updateIntake()
             break;
         }
     }
+
     if (IsRingNotDetected())
     {
-     m_IntakeMotor.Set(IntakeSpeed);
+        m_IntakeMotor.Set(IntakeSpeed);
     }
     else
      {
-        if (! IntakeSpeed==1)
+        if ( IntakeSpeed > 0.0 )
         {
-        m_IntakeMotor.Set(IntakeSpeed);
+            m_IntakeMotor.Set(IntakeSpeed);
         }
     }
     

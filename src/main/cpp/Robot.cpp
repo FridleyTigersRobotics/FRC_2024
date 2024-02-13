@@ -209,8 +209,12 @@ void Drivetrain_Stop() {
   void TeleopPeriodic() override 
   { 
     DriveWithJoystick(false); 
-     m_Arm.updateArm();
+    m_Arm.updateArm();
     m_Climber.updateClimber();
+    m_Shooter.updateShooter( false );
+
+
+
   }
  private:
   frc::XboxController m_controller{0};

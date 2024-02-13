@@ -4,17 +4,15 @@
 //#include <arms> *flexes, cutely*
 void Arm::SetArmPosition (arm_position_t DesiredPosition)
 {
-m_ArmPosition = DesiredPosition;
-
-
-
+    m_ArmPosition = DesiredPosition;
 }
 
 void Arm::updateArm()
 {
     double ArmAngle = 0;
     double WristAngle = 0;
- switch (m_ArmPosition)
+
+    switch (m_ArmPosition)
     {
         case (GROUND_PICKUP):
         {
@@ -47,19 +45,20 @@ void Arm::updateArm()
             break;
         }
     }
-//PIDdly thing
-const auto ArmControllOutput = m_ArmPIDController.Calculate(
-      units::radian_t{m_ArmEncoder.GetDistance()}, units::radian_t{ArmAngle});
-m_ArmMotorLeft.Set(ArmControllOutput);
-m_ArmMotorRight.Set(ArmControllOutput);
-frc::SmartDashboard::PutNumber("Arm_ArmControllOutput", ArmControllOutput);
-frc::SmartDashboard::PutNumber("ArmAngle", ArmAngle);
-frc::SmartDashboard::PutNumber("ArmPosition", m_ArmPosition);
+    
+    //PIDdly thing
+    const auto ArmControllOutput = m_ArmPIDController.Calculate(
+        units::radian_t{m_ArmEncoder.GetDistance()}, units::radian_t{ArmAngle});
+    m_ArmMotorLeft.Set(ArmControllOutput);
+    m_ArmMotorRight.Set(ArmControllOutput);
+    frc::SmartDashboard::PutNumber("Arm_ArmControllOutput", ArmControllOutput);
+    frc::SmartDashboard::PutNumber("ArmAngle", ArmAngle);
+    frc::SmartDashboard::PutNumber("ArmPosition", m_ArmPosition);
 
 
-const auto WristControllOutput = m_WristPIDController.Calculate(
-      units::radian_t{m_WristEncoder.GetDistance()}, units::radian_t{WristAngle});
-m_WristMotor.Set(WristControllOutput);
+    const auto WristControllOutput = m_WristPIDController.Calculate(
+        units::radian_t{m_WristEncoder.GetDistance()}, units::radian_t{WristAngle});
+    m_WristMotor.Set(WristControllOutput);
 }
 
 //Change to work for wrist???
