@@ -2,6 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+
 #include <frc/MathUtil.h>
 #include <frc/TimedRobot.h>
 #include <frc/XboxController.h>
@@ -217,8 +218,8 @@ void Drivetrain_Stop() {
 
   }
  private:
-  frc::XboxController m_controller{0};
-  frc::XboxController m_secondcontroller{1};
+  frc::XboxController m_drivecontroller{0};
+  frc::XboxController m_codrivecontroller{1};
   Drivetrain m_swerve;
   Arm m_Arm;
   Climber m_Climber;
@@ -273,7 +274,7 @@ frc::SmartDashboard::PutNumber("m_controller.GetLeftX()",double{m_controller.Get
 frc::SmartDashboard::PutNumber("m_controller.GetRightX()",double{m_controller.GetRightX()});
 
 //Arm and intake code
-if (m_controller.GetLeftBumperPressed())
+if (m_codrivecontroller.GetLeftBumperPressed())
 {
   if (m_Arm.m_ArmPosition==GROUND_PICKUP)
   {
@@ -310,7 +311,7 @@ if (m_controller.GetLeftBumperPressed())
   }
 }
 
-if (m_controller.GetRightBumperPressed())
+if (m_codrivecontroller.GetRightBumperPressed())
 {
   if (m_Arm.m_ArmPosition==SOURCE)
   {
@@ -347,14 +348,14 @@ if (m_controller.GetRightBumperPressed())
   }
 }
 
-if (m_controller.GetAButton())
+if (m_codrivecontroller.GetAButton())
 {
   m_Climber.m_ClimberState=ClimberUp;
   
 }
 else
   {
-    if (m_controller.GetBButton())
+    if (m_codrivecontroller.GetBButton())
     {
       m_Climber.m_ClimberState=ClimberDown;
       

@@ -3,12 +3,12 @@
 namespace ConstantCrap
 {
 //Can IDs
-constexpr int kRightClimberMotor = 24;
-constexpr int kLeftClimberMotor = 23;
+constexpr int kRightClimberMotor = 3;
+constexpr int kLeftClimberMotor = 4;
 constexpr int kIntakeMotorcanID = 22;
 constexpr int kArmMotorLeftcanID = 21;
-constexpr int kArmMotorRightcanID = 20;
-constexpr int kWristMotorID = 19;
+constexpr int kArmMotorRightcanID = 19;
+constexpr int kWristMotorID = 18;
 constexpr int kShooterMotorID = 18;
 constexpr int kFrontLeftSpinID = 17;
 constexpr int kFrontLeftDriveID = 16;
