@@ -59,12 +59,14 @@ void Arm::updateArm()
     const auto WristControllOutput = m_WristPIDController.Calculate(
         units::radian_t{m_WristEncoder.GetDistance()}, units::radian_t{WristAngle});
     m_WristMotor.Set(WristControllOutput);
+
+   /* const auto WristAngle = m_WristPIDController.Calculate(
+        units::radian_t{m_WristEncoder.GetDistance()}, units::radian_t{WristAngle});*/
+frc::SmartDashboard::PutNumber("Wrist_WristControllOutput", WristControllOutput);
+frc::SmartDashboard::PutNumber("WristAngle", WristAngle);
+frc::SmartDashboard::PutNumber("WristPosition", m_WristPosition);
 }
 
 //Change to work for wrist???
 
 //PID? PIN? Bowling? Wii Sports Bowling???
-
-//frc::SmartDashboard::PutNumber("Wrist_WristControllOutput", WristControllOutput);
-//frc::SmartDashboard::PutNumber("WristAngle", WristAngle);
-//frc::SmartDashboard::PutNumber("WristPosition", m_WristPosition);

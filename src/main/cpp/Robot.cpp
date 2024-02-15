@@ -35,14 +35,14 @@ class Robot : public frc::TimedRobot {
  void TestInit() override {
 
  
-     if (m_controller.GetAButton())
+     if (m_codrivecontroller.GetAButton())
   {
     m_Climber.m_ClimberState=ClimberUp;
 
   }
   else
     {
-      if (m_controller.GetBButton())
+      if (m_codrivecontroller.GetBButton())
       {
         m_Climber.m_ClimberState=ClimberDown;
 
@@ -53,14 +53,14 @@ class Robot : public frc::TimedRobot {
         }
     }
 
-  if (m_controller.GetXButton())
+  if (m_codrivecontroller.GetXButton())
   {
     m_Arm.m_ArmMotorLeft.Set(1);
     m_Arm.m_ArmMotorRight.Set(1);
   }
   else
   {
-    if (m_controller.GetYButton())
+    if (m_codrivecontroller.GetYButton())
     {
       m_Arm.m_ArmMotorLeft.Set(-1);
       m_Arm.m_ArmMotorRight.Set(-1);
@@ -73,13 +73,13 @@ class Robot : public frc::TimedRobot {
   }
 
 
-if (m_controller.GetLeftBumper())
+if (m_codrivecontroller.GetLeftBumper())
 {
   m_Arm.m_WristMotor.Set(1);
 }
 else
 {
-  if (m_controller.GetRightBumper())
+  if (m_codrivecontroller.GetRightBumper())
   {
     m_Arm.m_WristMotor.Set(-1);
   }
@@ -89,13 +89,13 @@ else
   }
 }
 
-if (m_secondcontroller.GetAButton())
+if (m_codrivecontroller.GetAButton())
 {
   m_Shooter.m_ShooterMotor.Set(1);
 }
 else
 {
-  if(m_secondcontroller.GetBButton())
+  if(m_codrivecontroller.GetBButton())
   {
   m_Shooter.m_ShooterMotor.Set(-1);
   }
@@ -251,14 +251,14 @@ frc::Timer   m_autoTimer;
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     const auto xSpeed = -m_xspeedLimiter.Calculate(
-                            frc::ApplyDeadband(m_controller.GetLeftY(), 0.25)) *
+                            frc::ApplyDeadband(m_drivecontroller.GetLeftY(), 0.25)) *
                         Drivetrain::kMaxSpeed;
 
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
     const auto ySpeed = -m_yspeedLimiter.Calculate(
-                            frc::ApplyDeadband(m_controller.GetLeftX(), 0.25)) *
+                            frc::ApplyDeadband(m_drivecontroller.GetLeftX(), 0.25)) *
                         Drivetrain::kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
@@ -266,12 +266,12 @@ frc::Timer   m_autoTimer;
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
     const auto rot = -m_rotLimiter.Calculate(
-                         frc::ApplyDeadband(m_controller.GetRightX(), 0.25)) *
+                         frc::ApplyDeadband(m_drivecontroller.GetRightX(), 0.25)) *
                      Drivetrain::kMaxAngularSpeed;
 
-frc::SmartDashboard::PutNumber("m_controller.GetLeftY",double{m_controller.GetLeftY()});
-frc::SmartDashboard::PutNumber("m_controller.GetLeftX()",double{m_controller.GetLeftX()});
-frc::SmartDashboard::PutNumber("m_controller.GetRightX()",double{m_controller.GetRightX()});
+frc::SmartDashboard::PutNumber("m_drivecontroller.GetLeftY",double{m_drivecontroller.GetLeftY()});
+frc::SmartDashboard::PutNumber("m_drivecontroller.GetLeftX()",double{m_drivecontroller.GetLeftX()});
+frc::SmartDashboard::PutNumber("m_drivecontroller.GetRightX()",double{m_drivecontroller.GetRightX()});
 
 //Arm and intake code
 if (m_codrivecontroller.GetLeftBumperPressed())
