@@ -1,5 +1,6 @@
-
+#include <Debug.h>
 #include <Climber.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 void Climber::initClimber()
 {
@@ -19,7 +20,7 @@ void Climber::updateClimber()
             break;
         }
         case (ClimberDown):
-        {
+        { // TODO : Might want lower speed for down, need to test.
             ClimberMotorSpeed = -1;
             break;
         }
@@ -29,8 +30,16 @@ void Climber::updateClimber()
             break;
         }
     }
+
+    frc::SmartDashboard::PutNumber( "Climber_Output", ClimberMotorSpeed );
+
+   #if DBG_DISABLE_CLIMB_MOTORS
+    m_leftClimberMotor.Set( 0 );
+    m_rightClimberMotor.Set( 0 );  
+   #else
     m_leftClimberMotor.Set(ClimberMotorSpeed);
     m_rightClimberMotor.Set(ClimberMotorSpeed);  
+   #endif
 }
 
 void Climber::ChangeClimberState( ClimberState_t ClimberState )

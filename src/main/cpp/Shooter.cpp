@@ -1,3 +1,4 @@
+#include <Debug.h>
 #include <Shooter.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
@@ -23,8 +24,12 @@ void Shooter::updateShooter( bool spinUpShooter )
         m_shooterSpeedReadyToShoot = false;
     }
 
+   #if DBG_DISABLE_SHOOT_MOTORS
+    m_shooterMotor.Set( 0 );  
+   #else
     if ( spinUpShooter )
-    {   // TODO : determine this delta for switching to PID control.
+    {   
+        // TODO : determine this delta for switching to PID control.
         double const speedDeltaForPidControl = 500;
 
         if ( shooterVelocity < ( m_maxShooterSpeed - speedDeltaForPidControl ) )
@@ -36,14 +41,16 @@ void Shooter::updateShooter( bool spinUpShooter )
         {
             m_shooterPid.SetReference( m_maxShooterSpeed, rev::CANSparkBase::ControlType::kVelocity, 0 );
         }
+
     }
     else
     {
         m_shooterMotor.Set( 0.0 );
     }
+   #endif
 
-    frc::SmartDashboard::PutNumber( "Shooter Speed",  shooterVelocity );
-    frc::SmartDashboard::PutNumber( "Shooter Output", m_shooterMotor.GetAppliedOutput() );
+    frc::SmartDashboard::PutNumber( "Shooter_Speed",  shooterVelocity );
+    frc::SmartDashboard::PutNumber( "Shooter_Output", m_shooterMotor.GetAppliedOutput() );
 }
 
 

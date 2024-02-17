@@ -1,4 +1,6 @@
+#include <Debug.h>
 #include <Intake.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 void Intake::initIntake()
 {
@@ -44,7 +46,13 @@ void Intake::updateIntake()
         }
     }
 
+    frc::SmartDashboard::PutNumber( "Intake_Output", IntakeSpeed );
+
+   #if DBG_DISABLE_INTAKE_MOTORS
+    m_IntakeMotor.Set( 0 );  
+   #else
     m_IntakeMotor.Set(IntakeSpeed);
+   #endif
 }
 
 

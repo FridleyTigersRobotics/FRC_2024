@@ -12,8 +12,11 @@
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <AHRS.h>
 #include "SwerveModule.h"
+#include "Constants.h"
 #include "frc/geometry/Rotation2d.h"
 #include <frc/SPI.h>
+
+using namespace ConstantCrap;
 
 /**
  * Represents a swerve drive style drivetrain.
@@ -64,12 +67,11 @@ class Drivetrain {
 //0.255626 Drive motor #14
 //4.980153 Drive motor #16
 
-  SwerveModule m_backRight {10, 11, 0, (1.230863/(2*std::numbers::pi))};
-  SwerveModule m_frontRight{12, 13, 1, 0.5+(0.909437/(2*std::numbers::pi))};
-  SwerveModule m_backLeft  {14, 15, 2, 0.255626/(2*std::numbers::pi)};
-  SwerveModule m_frontLeft {16, 17, 3, 4.980153/(2*std::numbers::pi)};
 
-  //frc::AnalogGyro m_gyro{4};
+  SwerveModule m_backRight { kBackRightDriveID,  kBackRightSpinID,  kDriveEncoderBackRight,  1.230863 / (2*std::numbers::pi)};
+  SwerveModule m_frontRight{ kFrontRightDriveID, kFrontRightSpinID, kDriveEncoderFrontRight, 1.409437 / (2*std::numbers::pi)};
+  SwerveModule m_backLeft  { kBackLeftDriveID,   kBackLeftSpinID,   kDriveEncoderBackLeft,   0.255626 / (2*std::numbers::pi)};
+  SwerveModule m_frontLeft { kFrontLeftDriveID,  kFrontLeftSpinID,  kDriveEncoderFrontLeft,  4.980153 / (2*std::numbers::pi)};
 
   AHRS m_imu { frc::SPI::Port::kMXP};
 

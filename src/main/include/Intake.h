@@ -5,17 +5,16 @@
 #include <Constants.h>
 #include <frc/AnalogInput.h>
 
-typedef enum intake_movement
-{
-    Intake_Intaking,
-    Intake_Outtaking,
-    Intake_Stopped,
-
-} intake_movement_t;
-
-
 class Intake{
  public:
+    typedef enum intake_movement
+    {
+        Intake_Intaking,
+        Intake_Outtaking,
+        Intake_Stopped,
+    } intake_movement_t;
+
+
     void initIntake();
     void ChangeIntakeState(intake_movement_t);
     void updateIntake ();

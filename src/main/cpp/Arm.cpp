@@ -1,3 +1,4 @@
+#include <Debug.h>
 #include <Arm.h>
 #include <rev/cansparkmax.h>
 #include <frc/smartdashboard/SmartDashboard.h>
@@ -69,9 +70,15 @@ void Arm::updateArm()
     frc::SmartDashboard::PutNumber("Wrist_Angle",         WristAngle);
     frc::SmartDashboard::PutNumber("Wrist_Position",      m_WristPosition);
 
+   #if DBG_DISABLE_ARM_MOTORS
+    m_ArmMotorLeft.Set( 0 );
+    m_ArmMotorRight.Set( 0 );
+    m_WristMotor.Set( 0 );
+   #else
     m_ArmMotorLeft.Set(ArmControlOutput);
     m_ArmMotorRight.Set(ArmControlOutput);
     m_WristMotor.Set(WristControlOutput);
+   #endif
 }
 
 //Change to work for wrist???
