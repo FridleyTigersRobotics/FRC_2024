@@ -11,7 +11,6 @@
 #include <units/velocity.h>
 #include <units/voltage.h>
 
-
 typedef enum arm_positon_e
 {
     GROUND_PICKUP,
@@ -33,12 +32,13 @@ typedef enum wrist_positon_e
 class Arm
 {
 public:
-    arm_position_t m_ArmPosition {arm_position_t::GROUND_PICKUP};
-    wrist_position_t m_WristPosition {wrist_position_t::WRIST_GROUND_PICKUP};
-
     void initArm();
     void SetArmPosition (arm_position_t DesiredPosition);
     void updateArm (/*Arm? I have those!*/);
+
+private:
+    arm_position_t m_ArmPosition {arm_position_t::GROUND_PICKUP};
+    wrist_position_t m_WristPosition {wrist_position_t::WRIST_GROUND_PICKUP};
 
     // Arm
     rev::CANSparkMax m_ArmMotorLeft { ConstantCrap::kArmMotorLeftcanID,rev::CANSparkLowLevel::MotorType::kBrushless };

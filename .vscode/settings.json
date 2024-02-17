@@ -24,6 +24,7 @@
     "mutex": "cpp",
     "sstream": "cpp",
     "functional": "cpp",
-    "utility": "cpp"
+    "utility": "cpp",
+    "*.inc": "cpp"
   }
 }

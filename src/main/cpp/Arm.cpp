@@ -5,7 +5,8 @@
 
 void Arm::initArm()
 {
-
+    m_ArmMotorRight.SetInverted( false );
+    m_ArmMotorLeft.SetInverted( true );
 }
 
 void Arm::SetArmPosition (arm_position_t DesiredPosition)
@@ -20,6 +21,7 @@ void Arm::updateArm()
 
     switch (m_ArmPosition)
     {
+        // TODO : Determine all arm and wrist positions
         case (GROUND_PICKUP):
         {
             ArmAngle = 0;

@@ -6,17 +6,17 @@ typedef enum ClimberState_e
     ClimberDown,
     ClimberUp,
     ClimberStop
-
 } ClimberState_t;
 
 class Climber
 {
-    public:
+ public:
     void initClimber();
     void updateClimber (/*Me when the me when... *Literally combusts* */);
-    void ChangeClimberState (/*Arises from ashes because epic pheonix*/);
+    void ChangeClimberState( ClimberState_t ClimberState );
 
-ClimberState_t m_ClimberState {ClimberState_t::ClimberStop};
+ private:
+    ClimberState_t m_ClimberState {ClimberState_t::ClimberStop};
     ctre::phoenix::motorcontrol::can::WPI_TalonSRX  m_leftClimberMotor { 23 };
     ctre::phoenix::motorcontrol::can::WPI_TalonSRX  m_rightClimberMotor{ 24 };
 };

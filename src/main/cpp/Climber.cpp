@@ -3,7 +3,8 @@
 
 void Climber::initClimber()
 {
-
+    m_leftClimberMotor.SetInverted( false );
+    m_rightClimberMotor.SetInverted( true );
 }
 
 void Climber::updateClimber()
@@ -32,7 +33,7 @@ void Climber::updateClimber()
     m_rightClimberMotor.Set(ClimberMotorSpeed);  
 }
 
-void Climber::ChangeClimberState()
+void Climber::ChangeClimberState( ClimberState_t ClimberState )
 {
- /*Fio noihts aht FRUEDD1ES!! IS THIS WHERE YOU WANNA BE?*/   
+    m_ClimberState = ClimberState;
 }

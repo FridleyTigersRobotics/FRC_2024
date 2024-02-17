@@ -40,76 +40,78 @@
 
  void Robot::TestPeriodic() {
 
-     if (m_coController.GetAButton())
-  {
-    m_Climber.m_ClimberState=ClimberUp;
 
-  }
-  else
+#if 0
+    if ( m_coController.GetAButton() )
+    {
+      m_Climber.ChangeClimberState( ClimberUp );
+
+    }
+    else
     {
       if (m_coController.GetBButton())
       {
-        m_Climber.m_ClimberState=ClimberDown;
+        m_Climber.ChangeClimberState( ClimberDown );
 
       }
       else
         {
-          m_Climber.m_ClimberState=ClimberStop;
+          m_Climber.ChangeClimberState( ClimberStop );
         }
     }
 
-  if (m_coController.GetXButton())
-  {
-    m_Arm.m_ArmMotorLeft.Set(1);
-    m_Arm.m_ArmMotorRight.Set(1);
-  }
-  else
-  {
-    if (m_coController.GetYButton())
+    if (m_coController.GetXButton())
     {
-      m_Arm.m_ArmMotorLeft.Set(-1);
-      m_Arm.m_ArmMotorRight.Set(-1);
+      m_Arm.m_ArmMotorLeft.Set(1);
+      m_Arm.m_ArmMotorRight.Set(1);
     }
     else
     {
-      m_Arm.m_ArmMotorLeft.Set(0);
-      m_Arm.m_ArmMotorRight.Set(0);
+      if (m_coController.GetYButton())
+      {
+        m_Arm.m_ArmMotorLeft.Set(-1);
+        m_Arm.m_ArmMotorRight.Set(-1);
+      }
+      else
+      {
+        m_Arm.m_ArmMotorLeft.Set(0);
+        m_Arm.m_ArmMotorRight.Set(0);
+      }
+    }
+
+
+  if (m_coController.GetLeftBumper())
+  {
+    m_Arm.m_WristMotor.Set(1);
+  }
+  else
+  {
+    if (m_coController.GetRightBumper())
+    {
+      m_Arm.m_WristMotor.Set(-1);
+    }
+    else
+    {
+      m_Arm.m_WristMotor.Set(0);
     }
   }
 
-
-if (m_coController.GetLeftBumper())
-{
-  m_Arm.m_WristMotor.Set(1);
-}
-else
-{
-  if (m_coController.GetRightBumper())
+  if (m_coController.GetAButton())
   {
-    m_Arm.m_WristMotor.Set(-1);
+    m_Shooter.m_shooterMotor.Set(1);
   }
   else
   {
-    m_Arm.m_WristMotor.Set(0);
+    if(m_coController.GetBButton())
+    {
+    m_Shooter.m_shooterMotor.Set(-1);
+    }
+    else
+    {
+      m_Shooter.m_shooterMotor.Set(0);
+    }
   }
-}
-
-if (m_coController.GetAButton())
-{
-  m_Shooter.m_ShooterMotor.Set(1);
-}
-else
-{
-  if(m_coController.GetBButton())
-  {
-  m_Shooter.m_ShooterMotor.Set(-1);
-  }
-  else
-  {
-    m_Shooter.m_ShooterMotor.Set(0);
-  }
-}
-
+#endif
 
 }
 
@@ -245,10 +247,12 @@ bool Robot::RunDriveAuto()
                          frc::ApplyDeadband(m_driveController.GetRightX(), 0.25)) *
                      Drivetrain::kMaxAngularSpeed;
 
-frc::SmartDashboard::PutNumber("m_driveController.GetLeftY",double{m_driveController.GetLeftY()});
-frc::SmartDashboard::PutNumber("m_driveController.GetLeftX()",double{m_driveController.GetLeftX()});
-frc::SmartDashboard::PutNumber("m_driveController.GetRightX()",double{m_driveController.GetRightX()});
+    frc::SmartDashboard::PutNumber("m_driveController.GetLeftY",double{m_driveController.GetLeftY()});
+    frc::SmartDashboard::PutNumber("m_driveController.GetLeftX()",double{m_driveController.GetLeftX()});
+    frc::SmartDashboard::PutNumber("m_driveController.GetRightX()",double{m_driveController.GetRightX()});
 
+
+#if 0
 //Arm and intake code
 if (m_coController.GetLeftBumperPressed())
 {
@@ -341,7 +345,7 @@ else
         m_Climber.m_ClimberState=ClimberStop;
       }
   }
-
+#endif
 
 
 
