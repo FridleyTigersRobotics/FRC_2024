@@ -2,6 +2,12 @@
 #include <rev/cansparkmax.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 //#include <arms> *flexes, cutely*
+
+void Arm::initArm()
+{
+
+}
+
 void Arm::SetArmPosition (arm_position_t DesiredPosition)
 {
     m_ArmPosition = DesiredPosition;
@@ -47,24 +53,23 @@ void Arm::updateArm()
     }
     
     //PIDdly thing
-    const auto ArmControllOutput = m_ArmPIDController.Calculate(
+    const auto ArmControlOutput = m_ArmPIDController.Calculate(
         units::radian_t{m_ArmEncoder.GetDistance()}, units::radian_t{ArmAngle});
-    m_ArmMotorLeft.Set(ArmControllOutput);
-    m_ArmMotorRight.Set(ArmControllOutput);
-    frc::SmartDashboard::PutNumber("Arm_ArmControllOutput", ArmControllOutput);
-    frc::SmartDashboard::PutNumber("ArmAngle", ArmAngle);
-    frc::SmartDashboard::PutNumber("ArmPosition", m_ArmPosition);
 
-
-    const auto WristControllOutput = m_WristPIDController.Calculate(
+    const auto WristControlOutput = m_WristPIDController.Calculate(
         units::radian_t{m_WristEncoder.GetDistance()}, units::radian_t{WristAngle});
-    m_WristMotor.Set(WristControllOutput);
 
-   /* const auto WristAngle = m_WristPIDController.Calculate(
-        units::radian_t{m_WristEncoder.GetDistance()}, units::radian_t{WristAngle});*/
-frc::SmartDashboard::PutNumber("Wrist_WristControllOutput", WristControllOutput);
-frc::SmartDashboard::PutNumber("WristAngle", WristAngle);
-frc::SmartDashboard::PutNumber("WristPosition", m_WristPosition);
+    frc::SmartDashboard::PutNumber("Arm_ControlOutput", ArmControlOutput);
+    frc::SmartDashboard::PutNumber("Arm_Angle",         ArmAngle);
+    frc::SmartDashboard::PutNumber("Arm_Position",      m_ArmPosition);
+
+    frc::SmartDashboard::PutNumber("Wrist_ControlOutput", WristControlOutput);
+    frc::SmartDashboard::PutNumber("Wrist_Angle",         WristAngle);
+    frc::SmartDashboard::PutNumber("Wrist_Position",      m_WristPosition);
+
+    m_ArmMotorLeft.Set(ArmControlOutput);
+    m_ArmMotorRight.Set(ArmControlOutput);
+    m_WristMotor.Set(WristControlOutput);
 }
 
 //Change to work for wrist???

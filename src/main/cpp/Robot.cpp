@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-
+#include <Robot.h>
 #include <frc/MathUtil.h>
 #include <frc/TimedRobot.h>
 #include <frc/XboxController.h>
@@ -13,10 +13,16 @@
 #include <string>
 #include <Arm.h>
 #include <Climber.h>
-class Robot : public frc::TimedRobot {
- public:
 
- void AutonomousInit() override {
+
+ void Robot::TestInit() {
+ }
+
+ void Robot::TeleopInit() {
+ }
+
+
+ void Robot::AutonomousInit() {
     TeleopInit(); 
     m_autoTimer.Stop();
     m_autoTimer.Reset();
@@ -32,17 +38,16 @@ class Robot : public frc::TimedRobot {
 
  }
 
- void TestInit() override {
+ void Robot::TestPeriodic() {
 
- 
-     if (m_codrivecontroller.GetAButton())
+     if (m_coController.GetAButton())
   {
     m_Climber.m_ClimberState=ClimberUp;
 
   }
   else
     {
-      if (m_codrivecontroller.GetBButton())
+      if (m_coController.GetBButton())
       {
         m_Climber.m_ClimberState=ClimberDown;
 
@@ -53,14 +58,14 @@ class Robot : public frc::TimedRobot {
         }
     }
 
-  if (m_codrivecontroller.GetXButton())
+  if (m_coController.GetXButton())
   {
     m_Arm.m_ArmMotorLeft.Set(1);
     m_Arm.m_ArmMotorRight.Set(1);
   }
   else
   {
-    if (m_codrivecontroller.GetYButton())
+    if (m_coController.GetYButton())
     {
       m_Arm.m_ArmMotorLeft.Set(-1);
       m_Arm.m_ArmMotorRight.Set(-1);
@@ -73,13 +78,13 @@ class Robot : public frc::TimedRobot {
   }
 
 
-if (m_codrivecontroller.GetLeftBumper())
+if (m_coController.GetLeftBumper())
 {
   m_Arm.m_WristMotor.Set(1);
 }
 else
 {
-  if (m_codrivecontroller.GetRightBumper())
+  if (m_coController.GetRightBumper())
   {
     m_Arm.m_WristMotor.Set(-1);
   }
@@ -89,13 +94,13 @@ else
   }
 }
 
-if (m_codrivecontroller.GetAButton())
+if (m_coController.GetAButton())
 {
   m_Shooter.m_ShooterMotor.Set(1);
 }
 else
 {
-  if(m_codrivecontroller.GetBButton())
+  if(m_coController.GetBButton())
   {
   m_Shooter.m_ShooterMotor.Set(-1);
   }
@@ -109,18 +114,18 @@ else
 }
 
 
-void Drivetrain_Drive(units::meters_per_second_t xSpeed,
+void Robot::Drivetrain_Drive(units::meters_per_second_t xSpeed,
                              units::radians_per_second_t rot) {
   m_swerve.Drive(xSpeed, 0.0_mps, rot, false, GetPeriod());
 }
 
 
-void Drivetrain_Stop() {
+void Robot::Drivetrain_Stop() {
    m_swerve.Drive(0.0_mps, 0.0_mps, units::radians_per_second_t{0.0}, false, GetPeriod());
 }
 
 
- bool DriveForDistance( units::meters_per_second_t speed, units::meter_t distance, units::time::second_t maxTime=5.0_s )
+ bool Robot::DriveForDistance( units::meters_per_second_t speed, units::meter_t distance, units::time::second_t maxTime=5.0_s )
   {
     frc::Pose2d pose = m_swerve.m_odometry.GetPose();
     frc::SmartDashboard::PutNumber("pose.X()",double{pose.X()});
@@ -141,7 +146,7 @@ void Drivetrain_Stop() {
   }
 
 
-  bool RunDriveAuto()
+bool Robot::RunDriveAuto()
 {
  frc::Pose2d pose = m_swerve.m_odometry.GetPose();
     bool sequenceDone = false;
@@ -202,12 +207,12 @@ void Drivetrain_Stop() {
 
 
 
-  void AutonomousPeriodic() override {
+  void Robot::AutonomousPeriodic() {
     RunDriveAuto();
     m_swerve.UpdateOdometry();
   }
 
-  void TeleopPeriodic() override 
+  void Robot::TeleopPeriodic() 
   { 
     DriveWithJoystick(false); 
     m_Arm.updateArm();
@@ -217,48 +222,19 @@ void Drivetrain_Stop() {
 
 
   }
- private:
-  frc::XboxController m_drivecontroller{0};
-  frc::XboxController m_codrivecontroller{1};
-  Drivetrain m_swerve;
-  Arm m_Arm;
-  Climber m_Climber;
-  Shooter m_Shooter;
-  //int m_Count=0;
- // std::string m_smart="idk";
-  // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0
-  // to 1.
-  frc::SlewRateLimiter<units::scalar> m_xspeedLimiter{3 / 1_s};
-  frc::SlewRateLimiter<units::scalar> m_yspeedLimiter{3 / 1_s};
-  frc::SlewRateLimiter<units::scalar> m_rotLimiter{3 / 1_s};
-frc::Timer   m_autoTimer;
-  //std::string  m_autoSelected { kAutoNameDefault };
-  int          m_autoSequence { 0 };
-  bool         m_initState    { true };
-  unsigned int m_autoState    { 0 }; 
-  double       m_initialAngle { 0 };
-  double m_prevAngle             { 0 };
-  double m_currentAngle          { 0 };
-  double m_angleDelta            { 0 };
-  double m_currentAvgAngle       { 0 };
-  double m_avgAngleDelta         { 0 };
-  double m_prevAvgAngle          { 0 };
-  int m_atRotateSetpointCount    { 0 };
-  units::meter_t m_startDistance { 0 };
 
-
-  void DriveWithJoystick(bool fieldRelative) {
+  void Robot::DriveWithJoystick(bool fieldRelative) {
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     const auto xSpeed = -m_xspeedLimiter.Calculate(
-                            frc::ApplyDeadband(m_drivecontroller.GetLeftY(), 0.25)) *
+                            frc::ApplyDeadband(m_driveController.GetLeftY(), 0.25)) *
                         Drivetrain::kMaxSpeed;
 
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
     const auto ySpeed = -m_yspeedLimiter.Calculate(
-                            frc::ApplyDeadband(m_drivecontroller.GetLeftX(), 0.25)) *
+                            frc::ApplyDeadband(m_driveController.GetLeftX(), 0.25)) *
                         Drivetrain::kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
@@ -266,15 +242,15 @@ frc::Timer   m_autoTimer;
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
     const auto rot = -m_rotLimiter.Calculate(
-                         frc::ApplyDeadband(m_drivecontroller.GetRightX(), 0.25)) *
+                         frc::ApplyDeadband(m_driveController.GetRightX(), 0.25)) *
                      Drivetrain::kMaxAngularSpeed;
 
-frc::SmartDashboard::PutNumber("m_drivecontroller.GetLeftY",double{m_drivecontroller.GetLeftY()});
-frc::SmartDashboard::PutNumber("m_drivecontroller.GetLeftX()",double{m_drivecontroller.GetLeftX()});
-frc::SmartDashboard::PutNumber("m_drivecontroller.GetRightX()",double{m_drivecontroller.GetRightX()});
+frc::SmartDashboard::PutNumber("m_driveController.GetLeftY",double{m_driveController.GetLeftY()});
+frc::SmartDashboard::PutNumber("m_driveController.GetLeftX()",double{m_driveController.GetLeftX()});
+frc::SmartDashboard::PutNumber("m_driveController.GetRightX()",double{m_driveController.GetRightX()});
 
 //Arm and intake code
-if (m_codrivecontroller.GetLeftBumperPressed())
+if (m_coController.GetLeftBumperPressed())
 {
   if (m_Arm.m_ArmPosition==GROUND_PICKUP)
   {
@@ -311,7 +287,7 @@ if (m_codrivecontroller.GetLeftBumperPressed())
   }
 }
 
-if (m_codrivecontroller.GetRightBumperPressed())
+if (m_coController.GetRightBumperPressed())
 {
   if (m_Arm.m_ArmPosition==SOURCE)
   {
@@ -348,14 +324,14 @@ if (m_codrivecontroller.GetRightBumperPressed())
   }
 }
 
-if (m_codrivecontroller.GetAButton())
+if (m_coController.GetAButton())
 {
   m_Climber.m_ClimberState=ClimberUp;
   
 }
 else
   {
-    if (m_codrivecontroller.GetBButton())
+    if (m_coController.GetBButton())
     {
       m_Climber.m_ClimberState=ClimberDown;
       
@@ -370,13 +346,13 @@ else
 
 
 
-frc::SmartDashboard::PutNumber("Xspeed",double{xSpeed});
-frc::SmartDashboard::PutNumber("Yspeed",double{ySpeed});
-frc::SmartDashboard::PutNumber("Rot",double{rot});
+  frc::SmartDashboard::PutNumber("Xspeed",double{xSpeed});
+  frc::SmartDashboard::PutNumber("Yspeed",double{ySpeed});
+  frc::SmartDashboard::PutNumber("Rot",double{rot});
 
     m_swerve.Drive(xSpeed, ySpeed, rot, fieldRelative, GetPeriod());
   }
-};
+
 
 #ifndef RUNNING_FRC_TESTS
 int main() {

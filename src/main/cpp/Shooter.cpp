@@ -1,6 +1,11 @@
 #include <Shooter.h>
 #include <Intake.h>
 
+void Shooter::initShooter()
+{
+
+}
+
 void Shooter::updateShooter( bool spinUpShooter )
 {
     if ( spinUpShooter /*&& IsRingNotDetected()*/)

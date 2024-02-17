@@ -12,6 +12,7 @@ typedef enum ClimberState_e
 class Climber
 {
     public:
+    void initClimber();
     void updateClimber (/*Me when the me when... *Literally combusts* */);
     void ChangeClimberState (/*Arises from ashes because epic pheonix*/);
 

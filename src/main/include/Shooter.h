@@ -5,6 +5,7 @@
 class Shooter
 {
 public:
+    void initShooter();
     void updateShooter ( bool spinUpShooter );
     rev::CANSparkMax m_ShooterMotor { ConstantCrap::kShooterMotorID,rev::CANSparkLowLevel::MotorType::kBrushless };
 

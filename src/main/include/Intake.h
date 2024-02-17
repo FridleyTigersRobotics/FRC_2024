@@ -15,6 +15,7 @@ typedef enum intake_movement
 
 class Intake{
  public:
+    void initIntake();
     void ChangeIntakeState(intake_movement_t);
     intake_movement_t m_intake_movement;
     void updateIntake ();

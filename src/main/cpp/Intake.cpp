@@ -1,5 +1,10 @@
 #include <Intake.h>
 
+void Intake::initIntake()
+{
+
+}
+
  /*Hey there ;)*/
 void Intake::ChangeIntakeState(intake_movement_t IntakeState)
 {
