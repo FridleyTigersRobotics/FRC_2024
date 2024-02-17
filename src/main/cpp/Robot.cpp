@@ -13,12 +13,13 @@
 #include <string>
 #include <Arm.h>
 #include <Climber.h>
-
+//#include <frc/PowerDistribution.h>
 
  void Robot::TestInit() {
  }
 
  void Robot::TeleopInit() {
+  //frc::PowerDistribution::ClearStickyFaults();
  }
 
 
@@ -220,7 +221,7 @@ bool Robot::RunDriveAuto()
     m_Arm.updateArm();
     m_Climber.updateClimber();
     m_Shooter.updateShooter( false );
-
+    m_Intake.updateIntake();
 
 
   }

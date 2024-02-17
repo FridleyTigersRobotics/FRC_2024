@@ -25,7 +25,7 @@ void Arm::updateArm()
         // TODO : Determine all arm and wrist positions
         case (GROUND_PICKUP):
         {
-            ArmAngle = 0;
+            ArmAngle = 0.5099;
             WristAngle = 1;
             break;
         }
@@ -62,13 +62,15 @@ void Arm::updateArm()
     const auto WristControlOutput = m_WristPIDController.Calculate(
         units::radian_t{m_WristEncoder.GetDistance()}, units::radian_t{WristAngle});
 
-    frc::SmartDashboard::PutNumber("Arm_ControlOutput", ArmControlOutput);
-    frc::SmartDashboard::PutNumber("Arm_Angle",         ArmAngle);
-    frc::SmartDashboard::PutNumber("Arm_Position",      m_ArmPosition);
+    frc::SmartDashboard::PutNumber("Arm_ControlOutput",   ArmControlOutput);
+    frc::SmartDashboard::PutNumber("Arm_Angle",           ArmAngle);
+    frc::SmartDashboard::PutNumber("Arm_Position",        m_ArmPosition);
+    frc::SmartDashboard::PutNumber("Arm_Encoder",         m_ArmEncoder.GetDistance());//Ground pickup:0.5099 Top Position 0.1844
 
     frc::SmartDashboard::PutNumber("Wrist_ControlOutput", WristControlOutput);
     frc::SmartDashboard::PutNumber("Wrist_Angle",         WristAngle);
     frc::SmartDashboard::PutNumber("Wrist_Position",      m_WristPosition);
+    frc::SmartDashboard::PutNumber("Wrist_Encoder",       m_WristEncoder.GetDistance());//Shooting position:-1.3570 Ground Pickup:-0.0379
 
    #if DBG_DISABLE_ARM_MOTORS
     m_ArmMotorLeft.Set( 0 );

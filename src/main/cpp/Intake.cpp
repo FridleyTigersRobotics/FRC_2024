@@ -7,7 +7,6 @@ void Intake::initIntake()
 
 }
 
- /*Hey there ;)*/
 void Intake::ChangeIntakeState(intake_movement_t IntakeState)
 {
     m_intake_movement = IntakeState;
@@ -59,5 +58,5 @@ void Intake::updateIntake()
 bool Intake::IsRingDetected() 
 {   
     // TODO : determine the correct value to detect note
-    return m_RingDetector.GetValue() < 50;
+    return 0;//m_RingDetector.GetValue() < 50;
 }

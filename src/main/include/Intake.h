@@ -4,6 +4,7 @@
 #include <rev/cansparkmax.h>
 #include <Constants.h>
 #include <frc/AnalogInput.h>
+#include <frc/DigitalInput.h>
 
 class Intake{
  public:
@@ -22,7 +23,7 @@ class Intake{
 
   private:
     rev::CANSparkMax m_IntakeMotor { ConstantCrap::kIntakeMotorcanID,rev::CANSparkLowLevel::MotorType::kBrushless };
-    frc::AnalogInput m_RingDetector{0};
+    frc::DigitalInput m_RingDetector{ConstantCrap::kNoteDetectorDIO};
     intake_movement_t m_intake_movement;
 
 };
