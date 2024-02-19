@@ -22,13 +22,15 @@ namespace ConstantCrap
     constexpr int kLeftClimberMotor     = 4;
 
     // DIO IDs
-    constexpr int kArmEncoderDIO          = 0;
-    constexpr int kWristEncoderDIO        = 1;
+    constexpr int kArmEncoderDIO           = 0;
+    constexpr int kWristEncoderDIO         = 1;
     constexpr int kRightClimberEncoderDIO1 = 2;
     constexpr int kRightClimberEncoderDIO2 = 3;
     constexpr int kLeftClimberEncoderDIO1  = 4;
     constexpr int kLeftClimberEncoderDIO2  = 5;
-    constexpr int kNoteDetectorDIO  = 6;
+    constexpr int kRightClimberStopDIO     = 6;
+    constexpr int kLeftClimberStopDIO      = 7;
+
     // Analog IDs
     constexpr int kDriveEncoderBackRight  = 0;
     constexpr int kDriveEncoderFrontRight = 1;

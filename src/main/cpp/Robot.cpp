@@ -6,6 +6,7 @@
 #include <frc/MathUtil.h>
 #include <frc/TimedRobot.h>
 #include <frc/XboxController.h>
+#include <fmt/printf.h>
 #include <frc/filter/SlewRateLimiter.h>
 #include <Shooter.h>
 #include "Drivetrain.h"
@@ -13,12 +14,53 @@
 #include <string>
 #include <Arm.h>
 #include <Climber.h>
+
+
+
+
+// Function from Kauailab Website:
+//   https://pdocs.kauailabs.com/navx-mxp/examples/mxp-io-expansion/
+int GetDioChannelFromPin( int io_pin_number ) {
+    //static const int MAX_NAVX_MXP_DIGIO_PIN_NUMBER      = 9;
+    static const int MAX_NAVX_MXP_ANALOGIN_PIN_NUMBER   = 3;
+    //static const int MAX_NAVX_MXP_ANALOGOUT_PIN_NUMBER  = 1;
+    //static const int NUM_ROBORIO_ONBOARD_DIGIO_PINS     = 10;
+    //static const int NUM_ROBORIO_ONBOARD_PWM_PINS       = 10;
+    static const int NUM_ROBORIO_ONBOARD_ANALOGIN_PINS  = 4;
+    int roborio_channel = 0;
+
+
+
+    if ( io_pin_number < 0 ) {
+        throw std::runtime_error("Error:  navX-MXP I/O Pin #");
+    }
+
+    if ( io_pin_number > MAX_NAVX_MXP_ANALOGIN_PIN_NUMBER ) {
+        throw new std::runtime_error("Error:  Invalid navX-MXP Analog Input Pin #");
+    }
+    roborio_channel = io_pin_number + NUM_ROBORIO_ONBOARD_ANALOGIN_PINS;
+
+
+
+    return roborio_channel;
+}
+
 //#include <frc/PowerDistribution.h>
+
+
+void Robot::RobotInit() {
+
+
+}
 
  void Robot::TestInit() {
  }
 
  void Robot::TeleopInit() {
+
+  m_Arm.initArm();
+
+
   //frc::PowerDistribution::ClearStickyFaults();
  }
 
@@ -116,91 +158,18 @@
 
 }
 
-
-void Robot::Drivetrain_Drive(units::meters_per_second_t xSpeed,
-                             units::radians_per_second_t rot) {
-  m_swerve.Drive(xSpeed, 0.0_mps, rot, false, GetPeriod());
-}
-
-
-void Robot::Drivetrain_Stop() {
-   m_swerve.Drive(0.0_mps, 0.0_mps, units::radians_per_second_t{0.0}, false, GetPeriod());
-}
-
-
- bool Robot::DriveForDistance( units::meters_per_second_t speed, units::meter_t distance, units::time::second_t maxTime=5.0_s )
-  {
-    frc::Pose2d pose = m_swerve.m_odometry.GetPose();
-    frc::SmartDashboard::PutNumber("pose.X()",double{pose.X()});
-    frc::SmartDashboard::PutNumber("m_startDistance",double{m_startDistance});
-    frc::SmartDashboard::PutNumber("distance",double{distance});
-    if ( ( ( ( speed > 0.0_mps ) && ( (pose.X() - m_startDistance) < distance ) ) ||
-           ( ( speed < 0.0_mps ) && ( (pose.X() - m_startDistance) > distance ) ) ) &&
-         ( m_autoTimer.Get() < maxTime ) )
-    {
-      Drivetrain_Drive( speed, 0.0_rad_per_s );
-      return false;
-    }
-    else
-    {
-      Drivetrain_Stop();
-      return true;
-    }
-  }
-
-
-bool Robot::RunDriveAuto()
+void Robot::DisabledInit()
 {
- frc::Pose2d pose = m_swerve.m_odometry.GetPose();
-    bool sequenceDone = false;
-    bool stateDone = false;
-
-    switch( m_autoState )
-    {
-      case 0:
-      {
-        if ( m_initState )
-        {
-          m_autoTimer.Stop();
-          m_autoTimer.Reset();
-          m_autoTimer.Start();
-          m_initialAngle = m_swerve.m_imu.GetAngle();
-          m_startDistance = pose.X();
-        }
-        //SetLiftSetpoints( LIFT_POSITION_DRIVING );
-        stateDone = DriveForDistance( 0.5_mps, 1.0_m, 6.0_s );
-        break;
-      }
-
-      default:
-      {
-        Drivetrain_Stop();
-        sequenceDone = true;
-
-        // Done, do nothing
-        break;
-      }
-    }
-
-    if ( m_initState )
-    {
-      m_initState = false;
-    }
-
-    if ( stateDone )
-    {
-      //fmt::print( "stateDone {}\n", m_autoState );
-      m_autoState++;
-      m_initState = true;
-    }
-
-    return sequenceDone;
+  m_Arm.disableArm();
 }
 
 
 
-
-
+void Robot::RobotPeriodic()
+{
+  m_Arm.UpdateSmartDashboardData();
+  m_Intake.UpdateSmartDashboardData();
+}
 
 
 
@@ -215,18 +184,96 @@ bool Robot::RunDriveAuto()
     m_swerve.UpdateOdometry();
   }
 
+
+
   void Robot::TeleopPeriodic() 
   { 
     DriveWithJoystick(false); 
+
+
+    if( m_coController.GetAButtonPressed() )
+    {
+      m_Arm.SetArmPosition( m_Arm.GROUND_PICKUP );
+    }
+    else if( m_coController.GetBButtonPressed() )
+    {
+      m_Arm.SetArmPosition( m_Arm.SPEAKER );
+    }
+    else if( m_coController.GetYButtonPressed() )
+    {
+      m_Arm.SetArmPosition( m_Arm.SOURCE );
+    }
+
+
+
+
+
+    if( m_driveController.GetAButton() )
+    {
+      m_Intake.ChangeIntakeState( m_Intake.Intake_Intaking );
+    }
+    else if ( m_driveController.GetBButton() )
+    {
+      m_Intake.ChangeIntakeState( m_Intake.Intake_Outtaking );
+    }
+    else
+    {
+      m_Intake.ChangeIntakeState( m_Intake.Intake_Stopped );
+    }
+
+
     m_Arm.updateArm();
+
+  #if DBG_MANUAL_CONTROL_ARM_MOTORS
+    m_Arm.armManualControl( frc::ApplyDeadband(m_coController.GetLeftY(), 0.25 ) );
+  #endif
+
+  #if DBG_MANUAL_CONTROL_WRIST_MOTORS
+    m_Arm.wristManualControl(frc::ApplyDeadband(m_coController.GetRightY(), 0.25 ));
+  #endif
+
+
+
     m_Climber.updateClimber();
-    m_Shooter.updateShooter( false );
+    m_Shooter.updateShooter( m_coController.GetXButton() );
     m_Intake.updateIntake();
 
 
+    double speedL = 0;
+    double speedR = 0;
+
+    if ( m_driveController.GetXButton() )
+    {
+      if ( m_driveController.GetLeftBumper() )
+      {
+        speedL = 1.0;
+      }
+      if ( m_driveController.GetRightBumper() )
+      {
+        speedR = 1.0;
+      }
+    }
+    else if ( m_driveController.GetYButton() )
+    {
+      if ( m_driveController.GetLeftBumper() )
+      {
+        speedL = -1.0;
+      }
+      if ( m_driveController.GetRightBumper() )
+      {
+        speedR = -1.0;
+      }
+    }
+
+    m_Climber.manualControl( speedL, speedR );
+
   }
 
+
+
+
   void Robot::DriveWithJoystick(bool fieldRelative) {
+
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     const auto xSpeed = -m_xspeedLimiter.Calculate(
@@ -356,7 +403,133 @@ else
   frc::SmartDashboard::PutNumber("Rot",double{rot});
 
     m_swerve.Drive(xSpeed, ySpeed, rot, fieldRelative, GetPeriod());
+
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void Robot::Drivetrain_Drive(units::meters_per_second_t xSpeed,
+                             units::radians_per_second_t rot) {
+  m_swerve.Drive(xSpeed, 0.0_mps, rot, false, GetPeriod());
+}
+
+
+void Robot::Drivetrain_Stop() {
+   m_swerve.Drive(0.0_mps, 0.0_mps, units::radians_per_second_t{0.0}, false, GetPeriod());
+}
+
+
+ bool Robot::DriveForDistance( units::meters_per_second_t speed, units::meter_t distance, units::time::second_t maxTime=5.0_s )
+  {
+    frc::Pose2d pose = m_swerve.m_odometry.GetPose();
+    frc::SmartDashboard::PutNumber("pose.X()",double{pose.X()});
+    frc::SmartDashboard::PutNumber("m_startDistance",double{m_startDistance});
+    frc::SmartDashboard::PutNumber("distance",double{distance});
+    if ( ( ( ( speed > 0.0_mps ) && ( (pose.X() - m_startDistance) < distance ) ) ||
+           ( ( speed < 0.0_mps ) && ( (pose.X() - m_startDistance) > distance ) ) ) &&
+         ( m_autoTimer.Get() < maxTime ) )
+    {
+      Drivetrain_Drive( speed, 0.0_rad_per_s );
+      return false;
+    }
+    else
+    {
+      Drivetrain_Stop();
+      return true;
+    }
+  }
+
+
+bool Robot::RunDriveAuto()
+{
+frc::Pose2d pose = m_swerve.m_odometry.GetPose();
+    bool sequenceDone = false;
+    bool stateDone = false;
+  
+    switch( m_autoState )
+    {
+      case 0:
+      {
+        if ( m_initState )
+        {
+          m_autoTimer.Stop();
+          m_autoTimer.Reset();
+          m_autoTimer.Start();
+          m_initialAngle = m_swerve.m_imu.GetAngle();
+          m_startDistance = pose.X();
+        }
+        //SetLiftSetpoints( LIFT_POSITION_DRIVING );
+        stateDone = DriveForDistance( 0.5_mps, 1.0_m, 6.0_s );
+        break;
+      }
+
+      default:
+      {
+        Drivetrain_Stop();
+        sequenceDone = true;
+
+        // Done, do nothing
+        break;
+      }
+    }
+
+    if ( m_initState )
+    {
+      m_initState = false;
+    }
+
+    if ( stateDone )
+    {
+      //fmt::print( "stateDone {}\n", m_autoState );
+      m_autoState++;
+      m_initState = true;
+    }
+
+    return sequenceDone;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #ifndef RUNNING_FRC_TESTS

@@ -25,11 +25,12 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
   // resolution.
   m_driveEncoder.SetPosition(0); 
   double positonConversionFactor = 3.9*std::numbers::pi/8.14*0.0254;
+  m_PositionConversionFactor = positonConversionFactor;
   m_driveEncoder.SetPositionConversionFactor(positonConversionFactor);
   m_driveEncoder.SetVelocityConversionFactor((1.0/60.0) * positonConversionFactor);
 
   m_drivechannel=driveMotorChannel;
-  m_encodername=fmt::sprintf("turnencoder %d",m_drivechannel);
+  //m_encodername=fmt::sprintf("turnencoder %d",m_drivechannel);
 
 
   // Set the distance (in this case, angle) per pulse for the turning encoder.
@@ -54,8 +55,11 @@ frc::SwerveModulePosition SwerveModule::GetPosition() const {
           units::radian_t{m_turningEncoder.GetDistance()}};
 }
 
+
+
 void SwerveModule::SetDesiredState(
     const frc::SwerveModuleState& referenceState) {
+
   frc::Rotation2d encoderRotation{
       units::radian_t{m_turningEncoder.GetDistance()}};
 
@@ -69,8 +73,13 @@ void SwerveModule::SetDesiredState(
   state.speed *= (state.angle - encoderRotation).Cos();
 
   // Calculate the drive output from the drive PID controller.
+
+  const auto posConvFact = m_PositionConversionFactor; //m_driveEncoder.GetPositionConversionFactor();
+
+  const auto stateSpeedVal = state.speed.value();
+
   const auto driveOutput = m_drivePIDController.Calculate(
-      m_driveEncoder.GetPositionConversionFactor(), state.speed.value());
+      posConvFact, stateSpeedVal);
 
   const auto driveFeedforward = m_driveFeedforward.Calculate(state.speed);
 
@@ -85,8 +94,7 @@ void SwerveModule::SetDesiredState(
   m_driveMotor.SetVoltage(units::volt_t{driveOutput} + driveFeedforward);
   m_turningMotor.SetVoltage(units::volt_t{turnOutput} + turnFeedforward);
 
-
-    frc::SmartDashboard::PutNumber(m_encodername, m_turningEncoder.GetDistance());
+    //frc::SmartDashboard::PutNumber(m_encodername, m_turningEncoder.GetDistance());
 
 
 }

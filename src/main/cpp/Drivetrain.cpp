@@ -4,11 +4,13 @@
 
 #include "Drivetrain.h"
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <fmt/printf.h>
 
 void Drivetrain::Drive(units::meters_per_second_t xSpeed,
                        units::meters_per_second_t ySpeed,
                        units::radians_per_second_t rot, bool fieldRelative,
                        units::second_t period) {
+
   auto states =
       m_kinematics.ToSwerveModuleStates(frc::ChassisSpeeds::Discretize(
           fieldRelative ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(
@@ -17,6 +19,7 @@ void Drivetrain::Drive(units::meters_per_second_t xSpeed,
           period));
 
   m_kinematics.DesaturateWheelSpeeds(&states, kMaxSpeed);
+
   frc::SmartDashboard::PutNumber("Yaw", m_imu.GetYaw());
   auto [fl, fr, bl, br] = states;
 

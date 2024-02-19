@@ -6,6 +6,8 @@
 #include <frc/AnalogInput.h>
 #include <frc/DigitalInput.h>
 
+int GetDioChannelFromPin( int io_pin_number );
+
 class Intake{
  public:
     typedef enum intake_movement
@@ -20,10 +22,11 @@ class Intake{
     void ChangeIntakeState(intake_movement_t);
     void updateIntake ();
     bool IsRingDetected();
+    void UpdateSmartDashboardData();
 
   private:
     rev::CANSparkMax m_IntakeMotor { ConstantCrap::kIntakeMotorcanID,rev::CANSparkLowLevel::MotorType::kBrushless };
-    frc::DigitalInput m_RingDetector{ConstantCrap::kNoteDetectorDIO};
+    frc::AnalogInput m_RingDetector{GetDioChannelFromPin(0)};
     intake_movement_t m_intake_movement;
 
 };

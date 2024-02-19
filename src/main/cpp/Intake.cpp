@@ -4,7 +4,7 @@
 
 void Intake::initIntake()
 {
-
+    m_intake_movement = Intake_Stopped;
 }
 
 void Intake::ChangeIntakeState(intake_movement_t IntakeState)
@@ -28,14 +28,14 @@ void Intake::updateIntake()
             }
             else
             { // TODO : Determine intaking speed & direction
-                IntakeSpeed = 1.0;
+                IntakeSpeed = -0.4;
             }
 
             break;
         }
         case (Intake_Outtaking):
         { // TODO : Determine out speed & direction
-            IntakeSpeed = -1.0;
+            IntakeSpeed = 1.0;
             break;
         }
         case (Intake_Stopped):
@@ -46,7 +46,9 @@ void Intake::updateIntake()
     }
 
     frc::SmartDashboard::PutNumber( "Intake_Output", IntakeSpeed );
-
+    //frc::SmartDashboard::PutNumber( "Intake_State", m_intake_movement );
+    //frc::SmartDashboard::PutNumber( "Intake_Detc", m_RingDetector.GetValue() );
+    
    #if DBG_DISABLE_INTAKE_MOTORS
     m_IntakeMotor.Set( 0 );  
    #else
@@ -54,9 +56,16 @@ void Intake::updateIntake()
    #endif
 }
 
+void Intake::UpdateSmartDashboardData()
+{
+    frc::SmartDashboard::PutNumber( "Intake_State", m_intake_movement );
+    frc::SmartDashboard::PutNumber( "Intake_Detc", m_RingDetector.GetValue() );
+}
+
+
 
 bool Intake::IsRingDetected() 
 {   
     // TODO : determine the correct value to detect note
-    return 0;//m_RingDetector.GetValue() < 50;
+    return (m_RingDetector.GetValue() > 1000);
 }

@@ -8,6 +8,16 @@ void Climber::initClimber()
     m_rightClimberMotor.SetInverted( true );
 }
 
+
+
+void Climber::manualControl( double speedL, double speedR )
+{
+    frc::SmartDashboard::PutNumber("Climber_ManualControlOutputL", speedL);
+    frc::SmartDashboard::PutNumber("Climber_ManualControlOutputR", speedR);
+    m_leftClimberMotor.Set(  0.4 * speedL );
+    m_rightClimberMotor.Set( 0.4 * speedR );  
+}
+
 void Climber::updateClimber()
 { /*Is that freddy five bear? Hor hor hor hor hor*/ 
 

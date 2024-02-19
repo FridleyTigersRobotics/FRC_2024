@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-
+#include <frc/Timer.h>
 #include <frc/TimedRobot.h>
 #include <frc/XboxController.h>
 #include <frc/filter/SlewRateLimiter.h>
@@ -14,8 +14,16 @@
 #include <Intake.h>
 //#include <frc/PowerDistribution.h>
 
+
+int GetDioChannelFromPin( int io_pin_number );
+
 class Robot : public frc::TimedRobot {
  public:
+    void RobotInit() override;
+    void RobotPeriodic() override;
+
+    void DisabledInit() override;
+
     void TestInit() override;
     void TestPeriodic() override;
 
@@ -45,9 +53,9 @@ class Robot : public frc::TimedRobot {
 
     Drivetrain m_swerve;
     Arm        m_Arm;
-    Intake     m_Intake;
-    Climber    m_Climber;
-    Shooter    m_Shooter;
+     Intake     m_Intake;
+     Climber    m_Climber;
+     Shooter    m_Shooter;
 
     //int m_Count=0;
     // std::string m_smart="idk";

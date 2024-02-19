@@ -59,7 +59,5 @@ std::string m_encodername;
   frc::SimpleMotorFeedforward<units::radians> m_turnFeedforward{
       1_V, 0.5_V / 1_rad_per_s};
 
-
-
-
+  double m_PositionConversionFactor;
 };
