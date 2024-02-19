@@ -15,7 +15,7 @@
 //#include <frc/PowerDistribution.h>
 
 
-int GetDioChannelFromPin( int io_pin_number );
+int GetAnalogChannelFromPin( int io_pin_number );
 
 class Robot : public frc::TimedRobot {
  public:
@@ -44,7 +44,12 @@ class Robot : public frc::TimedRobot {
     bool RunDriveAuto();
 
     // Teleop
-    void DriveWithJoystick(bool fieldRelative);
+   void DriveWithJoystick(
+      bool fieldRelative,
+      double xSpeedInput,
+      double ySpeedInput,
+      double rotInput
+   );
 
 
  private:

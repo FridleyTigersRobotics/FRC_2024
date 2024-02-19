@@ -20,7 +20,7 @@
 
 // Function from Kauailab Website:
 //   https://pdocs.kauailabs.com/navx-mxp/examples/mxp-io-expansion/
-int GetDioChannelFromPin( int io_pin_number ) {
+int GetAnalogChannelFromPin( int io_pin_number ) {
     //static const int MAX_NAVX_MXP_DIGIO_PIN_NUMBER      = 9;
     static const int MAX_NAVX_MXP_ANALOGIN_PIN_NUMBER   = 3;
     //static const int MAX_NAVX_MXP_ANALOGOUT_PIN_NUMBER  = 1;
@@ -28,8 +28,6 @@ int GetDioChannelFromPin( int io_pin_number ) {
     //static const int NUM_ROBORIO_ONBOARD_PWM_PINS       = 10;
     static const int NUM_ROBORIO_ONBOARD_ANALOGIN_PINS  = 4;
     int roborio_channel = 0;
-
-
 
     if ( io_pin_number < 0 ) {
         throw std::runtime_error("Error:  navX-MXP I/O Pin #");
@@ -39,8 +37,6 @@ int GetDioChannelFromPin( int io_pin_number ) {
         throw new std::runtime_error("Error:  Invalid navX-MXP Analog Input Pin #");
     }
     roborio_channel = io_pin_number + NUM_ROBORIO_ONBOARD_ANALOGIN_PINS;
-
-
 
     return roborio_channel;
 }
@@ -169,6 +165,8 @@ void Robot::RobotPeriodic()
 {
   m_Arm.UpdateSmartDashboardData();
   m_Intake.UpdateSmartDashboardData();
+  m_Climber.UpdateSmartDashboardData();
+  m_Shooter.UpdateSmartDashboardData();
 }
 
 
@@ -188,31 +186,55 @@ void Robot::RobotPeriodic()
 
   void Robot::TeleopPeriodic() 
   { 
-    DriveWithJoystick(false); 
+    // Driver Control
+    DriveWithJoystick(
+      false,
+      -m_driveController.GetLeftY(),
+      -m_driveController.GetLeftX(),
+      m_driveController.GetRightX()
+    ); 
+
+    // Climber
+    if( m_driveController.GetRightBumper() )
+    {
+      m_Climber.ChangeClimberState( m_Climber.ClimberDown );
+    }
+    else if ( m_driveController.GetLeftBumper() )
+    {
+      m_Climber.ChangeClimberState( m_Climber.ClimberUp );
+    }
+    else
+    {
+      m_Climber.ChangeClimberState( m_Climber.ClimberStop );
+    }
 
 
-    if( m_coController.GetAButtonPressed() )
+    // Codriver Controls
+
+    // Arm / Wrist
+    if( m_coController.GetBButtonPressed() )
     {
       m_Arm.SetArmPosition( m_Arm.GROUND_PICKUP );
     }
-    else if( m_coController.GetBButtonPressed() )
+    else if( m_coController.GetAButtonPressed() )
     {
       m_Arm.SetArmPosition( m_Arm.SPEAKER );
+    }
+    else if( m_coController.GetXButtonPressed() )
+    {
+      m_Arm.SetArmPosition( m_Arm.AMP );
     }
     else if( m_coController.GetYButtonPressed() )
     {
       m_Arm.SetArmPosition( m_Arm.SOURCE );
     }
 
-
-
-
-
-    if( m_driveController.GetAButton() )
+    // Intake
+    if( m_coController.GetRightBumper() )
     {
       m_Intake.ChangeIntakeState( m_Intake.Intake_Intaking );
     }
-    else if ( m_driveController.GetBButton() )
+    else if ( m_coController.GetLeftBumper() )
     {
       m_Intake.ChangeIntakeState( m_Intake.Intake_Outtaking );
     }
@@ -221,8 +243,17 @@ void Robot::RobotPeriodic()
       m_Intake.ChangeIntakeState( m_Intake.Intake_Stopped );
     }
 
+    // Shooter
+    m_Shooter.changeShooterState( m_coController.GetRightTriggerAxis() > 0.2 );
+
+
+
+
 
     m_Arm.updateArm();
+    m_Climber.updateClimber();
+    m_Shooter.updateShooter();
+    m_Intake.updateIntake();
 
   #if DBG_MANUAL_CONTROL_ARM_MOTORS
     m_Arm.armManualControl( frc::ApplyDeadband(m_coController.GetLeftY(), 0.25 ) );
@@ -232,13 +263,7 @@ void Robot::RobotPeriodic()
     m_Arm.wristManualControl(frc::ApplyDeadband(m_coController.GetRightY(), 0.25 ));
   #endif
 
-
-
-    m_Climber.updateClimber();
-    m_Shooter.updateShooter( m_coController.GetXButton() );
-    m_Intake.updateIntake();
-
-
+#if 0
     double speedL = 0;
     double speedR = 0;
 
@@ -266,25 +291,31 @@ void Robot::RobotPeriodic()
     }
 
     m_Climber.manualControl( speedL, speedR );
-
+#endif
   }
 
 
 
 
-  void Robot::DriveWithJoystick(bool fieldRelative) {
+  void Robot::DriveWithJoystick(
+    bool fieldRelative,
+    double xSpeedInput,
+    double ySpeedInput,
+    double rotInput
+  ) 
+  {
 
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     const auto xSpeed = -m_xspeedLimiter.Calculate(
-                            frc::ApplyDeadband(m_driveController.GetLeftY(), 0.25)) *
+                            frc::ApplyDeadband(xSpeedInput, 0.25)) *
                         Drivetrain::kMaxSpeed;
 
     // Get the y speed or sideways/strafe speed. We are inverting this because
     // we want a positive value when we pull to the left. Xbox controllers
     // return positive values when you pull to the right by default.
     const auto ySpeed = -m_yspeedLimiter.Calculate(
-                            frc::ApplyDeadband(m_driveController.GetLeftX(), 0.25)) *
+                            frc::ApplyDeadband(ySpeedInput, 0.25)) *
                         Drivetrain::kMaxSpeed;
 
     // Get the rate of angular rotation. We are inverting this because we want a
@@ -292,7 +323,7 @@ void Robot::RobotPeriodic()
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
     const auto rot = -m_rotLimiter.Calculate(
-                         frc::ApplyDeadband(m_driveController.GetRightX(), 0.25)) *
+                         frc::ApplyDeadband(rotInput, 0.25)) *
                      Drivetrain::kMaxAngularSpeed;
 
     frc::SmartDashboard::PutNumber("m_driveController.GetLeftY",double{m_driveController.GetLeftY()});

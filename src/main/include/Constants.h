@@ -28,8 +28,8 @@ namespace ConstantCrap
     constexpr int kRightClimberEncoderDIO2 = 3;
     constexpr int kLeftClimberEncoderDIO1  = 4;
     constexpr int kLeftClimberEncoderDIO2  = 5;
-    constexpr int kRightClimberStopDIO     = 6;
-    constexpr int kLeftClimberStopDIO      = 7;
+    constexpr int kRightClimberStopDIO     = 7;
+    constexpr int kLeftClimberStopDIO      = 6;
 
     // Analog IDs
     constexpr int kDriveEncoderBackRight  = 0;

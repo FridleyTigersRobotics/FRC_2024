@@ -5,10 +5,8 @@
 
 Shooter::Shooter()
 {
-  m_shooterMotor.RestoreFactoryDefaults();
-  m_shooterMotor.SetInverted( true );
-
-
+    m_shooterMotor.RestoreFactoryDefaults();
+    m_shooterMotor.SetInverted( true );
     m_shooterPid.SetP(kP);
     m_shooterPid.SetI(kI);
     m_shooterPid.SetD(kD);
@@ -45,12 +43,18 @@ void Shooter::initShooter()
 
 }
 
-void Shooter::updateShooter( bool spinUpShooter )
+void Shooter::changeShooterState( bool spinUpShooter )
+{
+    m_spinUpShooter = spinUpShooter;
+}
+
+
+void Shooter::updateShooter( )
 {
     double const shooterVelocity      = m_shooterEncoder.GetVelocity();
     double const shooterSpeedAbsError = m_maxShooterSpeed - shooterVelocity;
-        // TODO : determine this delta for switching to PID control.
-        double const speedDeltaForPidControl = 200;
+    // TODO : determine this delta for switching to PID control.
+    double const speedDeltaForPidControl = 200;
 
 
 #if 0
@@ -93,7 +97,7 @@ void Shooter::updateShooter( bool spinUpShooter )
    #if DBG_DISABLE_SHOOT_MOTORS
     m_shooterMotor.Set( 0 );  
    #else
-    if ( spinUpShooter )
+    if ( m_spinUpShooter )
     {   
         if ( shooterVelocity < ( m_maxShooterSpeed - speedDeltaForPidControl ) )
         {   
@@ -112,13 +116,15 @@ void Shooter::updateShooter( bool spinUpShooter )
     }
    #endif
 
-    frc::SmartDashboard::PutNumber( "Shooter_Speed",  shooterVelocity );
-    frc::SmartDashboard::PutNumber( "Shooter_SpeedErro",  ( m_maxShooterSpeed - speedDeltaForPidControl ) );
+}
 
-    frc::SmartDashboard::PutNumber( "Shooter_Output", m_shooterMotor.GetAppliedOutput() );
-    frc::SmartDashboard::PutNumber( "Shooter_Current", m_shooterMotor.GetOutputCurrent() );
-    frc::SmartDashboard::PutNumber( "Shooter_ReadyToShoot",  ReadyToShoot() );
 
+void Shooter::UpdateSmartDashboardData()
+{
+    frc::SmartDashboard::PutNumber( "Shooter_Speed",        m_shooterEncoder.GetVelocity() );
+    frc::SmartDashboard::PutNumber( "Shooter_Output",       m_shooterMotor.GetAppliedOutput() );
+    frc::SmartDashboard::PutNumber( "Shooter_Current",      m_shooterMotor.GetOutputCurrent() );
+    frc::SmartDashboard::PutNumber( "Shooter_ReadyToShoot", ReadyToShoot() );
 }
 
 

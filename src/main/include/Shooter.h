@@ -12,8 +12,10 @@ public:
 
     Shooter();
     void initShooter();
-    void updateShooter ( bool spinUpShooter );
+    void updateShooter ();
     bool ReadyToShoot();
+    void changeShooterState ( bool spinUpShooter );
+    void UpdateSmartDashboardData();
 
 private:
     rev::CANSparkMax          m_shooterMotor   { ConstantCrap::kShooterMotorID, rev::CANSparkLowLevel::MotorType::kBrushless };
@@ -31,6 +33,7 @@ private:
     // TODO : Determine the acceleration.
     frc::SlewRateLimiter<units::scalar> m_AccelerationLimiter{1 / 4_s};
 
+    bool   m_spinUpShooter { false };
     bool   m_shooterSpeedReadyToShoot { false };
 
     // TODO : Determine all thse values.

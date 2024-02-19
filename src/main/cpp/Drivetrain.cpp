@@ -20,7 +20,6 @@ void Drivetrain::Drive(units::meters_per_second_t xSpeed,
 
   m_kinematics.DesaturateWheelSpeeds(&states, kMaxSpeed);
 
-  frc::SmartDashboard::PutNumber("Yaw", m_imu.GetYaw());
   auto [fl, fr, bl, br] = states;
 
   m_frontLeft.SetDesiredState(fl);

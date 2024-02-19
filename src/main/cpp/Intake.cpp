@@ -28,7 +28,7 @@ void Intake::updateIntake()
             }
             else
             { // TODO : Determine intaking speed & direction
-                IntakeSpeed = -0.4;
+                IntakeSpeed = -0.5;
             }
 
             break;
@@ -44,10 +44,6 @@ void Intake::updateIntake()
             break;
         }
     }
-
-    frc::SmartDashboard::PutNumber( "Intake_Output", IntakeSpeed );
-    //frc::SmartDashboard::PutNumber( "Intake_State", m_intake_movement );
-    //frc::SmartDashboard::PutNumber( "Intake_Detc", m_RingDetector.GetValue() );
     
    #if DBG_DISABLE_INTAKE_MOTORS
     m_IntakeMotor.Set( 0 );  

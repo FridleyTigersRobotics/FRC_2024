@@ -93,8 +93,4 @@ void SwerveModule::SetDesiredState(
   // Set the motor outputs.
   m_driveMotor.SetVoltage(units::volt_t{driveOutput} + driveFeedforward);
   m_turningMotor.SetVoltage(units::volt_t{turnOutput} + turnFeedforward);
-
-    //frc::SmartDashboard::PutNumber(m_encodername, m_turningEncoder.GetDistance());
-
-
 }

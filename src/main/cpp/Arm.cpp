@@ -136,38 +136,38 @@ void Arm::updateArm()
     {   
         case (HOLD_START_POSITION):
         {
-            ArmAngle = m_startArmAngle;
+            ArmAngle   = m_startArmAngle;
             WristAngle =  m_startWristAngle;
             break;
         }
         // TODO : Determine all arm and wrist positions
         case (GROUND_PICKUP):
         {
-            ArmAngle = 0.5099;
+            ArmAngle   = 0.5099;
             WristAngle =  2.0;
             break;
         }
         case (SOURCE):
         {
-            ArmAngle = 0.4;
+            ArmAngle   = 0.4;
             WristAngle = 1.5;
             break;
         }
         case (SPEAKER):
         {
-            ArmAngle = 0.5099;
+            ArmAngle   = 0.5099;
             WristAngle = 0.75;
             break;
         }
         case (AMP):
         {
-            ArmAngle =  0.5099;
-            WristAngle = 0.75;
+            ArmAngle   = 0.3;
+            WristAngle = 1.5;
             break;
         }
         case (TRAP):
         {
-            ArmAngle = 0.5099;
+            ArmAngle   = 0.5099;
             WristAngle = 0.75;
             break;
         }
@@ -234,7 +234,6 @@ void Arm::UpdateSmartDashboardData()
 
 void Arm::armManualControl( double speed )
 {
-    frc::SmartDashboard::PutNumber("Arm_ManualControlOutput", speed);
     m_ArmMotorRight.Set(0.4 * speed);
     m_ArmMotorLeft.Set(0.4 * speed);
 }
@@ -242,7 +241,6 @@ void Arm::armManualControl( double speed )
 
 void Arm::wristManualControl( double speed )
 {
-    frc::SmartDashboard::PutNumber("Wrist_ManualControlOutput", speed);
     m_WristMotor.Set(0.2 * speed);
 }
 
