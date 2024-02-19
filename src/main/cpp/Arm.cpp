@@ -144,31 +144,31 @@ void Arm::updateArm()
         case (GROUND_PICKUP):
         {
             ArmAngle   = 0.5099;
-            WristAngle =  2.0;
+            WristAngle =  0.12;
             break;
         }
         case (SOURCE):
         {
             ArmAngle   = 0.4;
-            WristAngle = 1.5;
+            WristAngle = 0.12;
             break;
         }
         case (SPEAKER):
         {
             ArmAngle   = 0.5099;
-            WristAngle = 0.75;
+            WristAngle = 0.60;
             break;
         }
         case (AMP):
         {
             ArmAngle   = 0.3;
-            WristAngle = 1.5;
+            WristAngle = 0.12;
             break;
         }
         case (TRAP):
         {
             ArmAngle   = 0.5099;
-            WristAngle = 0.75;
+            WristAngle = 0.12;
             break;
         }
     }
