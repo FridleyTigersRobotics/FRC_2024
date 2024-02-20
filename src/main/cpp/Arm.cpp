@@ -264,8 +264,7 @@ void Arm::updateArm()
     // const auto ArmControlOutput = m_ArmPIDController.Calculate(
     //     units::radian_t{m_ArmEncoder.GetDistance()}, units::radian_t{ArmAngle});
 
-    const auto WristControlOutput = m_WristPIDController.Calculate(
-        units::radian_t{m_WristEncoder.GetDistance()}, units::radian_t{WristAngle});
+
 
 
    #if DBG_DISABLE_ARM_MOTORS
@@ -281,8 +280,10 @@ void Arm::updateArm()
    #elif WRIST_USE_MOTOR_ENCODER
     m_WristPidController.SetReference(WristAngle, rev::CANSparkMax::ControlType::kSmartMotion);
    #else
+    m_WristControlOutput = m_WristPIDController.Calculate(
+        units::radian_t{m_WristEncoder.GetDistance()}, units::radian_t{WristAngle});
     double const feedForward = 0.0; // TODO : Do we need feed forward based on wrist angle relative to the ground?
-    m_WristMotor.Set( std::clamp( WristControlOutput, -m_WristMaxOutputValue, m_WristMaxOutputValue ) );
+    m_WristMotor.Set( std::clamp( m_WristControlOutput, -m_WristMaxOutputValue, m_WristMaxOutputValue ) );
    #endif
 
 }
@@ -308,6 +309,7 @@ void Arm::UpdateSmartDashboardData()
     frc::SmartDashboard::PutNumber("Wrist_Encoder_Dist",     m_WristEncoder.GetDistance());
     frc::SmartDashboard::PutNumber("Wrist_Encoder_AbsPos",   m_WristEncoder.GetAbsolutePosition());
     frc::SmartDashboard::PutNumber("Wrist_MotorEncoder_Pos", m_WristMotorEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("Wrist_ControlOutput",    m_WristControlOutput);
     frc::SmartDashboard::PutNumber("Wrist_AppliedOutput",    m_WristMotor.GetAppliedOutput());
     frc::SmartDashboard::PutNumber("Wrist_NeoVelocity",      m_WristMotorEncoder.GetVelocity());
 }

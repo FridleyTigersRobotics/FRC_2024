@@ -117,6 +117,7 @@ private:
     double m_WristP              = 1.000;  
     double m_WristMaxVel         = double{std::numbers::pi * 1_rad_per_s};
     double m_WristMaxAccel       = double{std::numbers::pi * 2_rad_per_s / 1_s};
+    double m_WristControlOutput = 0;
 
     frc::ProfiledPIDController<units::radians> m_WristPIDController{
       m_WristP,
