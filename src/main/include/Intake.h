@@ -5,8 +5,7 @@
 #include <Constants.h>
 #include <frc/AnalogInput.h>
 #include <frc/DigitalInput.h>
-
-int GetAnalogChannelFromPin( int io_pin_number );
+#include <Utilities.h>
 
 class Intake{
  public:

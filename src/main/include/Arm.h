@@ -10,7 +10,10 @@
 #include <units/time.h>
 #include <units/velocity.h>
 #include <units/voltage.h>
+#include "units/angular_acceleration.h"
 
+
+#define WRIST_USE_MOTOR_ENCODER ( 0 )
 
 class Arm
 {
@@ -60,18 +63,7 @@ private:
     rev::SparkPIDController m_pidControllerLeft  = m_ArmMotorLeft.GetPIDController();
     rev::SparkPIDController m_pidControllerRight = m_ArmMotorRight.GetPIDController();
 
-    // default PID coefficients
-    double kP = 0.2, kI = 0.0, kD = 0, kIz = 0, kFF = 0.000, kMaxOutput = 0.4, kMinOutput = -0.4;
 
-    // default smart motion coefficients
-    double kMaxVel = 0.8, kMinVel = 0, kMaxAcc = 2.2, kAllErr = 0;
-
-
-    // default PID coefficients
-    double kP2 = 0.2, kI2 = 0.0, kD2 = 0, kIz2 = 0, kFF2 = 0.000, kMaxOutput2 = 0.4, kMinOutput2 = -0.4;
-
-    // default smart motion coefficients
-    double kMaxVel2 = 1.8, kMinVel2 = 0, kMaxAcc2 = 1.2, kAllErr2 = 0;
 
 
     rev::SparkRelativeEncoder m_ArmMotorLeftEncoder  { m_ArmMotorLeft.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor, 42) };
@@ -86,34 +78,52 @@ private:
     rev::SparkRelativeEncoder m_WristMotorEncoder  { m_WristMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor, 42) };
     rev::SparkPIDController m_WristPidController  = m_WristMotor.GetPIDController();
 
-    // ARM PID
-    static constexpr auto kArmAngleVelocity =
-      std::numbers::pi * 1_rad_per_s; // TODO : Determine this
-    static constexpr auto kArmAngleAcceleration =
-      std::numbers::pi * 2_rad_per_s / 1_s; // TODO : Determine this
-     
 
-    //rev::SparkPIDController m_armPidController2 = m_ArmMotorLeft.GetPIDController();
-
-#if 0 
     // TODO : Determine these
-    frc::ProfiledPIDController<units::radians> m_ArmPIDController{
-      1.0, 
-      0.0,
-      0.0,
-      {kArmAngleVelocity, kArmAngleAcceleration}};
+    double m_ArmGroundValue     = 0.5099;          
+    double m_ArmSourceValue     = 0.4;          
+    double m_ArmSpeakerValue    = 0.5099;           
+    double m_ArmAmpValue        = 0.3;       
+    double m_ArmTrapValue       = 0.3;
+    double m_ArmMaxOutputValue  = 0.4;             
+    double m_ArmP               = 0.2;
+    double m_ArmMaxVel          = 0.8;     
+    double m_ArmMaxAccel        = 2.2;       
 
-    // WRIST PID
-    static constexpr auto kWristAngleVelocity =
-      std::numbers::pi * 1_rad_per_s; // TODO : Determine this
-    static constexpr auto kWristAngleAcceleration =
-      std::numbers::pi * 2_rad_per_s / 1_s; // TODO : Determine this
-     
+
+    // default PID coefficients
+    double kP = m_ArmP, kI = 0.0, kD = 0, kIz = 0, kFF = 0.000, kMaxOutput = m_ArmMaxOutputValue, kMinOutput = -m_ArmMaxOutputValue;
+
+    // default smart motion coefficients
+    double kMaxVel = m_ArmMaxVel, kMinVel = 0, kMaxAcc = m_ArmMaxAccel, kAllErr = 0;
+
+
+
+
+#if WRIST_USE_MOTOR_ENCODER
+    // default PID coefficients
+    double kP2 = 0.2, kI2 = 0.0, kD2 = 0, kIz2 = 0, kFF2 = 0.000, kMaxOutput2 = 0.4, kMinOutput2 = -0.4;
+
+    // default smart motion coefficients
+    double kMaxVel2 = 1.8, kMinVel2 = 0, kMaxAcc2 = 1.2, kAllErr2 = 0;
+#else
     // TODO : Determine these
+    double m_WristGroundValue    = 0.120;            
+    double m_WristSourceValue    = 0.600;            
+    double m_WristSpeakerValue   = 0.600;             
+    double m_WristAmpValue       = 0.600;  
+    double m_WristTrapValue      = 0.600;    
+    double m_WristMaxOutputValue = 0.100;               
+    double m_WristP              = 1.000;  
+    double m_WristMaxVel         = double{std::numbers::pi * 1_rad_per_s};
+    double m_WristMaxAccel       = double{std::numbers::pi * 2_rad_per_s / 1_s};
+
     frc::ProfiledPIDController<units::radians> m_WristPIDController{
-      1.0,
+      m_WristP,
       0.0,
       0.0,
-      {kWristAngleVelocity, kWristAngleAcceleration}};
+      {units::radians_per_second_t{m_WristMaxVel}, units::radians_per_second_squared_t{m_WristMaxAccel}}};
 #endif
+
+
 };

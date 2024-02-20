@@ -5,6 +5,11 @@
 //#include <arms> *flexes, cutely*
 
 
+
+#define WRIST_TEST_POSITIONS    ( 1 )
+#define ARM_TEST_POSITIONS      ( 1 )
+
+
 Arm::Arm()
 {
     m_ArmMotorRight.SetInverted( false );
@@ -15,7 +20,6 @@ Arm::Arm()
 
     m_ArmMotorLeftEncoder.SetVelocityConversionFactor(  1.0 / ( 60 * 20.0 * ( 74.0 / 14.0 ) ) );
     m_ArmMotorRightEncoder.SetVelocityConversionFactor( 1.0 / ( 60 * 20.0 * ( 74.0 / 14.0 ) ) );
-
 
 
     m_pidControllerLeft.SetP(kP);
@@ -42,8 +46,9 @@ Arm::Arm()
     m_pidControllerRight.SetSmartMotionAllowedClosedLoopError(kAllErr);
 
     // 44 / 18 sprockets
-    m_WristMotorEncoder.SetPositionConversionFactor( 1.0 / ( 25.0 ) );
-    m_WristMotorEncoder.SetVelocityConversionFactor(  1.0 / ( 60 * 25.0 ) );
+  #if WRIST_USE_MOTOR_ENCODER
+    m_WristMotorEncoder.SetPositionConversionFactor( 1.0 / ( 25.0 * ( 44 / 18 ) ) );
+    m_WristMotorEncoder.SetVelocityConversionFactor(  1.0 / ( 60 * 25.0 * ( 44 / 18 ) ) );
     m_WristPidController.SetP(kP2);
     m_WristPidController.SetI(kI2);
     m_WristPidController.SetD(kD2);
@@ -54,7 +59,7 @@ Arm::Arm()
     m_WristPidController.SetSmartMotionMinOutputVelocity(kMinVel2);
     m_WristPidController.SetSmartMotionMaxAccel(kMaxAcc2);
     m_WristPidController.SetSmartMotionAllowedClosedLoopError(kAllErr2);
-
+  #endif
 
 #if 0
     // display PID coefficients on SmartDashboard
@@ -73,7 +78,35 @@ Arm::Arm()
     frc::SmartDashboard::PutNumber("Allowed Closed Loop Error", kAllErr);
     frc::SmartDashboard::PutNumber("Set Position", 0);
     frc::SmartDashboard::PutNumber("Set Velocity", 0);
-    #endif
+    #endif     
+
+
+
+
+ #if ARM_TEST_POSITIONS
+    frc::SmartDashboard::PutNumber("Arm_Test_Ground", m_ArmGroundValue);
+    frc::SmartDashboard::PutNumber("Arm_Test_Source", m_ArmSourceValue);
+    frc::SmartDashboard::PutNumber("Arm_Test_Speaker", m_ArmSpeakerValue);
+    frc::SmartDashboard::PutNumber("Arm_Test_Amp", m_ArmAmpValue);
+    frc::SmartDashboard::PutNumber("Arm_Test_Trap", m_ArmTrapValue);
+    frc::SmartDashboard::PutNumber("Arm_Test_MaxOutput", m_ArmMaxOutputValue);
+    frc::SmartDashboard::PutNumber("Arm_Test_P", m_ArmP);
+    frc::SmartDashboard::PutNumber("Arm_Test_MaxVel", m_ArmMaxVel);
+    frc::SmartDashboard::PutNumber("Arm_Test_MaxAccel", m_ArmMaxAccel);
+ #endif
+
+ #if WRIST_TEST_POSITIONS
+    frc::SmartDashboard::PutNumber("Wrist_Test_Ground",    m_WristGroundValue);
+    frc::SmartDashboard::PutNumber("Wrist_Test_Source",    m_WristSourceValue);
+    frc::SmartDashboard::PutNumber("Wrist_Test_Speaker",   m_WristSpeakerValue);
+    frc::SmartDashboard::PutNumber("Wrist_Test_Amp",       m_WristAmpValue);
+    frc::SmartDashboard::PutNumber("Wrist_Test_Trap",      m_WristTrapValue);
+    frc::SmartDashboard::PutNumber("Wrist_Test_MaxOutput", m_WristMaxOutputValue);
+    frc::SmartDashboard::PutNumber("Wrist_Test_P",         m_WristP);
+    frc::SmartDashboard::PutNumber("Wrist_Test_MaxVel",    m_WristMaxVel);
+    frc::SmartDashboard::PutNumber("Wrist_Test_MaxAccel",  m_WristMaxAccel);
+ #endif
+    
 }
 
 void Arm::initArm()
@@ -87,14 +120,14 @@ void Arm::initArm()
     m_WristMotorEncoder.SetPosition( m_WristEncoder.GetAbsolutePosition() );
     m_startArmAngle = m_ArmEncoder.GetAbsolutePosition();
     m_startWristAngle = m_WristEncoder.GetAbsolutePosition();
-
 }
 
 void Arm::disableArm()
 {
-    m_ArmMotorRight.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
-    m_ArmMotorLeft.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
-    m_WristMotor.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
+    // Nice to be able to move the arm/wrist, but will slam down when disabled....
+    // m_ArmMotorRight.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
+    // m_ArmMotorLeft.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
+    // m_WristMotor.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
 }
 
 void Arm::SetArmPosition (arm_position_t DesiredPosition)
@@ -132,43 +165,97 @@ void Arm::updateArm()
     if((allE != kAllErr)) { m_pidControllerRight.SetSmartMotionAllowedClosedLoopError(allE); m_pidControllerLeft.SetSmartMotionAllowedClosedLoopError(allE); allE = kAllErr; }
 #endif
 
+
+
+ #if ARM_TEST_POSITIONS
+    double temp_m_ArmGroundValue = frc::SmartDashboard::GetNumber("Arm_Test_Ground", m_ArmGroundValue);
+    double temp_m_ArmSourceValue = frc::SmartDashboard::GetNumber("Arm_Test_Source", m_ArmSourceValue);
+    double temp_m_ArmSpeakerValue = frc::SmartDashboard::GetNumber("Arm_Test_Speaker", m_ArmSpeakerValue);
+    double temp_m_ArmAmpValue = frc::SmartDashboard::GetNumber("Arm_Test_Amp", m_ArmAmpValue);
+    double temp_m_ArmTrapValue = frc::SmartDashboard::GetNumber("Arm_Test_Trap", m_ArmTrapValue);
+    double temp_m_ArmMaxOutputValue = frc::SmartDashboard::GetNumber("Arm_Test_MaxOutput", m_ArmMaxOutputValue);
+    double temp_m_ArmP = frc::SmartDashboard::GetNumber("Arm_Test_P", m_ArmP);
+    double temp_m_ArmMaxVel = frc::SmartDashboard::GetNumber("Arm_Test_MaxVel", m_ArmMaxVel);
+    double temp_m_ArmMaxAccel = frc::SmartDashboard::GetNumber("Arm_Test_MaxAccel", m_ArmMaxAccel);
+
+    if ( temp_m_ArmGroundValue != m_ArmGroundValue) m_ArmGroundValue = temp_m_ArmGroundValue;
+    if ( temp_m_ArmSourceValue != m_ArmSourceValue) m_ArmSourceValue = temp_m_ArmSourceValue;
+    if ( temp_m_ArmSpeakerValue != m_ArmSpeakerValue) m_ArmSpeakerValue = temp_m_ArmSpeakerValue;
+    if ( temp_m_ArmAmpValue != m_ArmAmpValue) m_ArmAmpValue = temp_m_ArmAmpValue;
+    if ( temp_m_ArmTrapValue != m_ArmTrapValue) m_ArmTrapValue = temp_m_ArmTrapValue;
+    if ( temp_m_ArmMaxOutputValue != m_ArmMaxOutputValue) {m_ArmMaxOutputValue = temp_m_ArmMaxOutputValue; m_pidControllerLeft.SetOutputRange(m_ArmMaxOutputValue, -m_ArmMaxOutputValue); m_pidControllerRight.SetOutputRange(m_ArmMaxOutputValue, -m_ArmMaxOutputValue);};
+    if ( temp_m_ArmP != m_ArmP) {m_ArmP = temp_m_ArmP; m_pidControllerLeft.SetP(m_ArmP); m_pidControllerRight.SetP(m_ArmP);};
+    if ( temp_m_ArmMaxVel != m_ArmMaxVel) {m_ArmMaxVel =temp_m_ArmMaxVel; m_pidControllerLeft.SetSmartMotionMaxVelocity(m_ArmMaxVel); m_pidControllerRight.SetSmartMotionMaxVelocity(m_ArmMaxVel);};
+    if ( temp_m_ArmMaxAccel != m_ArmMaxAccel) {m_ArmMaxAccel = temp_m_ArmMaxAccel; m_pidControllerLeft.SetSmartMotionMaxAccel(m_ArmMaxAccel); m_pidControllerRight.SetSmartMotionMaxAccel(m_ArmMaxAccel);};
+ #endif
+
+
+ #if WRIST_TEST_POSITIONS
+    double temp_m_WristGroundValue = frc::SmartDashboard::GetNumber("Wrist_Test_Ground", m_WristGroundValue);
+    double temp_m_WristSourceValue = frc::SmartDashboard::GetNumber("Wrist_Test_Source", m_WristSourceValue);
+    double temp_m_WristSpeakerValue = frc::SmartDashboard::GetNumber("Wrist_Test_Speaker", m_WristSpeakerValue);
+    double temp_m_WristAmpValue = frc::SmartDashboard::GetNumber("Wrist_Test_Amp", m_WristAmpValue);
+    double temp_m_WristTrapValue = frc::SmartDashboard::GetNumber("Wrist_Test_Trap", m_WristTrapValue);
+    double temp_m_WristMaxOutputValue = frc::SmartDashboard::GetNumber("Wrist_Test_MaxOutput", m_WristMaxOutputValue);
+    double temp_m_WristP = frc::SmartDashboard::GetNumber("Wrist_Test_P", m_WristP);
+    double temp_m_WristMaxVel = frc::SmartDashboard::GetNumber("Wrist_Test_MaxVel", m_WristMaxVel);
+    double temp_m_WristMaxAccel = frc::SmartDashboard::GetNumber("Wrist_Test_MaxAccel", m_WristMaxAccel);
+
+    if ( temp_m_WristGroundValue != m_WristGroundValue) m_WristGroundValue = temp_m_WristGroundValue;
+    if ( temp_m_WristSourceValue != m_WristSourceValue) m_WristSourceValue = temp_m_WristSourceValue;
+    if ( temp_m_WristSpeakerValue != m_WristSpeakerValue) m_WristSpeakerValue = temp_m_WristSpeakerValue;
+    if ( temp_m_WristAmpValue != m_WristAmpValue) m_WristAmpValue = temp_m_WristAmpValue;
+    if ( temp_m_WristTrapValue != m_WristTrapValue) m_WristTrapValue = temp_m_WristTrapValue;
+    if ( temp_m_WristMaxOutputValue != m_WristMaxOutputValue) m_WristMaxOutputValue = temp_m_WristMaxOutputValue;
+    if ( temp_m_WristP != m_WristP) {m_WristP = temp_m_WristP; m_WristPIDController.SetP(m_ArmP);};
+
+    if ( temp_m_WristMaxVel != m_WristMaxVel || 
+         temp_m_WristMaxAccel != m_WristMaxAccel) 
+    {
+        m_WristMaxVel   = temp_m_WristMaxVel;
+        m_WristMaxAccel = temp_m_WristMaxAccel;
+        m_WristPIDController.SetConstraints({units::radians_per_second_t{m_WristMaxVel}, units::radians_per_second_squared_t{m_WristMaxAccel}});
+    }
+ #endif
+
+
     switch (m_ArmPosition)
     {   
         case (HOLD_START_POSITION):
         {
             ArmAngle   = m_startArmAngle;
-            WristAngle =  m_startWristAngle;
+            WristAngle = m_startWristAngle;
             break;
         }
         // TODO : Determine all arm and wrist positions
         case (GROUND_PICKUP):
         {
-            ArmAngle   = 0.5099;
-            WristAngle =  0.12;
+            ArmAngle   = m_ArmGroundValue;
+            WristAngle = m_WristGroundValue;
             break;
         }
         case (SOURCE):
         {
-            ArmAngle   = 0.4;
-            WristAngle = 0.12;
+            ArmAngle   = m_ArmSourceValue;
+            WristAngle = m_WristSourceValue;
             break;
         }
         case (SPEAKER):
         {
-            ArmAngle   = 0.5099;
-            WristAngle = 0.60;
+            ArmAngle   = m_ArmSpeakerValue;
+            WristAngle = m_WristSpeakerValue;
             break;
         }
         case (AMP):
         {
-            ArmAngle   = 0.3;
-            WristAngle = 0.12;
+            ArmAngle   = m_ArmAmpValue;
+            WristAngle = m_WristAmpValue;
             break;
         }
         case (TRAP):
         {
-            ArmAngle   = 0.5099;
-            WristAngle = 0.12;
+            ArmAngle   = m_ArmTrapValue;
+            WristAngle = m_WristTrapValue;
             break;
         }
     }
@@ -177,8 +264,8 @@ void Arm::updateArm()
     // const auto ArmControlOutput = m_ArmPIDController.Calculate(
     //     units::radian_t{m_ArmEncoder.GetDistance()}, units::radian_t{ArmAngle});
 
-    // const auto WristControlOutput = m_WristPIDController.Calculate(
-    //     units::radian_t{m_WristEncoder.GetDistance()}, units::radian_t{WristAngle});
+    const auto WristControlOutput = m_WristPIDController.Calculate(
+        units::radian_t{m_WristEncoder.GetDistance()}, units::radian_t{WristAngle});
 
 
    #if DBG_DISABLE_ARM_MOTORS
@@ -191,9 +278,11 @@ void Arm::updateArm()
 
    #if DBG_DISABLE_WRIST_MOTORS
     m_WristMotor.Set( 0 );
-   #else
+   #elif WRIST_USE_MOTOR_ENCODER
     m_WristPidController.SetReference(WristAngle, rev::CANSparkMax::ControlType::kSmartMotion);
-    //m_WristMotor.Set(std::clamp( WristControlOutput, -0.1, 0.1 ));
+   #else
+    double const feedForward = 0.0; // TODO : Do we need feed forward based on wrist angle relative to the ground?
+    m_WristMotor.Set( std::clamp( WristControlOutput, -m_WristMaxOutputValue, m_WristMaxOutputValue ) );
    #endif
 
 }
@@ -215,17 +304,12 @@ void Arm::UpdateSmartDashboardData()
     frc::SmartDashboard::PutNumber("Arm_NeoVelocityR",     m_ArmMotorRightEncoder.GetVelocity());
 #endif
 
-    //frc::SmartDashboard::PutNumber("Wrist_ControlOutput", WristControlOutput);
-    //frc::SmartDashboard::PutNumber("Wrist_Angle",         WristAngle);
-    frc::SmartDashboard::PutNumber("Wrist_Position",      m_WristPosition);
-    frc::SmartDashboard::PutNumber("Wrist_Encoder_Dist",    m_WristEncoder.GetDistance());//Shooting position:-1.3570 Ground Pickup:-0.0379
-    frc::SmartDashboard::PutNumber("Wrist_Encoder_AbsPos",  m_WristEncoder.GetAbsolutePosition());
-    frc::SmartDashboard::PutNumber("Wrist_MotorEncoder_Pos",  m_WristMotorEncoder.GetPosition());
-
-    frc::SmartDashboard::PutNumber("Wrist_AppliedOutput",   m_WristMotor.GetAppliedOutput());
-    frc::SmartDashboard::PutNumber("Wrist_NeoVelocity",     m_WristMotorEncoder.GetVelocity());
-    //frc::SmartDashboard::PutNumber("Wrist_NeoVelocity",     m_WristPidController.Get());
-
+    frc::SmartDashboard::PutNumber("Wrist_Position",         m_WristPosition);
+    frc::SmartDashboard::PutNumber("Wrist_Encoder_Dist",     m_WristEncoder.GetDistance());
+    frc::SmartDashboard::PutNumber("Wrist_Encoder_AbsPos",   m_WristEncoder.GetAbsolutePosition());
+    frc::SmartDashboard::PutNumber("Wrist_MotorEncoder_Pos", m_WristMotorEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("Wrist_AppliedOutput",    m_WristMotor.GetAppliedOutput());
+    frc::SmartDashboard::PutNumber("Wrist_NeoVelocity",      m_WristMotorEncoder.GetVelocity());
 }
 
 
