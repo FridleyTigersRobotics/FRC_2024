@@ -80,10 +80,10 @@ private:
 
 
     // TODO : Determine these
-    double m_ArmGroundValue     = 0.5099;          
-    double m_ArmSourceValue     = 0.4;          
-    double m_ArmSpeakerValue    = 0.5099;           
-    double m_ArmAmpValue        = 0.3;       
+    double m_ArmGroundValue     = 0.51;          
+    double m_ArmSourceValue     = 0.32;          
+    double m_ArmSpeakerValue    = 0.51;           
+    double m_ArmAmpValue        = 0.28;       
     double m_ArmTrapValue       = 0.3;
     double m_ArmMaxOutputValue  = 0.4;             
     double m_ArmP               = 0.2;
@@ -108,13 +108,13 @@ private:
     double kMaxVel2 = 1.8, kMinVel2 = 0, kMaxAcc2 = 1.2, kAllErr2 = 0;
 #else
     // TODO : Determine these
-    double m_WristGroundValue    = 0.120;            
-    double m_WristSourceValue    = 0.600;            
+    double m_WristGroundValue    = 1.120;            
+    double m_WristSourceValue    = 1.1;            
     double m_WristSpeakerValue   = 0.600;             
-    double m_WristAmpValue       = 0.600;  
+    double m_WristAmpValue       = 1.300;  
     double m_WristTrapValue      = 0.600;    
-    double m_WristMaxOutputValue = 0.100;               
-    double m_WristP              = 1.000;  
+    double m_WristMaxOutputValue = 0.300;               
+    double m_WristP              = 3.000;  
     double m_WristMaxVel         = double{std::numbers::pi * 1_rad_per_s};
     double m_WristMaxAccel       = double{std::numbers::pi * 2_rad_per_s / 1_s};
     double m_WristControlOutput = 0;

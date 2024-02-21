@@ -119,7 +119,7 @@ void Arm::initArm()
     m_ArmMotorRightEncoder.SetPosition( m_ArmEncoder.GetAbsolutePosition() );
     m_WristMotorEncoder.SetPosition( m_WristEncoder.GetAbsolutePosition() );
     m_startArmAngle = m_ArmEncoder.GetAbsolutePosition();
-    m_startWristAngle = m_WristEncoder.GetAbsolutePosition();
+    m_startWristAngle = m_WristEncoder.GetDistance();
 }
 
 void Arm::disableArm()
@@ -290,19 +290,19 @@ void Arm::updateArm()
 
 void Arm::UpdateSmartDashboardData()
 {
-#if 0
-    frc::SmartDashboard::PutNumber("Arm_ControlOutputL",   m_ArmMotorLeft.GetAppliedOutput());
-    frc::SmartDashboard::PutNumber("Arm_ControlOutputR",   m_ArmMotorRight.GetAppliedOutput());
+#if 1
+    //frc::SmartDashboard::PutNumber("Arm_ControlOutputL",   m_ArmMotorLeft.GetAppliedOutput());
+    //frc::SmartDashboard::PutNumber("Arm_ControlOutputR",   m_ArmMotorRight.GetAppliedOutput());
 
-    frc::SmartDashboard::PutNumber("Arm_Angle",           ArmAngle);
-    frc::SmartDashboard::PutNumber("Arm_Position",        m_ArmPosition);
+    //frc::SmartDashboard::PutNumber("Arm_Angle",           ArmAngle);
+    //frc::SmartDashboard::PutNumber("Arm_Position",        m_ArmPosition);
     frc::SmartDashboard::PutNumber("Arm_Encoder_Dist",    m_ArmEncoder.GetDistance());//Ground pickup:0.5099 Top Position 0.1844
     frc::SmartDashboard::PutNumber("Arm_Encoder_AbsPos",  m_ArmEncoder.GetAbsolutePosition());//Ground pickup:0.5099 Top Position 0.1844
     
     frc::SmartDashboard::PutNumber("Arm_NeoPositionL",     m_ArmMotorLeftEncoder.GetPosition());
     frc::SmartDashboard::PutNumber("Arm_NeoPositionR",     m_ArmMotorRightEncoder.GetPosition());
-    frc::SmartDashboard::PutNumber("Arm_NeoVelocityL",     m_ArmMotorLeftEncoder.GetVelocity());
-    frc::SmartDashboard::PutNumber("Arm_NeoVelocityR",     m_ArmMotorRightEncoder.GetVelocity());
+    //frc::SmartDashboard::PutNumber("Arm_NeoVelocityL",     m_ArmMotorLeftEncoder.GetVelocity());
+    //frc::SmartDashboard::PutNumber("Arm_NeoVelocityR",     m_ArmMotorRightEncoder.GetVelocity());
 #endif
 
     frc::SmartDashboard::PutNumber("Wrist_Position",         m_WristPosition);

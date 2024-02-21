@@ -31,12 +31,12 @@ private:
 
 
     // TODO : Determine the acceleration.
-    frc::SlewRateLimiter<units::scalar> m_AccelerationLimiter{1 / 4_s};
+    frc::SlewRateLimiter<units::scalar> m_AccelerationLimiter{1 / 3_s};
 
     bool   m_spinUpShooter { false };
     bool   m_shooterSpeedReadyToShoot { false };
 
     // TODO : Determine all thse values.
-    double const m_maxShooterSpeed{ 1600 };
-    double const m_maxAccelOutput { 0.5 };
+    double const m_maxShooterSpeed{ 2200 };
+    double const m_maxAccelOutput { 0.8 };
 };

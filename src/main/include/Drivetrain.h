@@ -69,7 +69,7 @@ class Drivetrain {
 
 
   SwerveModule m_backRight { kBackRightDriveID,  kBackRightSpinID,  kDriveEncoderBackRight,  1.230863 / (2*std::numbers::pi)};
-  SwerveModule m_frontRight{ kFrontRightDriveID, kFrontRightSpinID, kDriveEncoderFrontRight, 1.409437 / (2*std::numbers::pi)};
+  SwerveModule m_frontRight{ kFrontRightDriveID, kFrontRightSpinID, kDriveEncoderFrontRight, 0.5 + 0.909437 / (2*std::numbers::pi)};
   SwerveModule m_backLeft  { kBackLeftDriveID,   kBackLeftSpinID,   kDriveEncoderBackLeft,   0.255626 / (2*std::numbers::pi)};
   SwerveModule m_frontLeft { kFrontLeftDriveID,  kFrontLeftSpinID,  kDriveEncoderFrontLeft,  4.980153 / (2*std::numbers::pi)};
 
