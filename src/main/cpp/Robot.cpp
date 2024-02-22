@@ -16,11 +16,6 @@
 #include <Climber.h>
 
 
-
-
-//#include <frc/PowerDistribution.h>
-
-
 void Robot::RobotInit() {
 
 
@@ -33,8 +28,6 @@ void Robot::RobotInit() {
 
   m_Arm.initArm();
 
-
-  //frc::PowerDistribution::ClearStickyFaults();
  }
 
 
@@ -55,79 +48,6 @@ void Robot::RobotInit() {
  }
 
  void Robot::TestPeriodic() {
-
-
-#if 0
-    if ( m_coController.GetAButton() )
-    {
-      m_Climber.ChangeClimberState( ClimberUp );
-
-    }
-    else
-    {
-      if (m_coController.GetBButton())
-      {
-        m_Climber.ChangeClimberState( ClimberDown );
-
-      }
-      else
-        {
-          m_Climber.ChangeClimberState( ClimberStop );
-        }
-    }
-
-    if (m_coController.GetXButton())
-    {
-      m_Arm.m_ArmMotorLeft.Set(1);
-      m_Arm.m_ArmMotorRight.Set(1);
-    }
-    else
-    {
-      if (m_coController.GetYButton())
-      {
-        m_Arm.m_ArmMotorLeft.Set(-1);
-        m_Arm.m_ArmMotorRight.Set(-1);
-      }
-      else
-      {
-        m_Arm.m_ArmMotorLeft.Set(0);
-        m_Arm.m_ArmMotorRight.Set(0);
-      }
-    }
-
-
-  if (m_coController.GetLeftBumper())
-  {
-    m_Arm.m_WristMotor.Set(1);
-  }
-  else
-  {
-    if (m_coController.GetRightBumper())
-    {
-      m_Arm.m_WristMotor.Set(-1);
-    }
-    else
-    {
-      m_Arm.m_WristMotor.Set(0);
-    }
-  }
-
-  if (m_coController.GetAButton())
-  {
-    m_Shooter.m_shooterMotor.Set(1);
-  }
-  else
-  {
-    if(m_coController.GetBButton())
-    {
-    m_Shooter.m_shooterMotor.Set(-1);
-    }
-    else
-    {
-      m_Shooter.m_shooterMotor.Set(0);
-    }
-  }
-#endif
 
 }
 
@@ -189,31 +109,32 @@ void Robot::RobotPeriodic()
     // Codriver Controls
 
     // Arm / Wrist
-    if( m_coController.GetBButtonPressed() )
+    if( m_coController.GetAButton() )
     {
       m_Arm.SetArmPosition( m_Arm.GROUND_PICKUP );
     }
-    else if( m_coController.GetAButtonPressed() )
-    {
-      m_Arm.SetArmPosition( m_Arm.SPEAKER );
-    }
-    else if( m_coController.GetXButtonPressed() )
+    else if( m_coController.GetXButton() )
     {
       m_Arm.SetArmPosition( m_Arm.AMP );
     }
-    else if( m_coController.GetYButtonPressed() )
+    else if( m_coController.GetYButton() )
     {
       m_Arm.SetArmPosition( m_Arm.SOURCE );
     }
+    else
+    {
+      m_Arm.SetArmPosition( m_Arm.SPEAKER );
+    }
 
     // Intake
-    if( m_coController.GetRightBumper() )
-    {
-      m_Intake.ChangeIntakeState( m_Intake.Intake_Intaking );
-    }
-    else if ( m_coController.GetLeftBumper() )
+    if ( m_coController.GetLeftBumper() )
     {
       m_Intake.ChangeIntakeState( m_Intake.Intake_Outtaking );
+    }
+    if( m_coController.GetRightBumper() ||
+        m_Arm.ArmReadyForGroundIntake() )
+    {
+      m_Intake.ChangeIntakeState( m_Intake.Intake_Intaking );
     }
     else
     {
@@ -222,9 +143,6 @@ void Robot::RobotPeriodic()
 
     // Shooter
     m_Shooter.changeShooterState( m_coController.GetRightTriggerAxis() > 0.2 );
-
-
-
 
 
     m_Arm.updateArm();
@@ -308,107 +226,9 @@ void Robot::RobotPeriodic()
     frc::SmartDashboard::PutNumber("m_driveController.GetRightX()",double{m_driveController.GetRightX()});
 
 
-#if 0
-//Arm and intake code
-if (m_coController.GetLeftBumperPressed())
-{
-  if (m_Arm.m_ArmPosition==GROUND_PICKUP)
-  {
-    m_Arm.SetArmPosition(SOURCE);
-  }
-  else
-  {
-    if (m_Arm.m_ArmPosition==SOURCE)
-    {
-     m_Arm.SetArmPosition(SPEAKER);
-    }
-    else
-    {
-        if (m_Arm.m_ArmPosition==SPEAKER)
-       {
-          m_Arm.SetArmPosition(AMP);
-       }
-        else
-        {
-          if (m_Arm.m_ArmPosition==AMP)
-          {
-            m_Arm.SetArmPosition(TRAP);
-          }
-          else
-          {
-            if (m_Arm.m_ArmPosition==TRAP)
-            {
-               m_Arm.SetArmPosition(GROUND_PICKUP);
-            }
-            
-          }
-        }
-    }
-  }
-}
-
-if (m_coController.GetRightBumperPressed())
-{
-  if (m_Arm.m_ArmPosition==SOURCE)
-  {
-    m_Arm.SetArmPosition(GROUND_PICKUP);
-  }
-  else
-  {
-    if (m_Arm.m_ArmPosition==SPEAKER)
-    {
-     m_Arm.SetArmPosition(SOURCE);
-    }
-    else
-    {
-        if (m_Arm.m_ArmPosition==AMP)
-       {
-          m_Arm.SetArmPosition(SPEAKER);
-       }
-        else
-        {
-          if (m_Arm.m_ArmPosition==TRAP)
-          {
-            m_Arm.SetArmPosition(AMP);
-          }
-          else
-          {
-            if (m_Arm.m_ArmPosition==GROUND_PICKUP)
-            {
-               m_Arm.SetArmPosition(TRAP);
-            }
-            
-          }
-        }
-    }
-  }
-}
-
-if (m_coController.GetAButton())
-{
-  m_Climber.m_ClimberState=ClimberUp;
-  
-}
-else
-  {
-    if (m_coController.GetBButton())
-    {
-      m_Climber.m_ClimberState=ClimberDown;
-      
-    }
-    else
-      {
-        m_Climber.m_ClimberState=ClimberStop;
-      }
-  }
-#endif
-
-
-
-
-  frc::SmartDashboard::PutNumber("Xspeed",double{xSpeed});
-  frc::SmartDashboard::PutNumber("Yspeed",double{ySpeed});
-  frc::SmartDashboard::PutNumber("Rot",double{rot});
+    frc::SmartDashboard::PutNumber("Xspeed",double{xSpeed});
+    frc::SmartDashboard::PutNumber("Yspeed",double{ySpeed});
+    frc::SmartDashboard::PutNumber("Rot",double{rot});
 
     m_swerve.Drive(xSpeed, ySpeed, rot, fieldRelative, GetPeriod());
 

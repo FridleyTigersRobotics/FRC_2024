@@ -46,12 +46,14 @@ public:
     void updateArm (/*Arm? I have those!*/);
 
     void UpdateSmartDashboardData();
-
+    bool ArmReadyForGroundIntake();
     void armManualControl( double speed );
     void wristManualControl( double speed );
 private:
-    arm_position_t   m_ArmPosition   { arm_position_t::HOLD_START_POSITION };
-    wrist_position_t m_WristPosition { wrist_position_t::WRIST_GROUND_PICKUP };
+    double getWristEncoderValue();
+
+    arm_position_t   m_ArmPosition     { arm_position_t::HOLD_START_POSITION };
+    arm_position_t   m_PrevArmPosition { arm_position_t::HOLD_START_POSITION };
 
     double m_startArmAngle;
     double m_startWristAngle;
@@ -78,6 +80,7 @@ private:
     rev::SparkRelativeEncoder m_WristMotorEncoder  { m_WristMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor, 42) };
     rev::SparkPIDController m_WristPidController  = m_WristMotor.GetPIDController();
 
+    double m_WristEncoderOffset = 0.0;
 
     // TODO : Determine these
     double m_ArmGroundValue     = 0.51;          

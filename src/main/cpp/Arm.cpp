@@ -6,9 +6,11 @@
 
 
 
-#define WRIST_TEST_POSITIONS    ( 1 )
-#define ARM_TEST_POSITIONS      ( 1 )
+#define WRIST_TEST_POSITIONS    ( 0 )
+#define ARM_TEST_POSITIONS      ( 0 )
 
+#define WRIST_DISTANCE_FIX_0 ( 1 )
+#define WRIST_COLLIDING_FIX  ( 1 )
 
 Arm::Arm()
 {
@@ -114,13 +116,34 @@ void Arm::initArm()
     m_ArmMotorRight.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
     m_ArmMotorLeft.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
     m_WristMotor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
-    m_ArmPosition = arm_position_t::HOLD_START_POSITION;
+    m_ArmPosition     = arm_position_t::HOLD_START_POSITION;
+    m_PrevArmPosition = arm_position_t::HOLD_START_POSITION;
     m_ArmMotorLeftEncoder.SetPosition(  m_ArmEncoder.GetAbsolutePosition() );
     m_ArmMotorRightEncoder.SetPosition( m_ArmEncoder.GetAbsolutePosition() );
     m_WristMotorEncoder.SetPosition( m_WristEncoder.GetAbsolutePosition() );
-    m_startArmAngle = m_ArmEncoder.GetAbsolutePosition();
-    m_startWristAngle = m_WristEncoder.GetDistance();
+
+   #if WRIST_DISTANCE_FIX_0
+    // Need to assume wrist is rotated outwards over the top
+    if ( m_WristEncoder.GetAbsolutePosition() < 0.4 )
+    {
+        m_WristEncoderOffset = 1.0;
+    }
+    else
+    {
+        m_WristEncoderOffset = 0.0;
+    }
+   #endif
+ 
+    m_startArmAngle   = m_ArmEncoder.GetAbsolutePosition();
+    m_startWristAngle = getWristEncoderValue();
 }
+
+
+double Arm::getWristEncoderValue()
+{
+    return m_WristEncoderOffset + m_WristEncoder.GetDistance();
+}
+
 
 void Arm::disableArm()
 {
@@ -133,6 +156,12 @@ void Arm::disableArm()
 void Arm::SetArmPosition (arm_position_t DesiredPosition)
 {
     m_ArmPosition = DesiredPosition;
+}
+
+bool Arm::ArmReadyForGroundIntake()
+{
+    return ( m_ArmPosition == GROUND_PICKUP &&
+            getWristEncoderValue() > 0.9 );
 }
 
 void Arm::updateArm()
@@ -218,6 +247,13 @@ void Arm::updateArm()
     }
  #endif
 
+    if ( m_ArmPosition != m_PrevArmPosition )
+    {
+        m_startArmAngle   = m_ArmEncoder.GetAbsolutePosition();
+        m_startWristAngle = getWristEncoderValue(); 
+    }
+
+    m_PrevArmPosition = m_ArmPosition;
 
     switch (m_ArmPosition)
     {   
@@ -236,8 +272,18 @@ void Arm::updateArm()
         }
         case (SOURCE):
         {
-            ArmAngle   = m_ArmSourceValue;
-            WristAngle = m_WristSourceValue;
+            ArmAngle = m_ArmSourceValue;
+           #if WRIST_COLLIDING_FIX
+            // Only move the wrist if it has enough clearance to move.
+            if ( m_ArmEncoder.GetAbsolutePosition() > 0.35 )
+            {
+                WristAngle = m_startWristAngle;
+            }
+            else
+           #endif
+            {
+                WristAngle = m_WristSourceValue;
+            }
             break;
         }
         case (SPEAKER):
@@ -248,8 +294,18 @@ void Arm::updateArm()
         }
         case (AMP):
         {
-            ArmAngle   = m_ArmAmpValue;
-            WristAngle = m_WristAmpValue;
+            ArmAngle = m_ArmAmpValue;
+           #if WRIST_COLLIDING_FIX
+            // Only move the wrist if it has enough clearance to move.
+            if ( m_ArmEncoder.GetAbsolutePosition() > 0.35 )
+            {
+                WristAngle = m_startWristAngle;
+            }
+            else
+           #endif
+            {
+                WristAngle = m_WristAmpValue;
+            }
             break;
         }
         case (TRAP):
@@ -281,7 +337,7 @@ void Arm::updateArm()
     m_WristPidController.SetReference(WristAngle, rev::CANSparkMax::ControlType::kSmartMotion);
    #else
     m_WristControlOutput = m_WristPIDController.Calculate(
-        units::radian_t{m_WristEncoder.GetDistance()}, units::radian_t{WristAngle});
+        units::radian_t{getWristEncoderValue()}, units::radian_t{WristAngle});
     double const feedForward = 0.0; // TODO : Do we need feed forward based on wrist angle relative to the ground?
     m_WristMotor.Set( std::clamp( m_WristControlOutput, -m_WristMaxOutputValue, m_WristMaxOutputValue ) );
    #endif
@@ -305,8 +361,7 @@ void Arm::UpdateSmartDashboardData()
     //frc::SmartDashboard::PutNumber("Arm_NeoVelocityR",     m_ArmMotorRightEncoder.GetVelocity());
 #endif
 
-    frc::SmartDashboard::PutNumber("Wrist_Position",         m_WristPosition);
-    frc::SmartDashboard::PutNumber("Wrist_Encoder_Dist",     m_WristEncoder.GetDistance());
+    frc::SmartDashboard::PutNumber("Wrist_Encoder_Dist",     getWristEncoderValue());
     frc::SmartDashboard::PutNumber("Wrist_Encoder_AbsPos",   m_WristEncoder.GetAbsolutePosition());
     frc::SmartDashboard::PutNumber("Wrist_MotorEncoder_Pos", m_WristMotorEncoder.GetPosition());
     frc::SmartDashboard::PutNumber("Wrist_ControlOutput",    m_WristControlOutput);
