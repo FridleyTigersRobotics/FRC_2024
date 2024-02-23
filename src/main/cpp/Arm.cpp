@@ -338,7 +338,7 @@ void Arm::updateArm()
    #else
     m_WristControlOutput = m_WristPIDController.Calculate(
         units::radian_t{getWristEncoderValue()}, units::radian_t{WristAngle});
-    double const feedForward = 0.0; // TODO : Do we need feed forward based on wrist angle relative to the ground?
+    //double const feedForward = 0.0; // TODO : Do we need feed forward based on wrist angle relative to the ground?
     m_WristMotor.Set( std::clamp( m_WristControlOutput, -m_WristMaxOutputValue, m_WristMaxOutputValue ) );
    #endif
 

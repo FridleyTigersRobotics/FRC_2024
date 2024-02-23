@@ -18,7 +18,8 @@ void Intake::updateIntake()
 
     switch (m_intake_movement)
     {
-        case (Intake_Intaking):
+
+        case (Intake_IntakingWithSensor):
         {
             // Might want to include an override for the ring detector 
             // in case it stops working...
@@ -27,15 +28,20 @@ void Intake::updateIntake()
                 IntakeSpeed = 0.0;
             }
             else
-            { // TODO : Determine intaking speed & direction
-                IntakeSpeed = -0.5;
+            {
+                IntakeSpeed = kIntakeSpeed;
             }
 
             break;
         }
+        case (Intake_Intaking):
+        {
+            IntakeSpeed = kIntakeSpeed;
+            break;
+        }
         case (Intake_Outtaking):
         { // TODO : Determine out speed & direction
-            IntakeSpeed = 1.0;
+            IntakeSpeed = kOuttakeSpeed;
             break;
         }
         case (Intake_Stopped):

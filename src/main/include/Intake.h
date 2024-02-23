@@ -12,6 +12,7 @@ class Intake{
     typedef enum intake_movement
     {
         Intake_Intaking,
+        Intake_IntakingWithSensor,
         Intake_Outtaking,
         Intake_Stopped,
     } intake_movement_t;
@@ -27,5 +28,8 @@ class Intake{
     rev::CANSparkMax m_IntakeMotor { ConstantCrap::kIntakeMotorcanID,rev::CANSparkLowLevel::MotorType::kBrushless };
     frc::AnalogInput m_RingDetector{GetAnalogChannelFromPin(0)};
     intake_movement_t m_intake_movement;
+
+    static constexpr double kIntakeSpeed  = -0.6;
+    static constexpr double kOuttakeSpeed = 1.0;
 
 };
