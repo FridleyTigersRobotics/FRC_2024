@@ -131,7 +131,7 @@ void Robot::RobotPeriodic()
     {
       m_Intake.ChangeIntakeState( m_Intake.Intake_Outtaking );
     }
-    if( m_coController.GetRightBumper() ||
+    else if( m_coController.GetRightBumper() ||
         m_Arm.ArmReadyForGroundIntake() )
     {
       m_Intake.ChangeIntakeState( m_Intake.Intake_Intaking );
