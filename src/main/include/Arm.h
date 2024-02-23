@@ -68,8 +68,8 @@ private:
 
 
 
-    rev::SparkRelativeEncoder m_ArmMotorLeftEncoder  { m_ArmMotorLeft.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor, 42) };
-    rev::SparkRelativeEncoder m_ArmMotorRightEncoder { m_ArmMotorRight.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor, 42) };
+    rev::SparkRelativeEncoder m_ArmMotorLeftEncoder  { m_ArmMotorLeft.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor) };
+    rev::SparkRelativeEncoder m_ArmMotorRightEncoder { m_ArmMotorRight.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor) };
 
     
     frc::DutyCycleEncoder m_ArmEncoder    { ConstantCrap::kArmEncoderDIO };
@@ -77,7 +77,7 @@ private:
     // Wrist
     rev::CANSparkMax      m_WristMotor   { ConstantCrap::kWristMotorID, rev::CANSparkLowLevel::MotorType::kBrushless };
     frc::DutyCycleEncoder m_WristEncoder { ConstantCrap::kWristEncoderDIO };
-    rev::SparkRelativeEncoder m_WristMotorEncoder  { m_WristMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor, 42) };
+    rev::SparkRelativeEncoder m_WristMotorEncoder  { m_WristMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor) };
     rev::SparkPIDController m_WristPidController  = m_WristMotor.GetPIDController();
 
     double m_WristEncoderOffset = 0.0;

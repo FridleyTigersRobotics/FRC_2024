@@ -24,10 +24,10 @@ namespace ConstantCrap
     // DIO IDs
     constexpr int kArmEncoderDIO           = 0;
     constexpr int kWristEncoderDIO         = 1;
-    constexpr int kRightClimberEncoderDIO1 = 2;
-    constexpr int kRightClimberEncoderDIO2 = 3;
-    constexpr int kLeftClimberEncoderDIO1  = 4;
-    constexpr int kLeftClimberEncoderDIO2  = 5;
+    constexpr int kLeftClimberEncoderDIO1  = 2;
+    constexpr int kLeftClimberEncoderDIO2  = 3;
+    constexpr int kRightClimberEncoderDIO1 = 4;
+    constexpr int kRightClimberEncoderDIO2 = 5;
     constexpr int kRightClimberStopDIO     = 7;
     constexpr int kLeftClimberStopDIO      = 6;
 

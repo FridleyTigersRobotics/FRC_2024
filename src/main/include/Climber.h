@@ -25,8 +25,8 @@ class Climber
     ctre::phoenix::motorcontrol::can::WPI_TalonSRX  m_leftClimberMotor { ConstantCrap::kLeftClimberMotor };
     ctre::phoenix::motorcontrol::can::WPI_TalonSRX  m_rightClimberMotor{ ConstantCrap::kRightClimberMotor };
 
-    frc::Encoder m_motorEncoderL {2,3};
-    frc::Encoder m_motorEncoderR {4,5};
+    frc::Encoder m_motorEncoderL { ConstantCrap::kLeftClimberEncoderDIO1,  ConstantCrap::kLeftClimberEncoderDIO2  };
+    frc::Encoder m_motorEncoderR { ConstantCrap::kRightClimberEncoderDIO1, ConstantCrap::kRightClimberEncoderDIO2 };
 
     frc::DigitalInput m_rightLimitSwitch{ConstantCrap::kRightClimberStopDIO}; 
     frc::DigitalInput m_leftLimitSwitch {ConstantCrap::kLeftClimberStopDIO};
