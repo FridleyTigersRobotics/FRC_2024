@@ -4,6 +4,19 @@
 #include <Constants.h>
 #include <frc/DigitalInput.h>
 #include <frc/Encoder.h>
+#include <frc/controller/ProfiledPIDController.h>
+#include <frc/controller/PIDController.h>
+#include <units/angular_velocity.h>
+#include <units/time.h>
+#include <units/velocity.h>
+#include <units/voltage.h>
+#include "units/angular_acceleration.h"
+
+
+#define CLIMBER_ENCODER_SYNC_ENABLED ( 1 )
+#define CLIMBER_ENCODER_SYNC_TRACK_L ( 0 )
+#define CLIMBER_GYRO_ENABLED         ( 0 )
+
 
 class Climber
 {
@@ -30,6 +43,35 @@ class Climber
 
     frc::DigitalInput m_rightLimitSwitch{ConstantCrap::kRightClimberStopDIO}; 
     frc::DigitalInput m_leftLimitSwitch {ConstantCrap::kLeftClimberStopDIO};
+
+  #if CLIMBER_ENCODER_SYNC_ENABLED
+    double m_ClimberPosition = 0.0;
+
+    // Number of encoder counts to change climber position each update.
+    double kCLimberSpeed = 1.0;
+
+    double m_ClimberLMaxOutputValue = 0.300;               
+    double m_ClimberLP              = 3.000;  
+
+    frc::PIDController m_ClimberLeftPidController{
+      m_ClimberLP,
+      0.0,
+      0.0};
+
+
+    double m_ClimberRMaxOutputValue = 0.300;               
+    double m_ClimberRP              = 3.000;  
+
+    frc::PIDController m_ClimberRightPidController{
+      m_ClimberRP,
+      0.0,
+      0.0};
+
+
+
+  #endif
+
+
 };
 /*doalways: AmogusDance
 fofever: AmogusDanceBigFunny

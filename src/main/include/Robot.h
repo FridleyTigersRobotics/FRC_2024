@@ -53,14 +53,19 @@ class Robot : public frc::TimedRobot {
 
 
  private:
+
     frc::XboxController m_driveController{0};
     frc::XboxController m_coController   {1};
 
+    // Switches co-controller to end game mode
+    bool m_controlModeEndGame = false;
+
+
     Drivetrain m_swerve;
     Arm        m_Arm;
-     Intake     m_Intake;
-     Climber    m_Climber;
-     Shooter    m_Shooter;
+    Intake     m_Intake;
+    Climber    m_Climber;
+    Shooter    m_Shooter;
 
     //int m_Count=0;
     // std::string m_smart="idk";

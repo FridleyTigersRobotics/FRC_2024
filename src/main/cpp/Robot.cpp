@@ -25,7 +25,7 @@ void Robot::RobotInit() {
  }
 
  void Robot::TeleopInit() {
-
+  m_Climber.initClimber();
   m_Arm.initArm();
 
  }
@@ -64,6 +64,8 @@ void Robot::RobotPeriodic()
   m_Intake.UpdateSmartDashboardData();
   m_Climber.UpdateSmartDashboardData();
   m_Shooter.UpdateSmartDashboardData();
+
+  frc::SmartDashboard::PutBoolean( "m_controlModeEndGame", m_controlModeEndGame );
 }
 
 
@@ -91,61 +93,71 @@ void Robot::RobotPeriodic()
       m_driveController.GetRightX()
     ); 
 
-    // Climber
-    if( m_driveController.GetRightBumper() )
-    {
-      m_Climber.ChangeClimberState( m_Climber.ClimberDown );
-    }
-    else if ( m_driveController.GetLeftBumper() )
-    {
-      m_Climber.ChangeClimberState( m_Climber.ClimberUp );
-    }
-    else
-    {
-      m_Climber.ChangeClimberState( m_Climber.ClimberStop );
-    }
-
-
     // Codriver Controls
+    if ( m_driveController.GetBackButtonPressed() )
+    {
+      m_controlModeEndGame = !m_controlModeEndGame;
+    }
 
-    // Arm / Wrist
-    if( m_coController.GetAButton() )
+    if ( m_controlModeEndGame )
     {
-      m_Arm.SetArmPosition( m_Arm.GROUND_PICKUP );
-    }
-    else if( m_coController.GetXButton() )
-    {
-      m_Arm.SetArmPosition( m_Arm.AMP );
-    }
-    else if( m_coController.GetYButton() )
-    {
-      m_Arm.SetArmPosition( m_Arm.SOURCE );
+      // Climber
+      if( m_driveController.GetRightBumper() )
+      {
+        m_Climber.ChangeClimberState( m_Climber.ClimberDown );
+      }
+      else if ( m_driveController.GetLeftBumper() )
+      {
+        m_Climber.ChangeClimberState( m_Climber.ClimberUp );
+      }
+      else
+      {
+        m_Climber.ChangeClimberState( m_Climber.ClimberStop );
+      }
     }
     else
     {
-      m_Arm.SetArmPosition( m_Arm.SPEAKER );
+      // Arm / Wrist
+      if( m_coController.GetAButton() )
+      {
+        m_Arm.SetArmPosition( m_Arm.GROUND_PICKUP );
+      }
+      else if( m_coController.GetXButton() )
+      {
+        m_Arm.SetArmPosition( m_Arm.AMP );
+      }
+      else if( m_coController.GetYButton() )
+      {
+        m_Arm.SetArmPosition( m_Arm.SOURCE );
+      }
+      else
+      {
+        m_Arm.SetArmPosition( m_Arm.SPEAKER );
+      }
+
+      // Intake
+      if ( m_coController.GetLeftBumper() )
+      {
+        m_Intake.ChangeIntakeState( m_Intake.Intake_Outtaking );
+      }
+      else if( m_coController.GetRightBumper() )
+      {
+        m_Intake.ChangeIntakeState( m_Intake.Intake_Intaking );
+      }
+      else if( m_Arm.ArmReadyForGroundIntake() )
+      {
+        m_Intake.ChangeIntakeState( m_Intake.Intake_IntakingWithSensor );
+      }
+      else
+      {
+        m_Intake.ChangeIntakeState( m_Intake.Intake_Stopped );
+      }
+
+      // Shooter
+      m_Shooter.changeShooterState( m_coController.GetRightTriggerAxis() > 0.2 );
+
     }
 
-    // Intake
-    if ( m_coController.GetLeftBumper() )
-    {
-      m_Intake.ChangeIntakeState( m_Intake.Intake_Outtaking );
-    }
-    else if( m_coController.GetRightBumper() )
-    {
-      m_Intake.ChangeIntakeState( m_Intake.Intake_Intaking );
-    }
-    else if( m_Arm.ArmReadyForGroundIntake() )
-    {
-      m_Intake.ChangeIntakeState( m_Intake.Intake_IntakingWithSensor );
-    }
-    else
-    {
-      m_Intake.ChangeIntakeState( m_Intake.Intake_Stopped );
-    }
-
-    // Shooter
-    m_Shooter.changeShooterState( m_coController.GetRightTriggerAxis() > 0.2 );
 
 
     m_Arm.updateArm();
