@@ -60,6 +60,8 @@ void Robot::DisabledInit()
 
 void Robot::RobotPeriodic()
 {
+  m_Climber.UpdateRoll( m_swerve.m_imu.GetRoll() );
+
   m_Arm.UpdateSmartDashboardData();
   m_Intake.UpdateSmartDashboardData();
   m_Climber.UpdateSmartDashboardData();

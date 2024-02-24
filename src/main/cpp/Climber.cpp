@@ -34,6 +34,11 @@ void Climber::manualControl( double speedL, double speedR )
     m_rightClimberMotor.Set( 0.4 * speedR );  
 }
 
+void Climber::UpdateRoll( double roll )
+{
+    m_prevRoll = m_roll;
+    m_roll     = roll;
+}
 
 
 void Climber::updateClimber()
@@ -124,6 +129,8 @@ void Climber::UpdateSmartDashboardData( )
 
     frc::SmartDashboard::PutNumber( "Climber_EncoderL", m_motorEncoderL.Get() );
     frc::SmartDashboard::PutNumber( "Climber_EncoderR", m_motorEncoderR.Get() );
+    frc::SmartDashboard::PutNumber( "Climber_prevRoll", m_prevRoll );
+    frc::SmartDashboard::PutNumber( "Climber_roll",     m_roll );
 
    #if CLIMBER_ENCODER_SYNC_ENABLED
     frc::SmartDashboard::PutNumber( "Climber_ClimberPosition", m_ClimberPosition );

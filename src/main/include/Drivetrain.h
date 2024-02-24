@@ -73,7 +73,7 @@ class Drivetrain {
   SwerveModule m_backLeft  { kBackLeftDriveID,   kBackLeftSpinID,   kDriveEncoderBackLeft,   0.255626 / (2*std::numbers::pi)};
   SwerveModule m_frontLeft { kFrontLeftDriveID,  kFrontLeftSpinID,  kDriveEncoderFrontLeft,  4.980153 / (2*std::numbers::pi)};
 
-  AHRS m_imu { frc::SPI::Port::kMXP};
+  AHRS m_imu { frc::SPI::Port::kMXP };
 
   frc::SwerveDriveKinematics<4> m_kinematics{
       m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation,

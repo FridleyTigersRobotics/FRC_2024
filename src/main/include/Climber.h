@@ -33,6 +33,8 @@ class Climber
     void ChangeClimberState( ClimberState_t ClimberState );
     void manualControl( double speedL, double speedR );
     void UpdateSmartDashboardData();
+    void UpdateRoll( double roll );
+
  private:
     ClimberState_t m_ClimberState {ClimberState_t::ClimberStop};
     ctre::phoenix::motorcontrol::can::WPI_TalonSRX  m_leftClimberMotor { ConstantCrap::kLeftClimberMotor };
@@ -43,6 +45,9 @@ class Climber
 
     frc::DigitalInput m_rightLimitSwitch{ConstantCrap::kRightClimberStopDIO}; 
     frc::DigitalInput m_leftLimitSwitch {ConstantCrap::kLeftClimberStopDIO};
+
+    double m_prevRoll = 0;
+    double m_roll     = 0;
 
   #if CLIMBER_ENCODER_SYNC_ENABLED
     double m_ClimberPosition = 0.0;
@@ -66,9 +71,6 @@ class Climber
       m_ClimberRP,
       0.0,
       0.0};
-
-
-
   #endif
 
 
