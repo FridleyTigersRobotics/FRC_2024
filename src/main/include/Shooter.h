@@ -37,6 +37,6 @@ private:
     bool   m_shooterSpeedReadyToShoot { false };
 
     // TODO : Determine all thse values.
-    double const m_maxShooterSpeed{ 2200 };
+    double const m_maxShooterSpeed{ 2800 };
     double const m_maxAccelOutput { 0.8 };
 };

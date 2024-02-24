@@ -49,7 +49,7 @@ std::string m_encodername;
 //Line fourty-nine??? That's CRAZY
   frc::PIDController m_drivePIDController{2.0, 0, 0};
   frc::ProfiledPIDController<units::radians> m_turningPIDController{
-      3.0,
+      10.0,
       0.0,
       0.0,
       {kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration}};
@@ -57,7 +57,7 @@ std::string m_encodername;
   frc::SimpleMotorFeedforward<units::meters> m_driveFeedforward{1_V,
                                                                 3_V / 1_mps};
   frc::SimpleMotorFeedforward<units::radians> m_turnFeedforward{
-      1_V, 0.5_V / 1_rad_per_s};
+      0.5_V, 0.25_V / 1_rad_per_s};
 
   double m_PositionConversionFactor;
 };

@@ -13,6 +13,7 @@
 #include "units/angular_acceleration.h"
 
 
+#define CLIMBER_MANUAL_CONTROL       ( 0 )
 #define CLIMBER_ENCODER_SYNC_ENABLED ( 1 )
 #define CLIMBER_ENCODER_SYNC_TRACK_L ( 0 )
 #define CLIMBER_GYRO_ENABLED         ( 0 )
@@ -53,20 +54,19 @@ class Climber
     double m_ClimberPosition = 0.0;
 
     // Number of encoder counts to change climber position each update.
-    double kCLimberSpeed = 1.0;
-    double kAngleToEncoderCounts = 1.0;
+    double kCLimberSpeed = 2000.0;
+    double kAngleToEncoderCounts = 0.0;
 
-    double m_ClimberLMaxOutputValue = 0.300;               
-    double m_ClimberLP              = 3.000;  
+    double m_ClimberLMaxOutputValue = 1.000;               
+    double m_ClimberLP              = 0.0001;  
 
     frc::PIDController m_ClimberLeftPidController{
       m_ClimberLP,
       0.0,
       0.0};
 
-
-    double m_ClimberRMaxOutputValue = 0.300;               
-    double m_ClimberRP              = 3.000;  
+    double m_ClimberRMaxOutputValue = 1.000;               
+    double m_ClimberRP              = 0.0001;  
 
     frc::PIDController m_ClimberRightPidController{
       m_ClimberRP,

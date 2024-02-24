@@ -18,18 +18,18 @@ namespace ConstantCrap
     constexpr int kArmMotorRightcanID   = 19;
     constexpr int kWristMotorID         = 20;
     constexpr int kShooterMotorID       = 18;
-    constexpr int kRightClimberMotor    = 3;
-    constexpr int kLeftClimberMotor     = 4;
+    constexpr int kRightClimberMotor    = 4;
+    constexpr int kLeftClimberMotor     = 3;
 
     // DIO IDs
     constexpr int kArmEncoderDIO           = 0;
     constexpr int kWristEncoderDIO         = 1;
-    constexpr int kLeftClimberEncoderDIO1  = 2;
-    constexpr int kLeftClimberEncoderDIO2  = 3;
-    constexpr int kRightClimberEncoderDIO1 = 4;
-    constexpr int kRightClimberEncoderDIO2 = 5;
-    constexpr int kRightClimberStopDIO     = 7;
-    constexpr int kLeftClimberStopDIO      = 6;
+    constexpr int kLeftClimberEncoderDIO1  = 4;
+    constexpr int kLeftClimberEncoderDIO2  = 5;
+    constexpr int kRightClimberEncoderDIO1 = 2;
+    constexpr int kRightClimberEncoderDIO2 = 3;
+    constexpr int kRightClimberStopDIO     = 6;
+    constexpr int kLeftClimberStopDIO      = 7;
 
     // Analog IDs
     constexpr int kDriveEncoderBackRight  = 0;

@@ -36,7 +36,7 @@ class Drivetrain {
   static constexpr units::meters_per_second_t kMaxSpeed =
       1.0_mps;  // 3 meters per second
   static constexpr units::radians_per_second_t kMaxAngularSpeed{
-      std::numbers::pi};  // 1/2 rotation per second
+      1.0 * std::numbers::pi};  // 1/2 rotation per second
 
  
 

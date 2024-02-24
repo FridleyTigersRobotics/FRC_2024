@@ -29,7 +29,7 @@ class Intake{
     frc::AnalogInput m_RingDetector{GetAnalogChannelFromPin(0)};
     intake_movement_t m_intake_movement;
 
-    static constexpr double kIntakeSpeed  = -0.6;
+    static constexpr double kIntakeSpeed  = -0.5;
     static constexpr double kOuttakeSpeed = 1.0;
 
 };

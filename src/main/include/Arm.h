@@ -41,7 +41,7 @@ public:
 
     void initArm();
     void disableArm();
-
+    bool ArmHold ();
     void SetArmPosition (arm_position_t DesiredPosition);
     void updateArm (/*Arm? I have those!*/);
 
@@ -83,15 +83,16 @@ private:
     double m_WristEncoderOffset = 0.0;
 
     // TODO : Determine these
-    double m_ArmGroundValue     = 0.51;          
+    double m_ArmGroundValue     = 0.52;          
     double m_ArmSourceValue     = 0.32;          
     double m_ArmSpeakerValue    = 0.51;           
-    double m_ArmAmpValue        = 0.28;       
+    double m_ArmAmpValue        = 0.25;       
     double m_ArmTrapValue       = 0.3;
-    double m_ArmMaxOutputValue  = 0.4;             
+    double m_ArmMaxOutputValue  = 0.8;             
     double m_ArmP               = 0.2;
-    double m_ArmMaxVel          = 0.8;     
-    double m_ArmMaxAccel        = 2.2;       
+    double m_ArmMaxVel          = 1.8;     
+    double m_ArmMaxAccel        = 4.2;
+    double m_ArmAngle           = 0.0;       
 
 
     // default PID coefficients
@@ -111,17 +112,17 @@ private:
     double kMaxVel2 = 1.8, kMinVel2 = 0, kMaxAcc2 = 1.2, kAllErr2 = 0;
 #else
     // TODO : Determine these
-    double m_WristGroundValue    = 1.120;            
+    double m_WristGroundValue    = 1.160;            
     double m_WristSourceValue    = 1.1;            
     double m_WristSpeakerValue   = 0.600;             
-    double m_WristAmpValue       = 1.300;  
+    double m_WristAmpValue       = 1.350;  
     double m_WristTrapValue      = 0.600;    
-    double m_WristMaxOutputValue = 0.300;               
+    double m_WristMaxOutputValue = 0.600;               
     double m_WristP              = 3.000;  
     double m_WristMaxVel         = double{std::numbers::pi * 1_rad_per_s};
     double m_WristMaxAccel       = double{std::numbers::pi * 2_rad_per_s / 1_s};
     double m_WristControlOutput = 0;
-
+    double m_WristAngle = 0;
     frc::ProfiledPIDController<units::radians> m_WristPIDController{
       m_WristP,
       0.0,

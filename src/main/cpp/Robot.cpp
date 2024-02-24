@@ -72,12 +72,6 @@ void Robot::RobotPeriodic()
 
 
 
-
-
-
-
-
-
   void Robot::AutonomousPeriodic() {
     RunDriveAuto();
     m_swerve.UpdateOdometry();
@@ -96,7 +90,7 @@ void Robot::RobotPeriodic()
     ); 
 
     // Codriver Controls
-    if ( m_driveController.GetBackButtonPressed() )
+    if ( m_coController.GetBackButtonPressed() )
     {
       m_controlModeEndGame = !m_controlModeEndGame;
     }
@@ -104,11 +98,11 @@ void Robot::RobotPeriodic()
     if ( m_controlModeEndGame )
     {
       // Climber
-      if( m_driveController.GetRightBumper() )
+      if( m_coController.GetRightBumper() )
       {
         m_Climber.ChangeClimberState( m_Climber.ClimberDown );
       }
-      else if ( m_driveController.GetLeftBumper() )
+      else if ( m_coController.GetLeftBumper() )
       {
         m_Climber.ChangeClimberState( m_Climber.ClimberUp );
       }
@@ -134,7 +128,10 @@ void Robot::RobotPeriodic()
       }
       else
       {
-        m_Arm.SetArmPosition( m_Arm.SPEAKER );
+        if( !m_Arm.ArmHold() )
+        {
+          m_Arm.SetArmPosition( m_Arm.SPEAKER );
+        }
       }
 
       // Intake
@@ -175,34 +172,36 @@ void Robot::RobotPeriodic()
     m_Arm.wristManualControl(frc::ApplyDeadband(m_coController.GetRightY(), 0.25 ));
   #endif
 
-#if 0
+#if CLIMBER_MANUAL_CONTROL
     double speedL = 0;
     double speedR = 0;
-
-    if ( m_driveController.GetXButton() )
+    if ( m_controlModeEndGame )
     {
-      if ( m_driveController.GetLeftBumper() )
+      if ( m_coController.GetXButton() )
       {
-        speedL = 1.0;
+        if ( m_coController.GetLeftBumper() )
+        {
+          speedL = 1.0;
+        }
+        if ( m_coController.GetRightBumper() )
+        {
+          speedR = 1.0;
+        }
       }
-      if ( m_driveController.GetRightBumper() )
+      else if ( m_coController.GetYButton() )
       {
-        speedR = 1.0;
+        if ( m_coController.GetLeftBumper() )
+        {
+          speedL = -1.0;
+        }
+        if ( m_coController.GetRightBumper() )
+        {
+          speedR = -1.0;
+        }
       }
-    }
-    else if ( m_driveController.GetYButton() )
-    {
-      if ( m_driveController.GetLeftBumper() )
-      {
-        speedL = -1.0;
-      }
-      if ( m_driveController.GetRightBumper() )
-      {
-        speedR = -1.0;
-      }
-    }
 
-    m_Climber.manualControl( speedL, speedR );
+      m_Climber.manualControl( speedL, speedR );
+    }
 #endif
   }
 

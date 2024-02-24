@@ -8,18 +8,20 @@
 void Climber::initClimber()
 {
     m_leftClimberMotor.SetInverted( false );
-    m_rightClimberMotor.SetInverted( true );
+    m_rightClimberMotor.SetInverted( false );
 
     m_motorEncoderL.SetMinRate(1);
     m_motorEncoderL.SetDistancePerPulse(0.1);
     m_motorEncoderL.SetReverseDirection(false);
     m_motorEncoderL.SetSamplesToAverage(2);
+    m_motorEncoderL.SetReverseDirection( true );
     m_motorEncoderL.Reset();
 
     m_motorEncoderR.SetMinRate(1);
     m_motorEncoderR.SetDistancePerPulse(0.1);
     m_motorEncoderR.SetReverseDirection(true);
     m_motorEncoderR.SetSamplesToAverage(2);
+    m_motorEncoderR.SetReverseDirection( true );
     m_motorEncoderR.Reset();
 
     m_ClimberLeftPidController.Reset();
@@ -97,29 +99,30 @@ void Climber::updateClimber()
     double positionR = m_ClimberPosition + (  applyToRight ? ( offset ) : ( 0.0 ) );
     double positionL = m_ClimberPosition + ( !applyToRight ? ( offset ) : ( 0.0 ) );
 
-    double ClimberMotorSpeedL = m_ClimberLeftPidController.Calculate(  positionL );
-    double ClimberMotorSpeedR = m_ClimberRightPidController.Calculate( positionR );
+    m_ClimberLeftPidController.SetSetpoint( positionL );
+    m_ClimberRightPidController.SetSetpoint( positionR );
+
+    double ClimberMotorSpeedL = -m_ClimberLeftPidController.Calculate(  m_motorEncoderL.Get() );
+    double ClimberMotorSpeedR = -m_ClimberRightPidController.Calculate( m_motorEncoderR.Get() );
    #else
     double ClimberMotorSpeedL = ClimberMotorSpeed;
     double ClimberMotorSpeedR = ClimberMotorSpeed;
    #endif
 
-
-    if( m_ClimberState == ClimberDown ) 
+    if ( ClimberMotorSpeedL > 0.0 && m_leftLimitSwitch.Get() )
     {
-        if ( m_leftLimitSwitch.Get() )
-        {
-            ClimberMotorSpeedL = 0;
-        }
-
-        if ( m_rightLimitSwitch.Get() )
-        {
-            ClimberMotorSpeedR = 0;
-        }
+        ClimberMotorSpeedL = 0;
     }
 
+    if ( ClimberMotorSpeedR > 0.0 && m_rightLimitSwitch.Get() )
+    {
+        ClimberMotorSpeedR = 0;
+    }
+
+    #if !CLIMBER_MANUAL_CONTROL
     m_leftClimberMotor.Set(  std::clamp( ClimberMotorSpeedL, -m_ClimberLMaxOutputValue, m_ClimberLMaxOutputValue ) );
     m_rightClimberMotor.Set( std::clamp( ClimberMotorSpeedR, -m_ClimberRMaxOutputValue, m_ClimberRMaxOutputValue ) );
+    #endif
 
    #endif
 }
@@ -143,7 +146,13 @@ void Climber::UpdateSmartDashboardData( )
     frc::SmartDashboard::PutNumber( "Climber_prevRoll", m_prevRoll );
     frc::SmartDashboard::PutNumber( "Climber_roll",     m_roll );
 
+
+
+
+
    #if CLIMBER_ENCODER_SYNC_ENABLED
+   frc::SmartDashboard::PutNumber( "Climber_LeftError", m_ClimberLeftPidController.GetPositionError() );
+   frc::SmartDashboard::PutNumber( "Climber_RightError", m_ClimberRightPidController.GetPositionError() );
     frc::SmartDashboard::PutNumber( "Climber_ClimberPosition", m_ClimberPosition );
    #endif
 }
