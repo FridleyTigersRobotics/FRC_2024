@@ -86,8 +86,19 @@ void Climber::updateClimber()
 
 
    #if CLIMBER_ENCODER_SYNC_ENABLED
-    double ClimberMotorSpeedL = m_ClimberLeftPidController.Calculate( m_ClimberPosition );
-    double ClimberMotorSpeedR = m_ClimberRightPidController.Calculate( m_ClimberPosition );
+   
+   #if CLIMBER_GYRO_ENABLED
+    double offset = kAngleToEncoderCounts * sin( m_roll );
+   #else
+    double offset = 0.0;
+   #endif
+    bool   applyToRight = offset > 0;
+
+    double positionR = m_ClimberPosition + (  applyToRight ? ( offset ) : ( 0.0 ) );
+    double positionL = m_ClimberPosition + ( !applyToRight ? ( offset ) : ( 0.0 ) );
+
+    double ClimberMotorSpeedL = m_ClimberLeftPidController.Calculate(  positionL );
+    double ClimberMotorSpeedR = m_ClimberRightPidController.Calculate( positionR );
    #else
     double ClimberMotorSpeedL = ClimberMotorSpeed;
     double ClimberMotorSpeedR = ClimberMotorSpeed;
