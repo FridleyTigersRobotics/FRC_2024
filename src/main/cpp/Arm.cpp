@@ -175,6 +175,13 @@ bool Arm::ArmReadyForGroundIntake()
             getWristEncoderValue() > 0.9 );
 }
 
+bool Arm::ArmReadyForShooting()
+{   
+    double wristEncoderVal = getWristEncoderValue();
+    return ( m_ArmPosition   == SPEAKER &&
+             wristEncoderVal == std::clamp( wristEncoderVal, -m_WristSpeakerValue, m_WristSpeakerValue ) );
+}
+
 void Arm::updateArm()
 {
     double ArmAngle = 0;
