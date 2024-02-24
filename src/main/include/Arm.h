@@ -47,6 +47,7 @@ public:
 
     void UpdateSmartDashboardData();
     bool ArmReadyForGroundIntake();
+    bool ArmReadyForShooting();
     void armManualControl( double speed );
     void wristManualControl( double speed );
 private:

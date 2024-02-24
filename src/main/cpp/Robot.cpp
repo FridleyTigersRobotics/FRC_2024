@@ -14,11 +14,11 @@
 #include <string>
 #include <Arm.h>
 #include <Climber.h>
+#include <networktables/NetworkTable.h>
+#include <LimelightHelpers.h>
 
 
 void Robot::RobotInit() {
-
-
 }
 
  void Robot::TestInit() {
@@ -31,21 +31,6 @@ void Robot::RobotInit() {
  }
 
 
- void Robot::AutonomousInit() {
-    TeleopInit(); 
-    m_autoTimer.Stop();
-    m_autoTimer.Reset();
-    m_autoTimer.Start();
-    
-
-    m_autoSequence = 0;
-    m_initState = true;
-    m_autoState = 0; 
-    m_initialAngle = 0;
-   
-    m_atRotateSetpointCount = 0;
-
- }
 
  void Robot::TestPeriodic() {
 
@@ -60,7 +45,7 @@ void Robot::DisabledInit()
 
 void Robot::RobotPeriodic()
 {
-  m_Climber.UpdateRoll( m_swerve.m_imu.GetRoll() );
+  m_Climber.UpdateRoll( m_Drivetrain.m_imu.GetRoll() );
 
   m_Arm.UpdateSmartDashboardData();
   m_Intake.UpdateSmartDashboardData();
@@ -70,18 +55,6 @@ void Robot::RobotPeriodic()
   frc::SmartDashboard::PutBoolean( "m_controlModeEndGame", m_controlModeEndGame );
 }
 
-
-
-
-
-
-
-
-
-  void Robot::AutonomousPeriodic() {
-    RunDriveAuto();
-    m_swerve.UpdateOdometry();
-  }
 
 
 
@@ -161,7 +134,7 @@ void Robot::RobotPeriodic()
     }
 
 
-
+    m_Drivetrain.updateDrivetrain( GetPeriod() );
     m_Arm.updateArm();
     m_Climber.updateClimber();
     m_Shooter.updateShooter();
@@ -247,7 +220,7 @@ void Robot::RobotPeriodic()
     frc::SmartDashboard::PutNumber("Yspeed",double{ySpeed});
     frc::SmartDashboard::PutNumber("Rot",double{rot});
 
-    m_swerve.Drive(xSpeed, ySpeed, rot, fieldRelative, GetPeriod());
+    m_Drivetrain.SetSpeeds( xSpeed, ySpeed, rot );
 
   }
 
@@ -282,97 +255,181 @@ void Robot::RobotPeriodic()
 
 
 
-void Robot::Drivetrain_Drive(units::meters_per_second_t xSpeed,
-                             units::radians_per_second_t rot) {
-  m_swerve.Drive(xSpeed, 0.0_mps, rot, false, GetPeriod());
-}
+
+
+ void Robot::AutonomousInit() {
+    AutonomousStateInit();
+    m_autoStateDone = false; 
+    m_autoState     = 0;
+
+    TeleopInit(); 
+    m_autoTimer.Stop();
+    m_autoTimer.Reset();
+    m_autoTimer.Start();
+    m_xDirPid.SetTolerance( kXyPosTolerance,  kXyVelTolerance );
+    m_yDirPid.SetTolerance( kXyPosTolerance,  kXyVelTolerance );
+    m_rotPid.SetTolerance(  kRotPosTolerance, kRotVelTolerance );
+
+    m_xDirPid.Reset( 0.0_m );
+    m_yDirPid.Reset( 0.0_m );
+    m_rotPid.Reset( 0.0_rad );
+
+ }
+
+  void Robot::AutonomousPeriodic() {
+    AutonomousStateUpdate();
+    RunAutoSequence();
+
+    m_Drivetrain.updateDrivetrain( GetPeriod() );
+    m_Arm.updateArm();
+    m_Climber.updateClimber();
+    m_Shooter.updateShooter();
+    m_Intake.updateIntake();
+  }
+
+
+
+
+
+
 
 
 void Robot::Drivetrain_Stop() {
-   m_swerve.Drive(0.0_mps, 0.0_mps, units::radians_per_second_t{0.0}, false, GetPeriod());
+   m_Drivetrain.SetSpeeds( 0.0_mps, 0.0_mps, 0.0_rad_per_s );
 }
 
 
- bool Robot::DriveForDistance( units::meters_per_second_t speed, units::meter_t distance, units::time::second_t maxTime=5.0_s )
+
+
+
+
+
+ void Robot::DriveForDistance( 
+  units::meter_t              xDistance, 
+  units::meter_t              yDistance, 
+  units::radian_t             rotRadians, 
+  units::meters_per_second_t  xSpeedMult, 
+  units::meters_per_second_t  ySpeedMult, 
+  units::radians_per_second_t rotSpeedMult,
+  units::time::second_t       maxTime
+)
+{
+  frc::Pose2d pose = m_Drivetrain.m_odometry.GetPose();
+
+  m_xDirPid.SetConstraints({xSpeedMult,   m_xyMaxAccel});
+  m_yDirPid.SetConstraints({ySpeedMult,   m_xyMaxAccel});
+  m_rotPid.SetConstraints( {rotSpeedMult, m_rotMaxAccel});
+
+  m_xDirPid.SetGoal( xDistance );
+  m_yDirPid.SetGoal( yDistance );
+  m_rotPid.SetGoal(  rotRadians );
+
+  units::meters_per_second_t  xSpeed  { m_xDirPid.Calculate( pose.X() ) };
+  units::meters_per_second_t  ySpeed  { m_yDirPid.Calculate( pose.Y() ) };
+  units::radians_per_second_t rotSpeed{ m_rotPid.Calculate( pose.Rotation().Radians() ) };
+
+  m_Drivetrain.SetSpeeds( xSpeed, ySpeed, rotSpeed );
+
+  if ( ( m_xDirPid.AtGoal() &&  m_yDirPid.AtGoal() &&  m_rotPid.AtGoal() ) || 
+       ( m_autoTimer.Get() > maxTime ) )
   {
-    frc::Pose2d pose = m_swerve.m_odometry.GetPose();
-    frc::SmartDashboard::PutNumber("pose.X()",double{pose.X()});
-    frc::SmartDashboard::PutNumber("m_startDistance",double{m_startDistance});
-    frc::SmartDashboard::PutNumber("distance",double{distance});
-    if ( ( ( ( speed > 0.0_mps ) && ( (pose.X() - m_startDistance) < distance ) ) ||
-           ( ( speed < 0.0_mps ) && ( (pose.X() - m_startDistance) > distance ) ) ) &&
-         ( m_autoTimer.Get() < maxTime ) )
-    {
-      Drivetrain_Drive( speed, 0.0_rad_per_s );
-      return false;
-    }
-    else
-    {
-      Drivetrain_Stop();
-      return true;
-    }
+    Drivetrain_Stop();
+    m_autoStateDone = true;
+  }
+}
+
+
+void Robot::MoveArmForPickup()
+{
+  m_Arm.SetArmPosition( m_Arm.GROUND_PICKUP );
+  m_Intake.ChangeIntakeState( m_Intake.Intake_IntakingWithSensor );
+  m_autoStateDone = true;
+}
+
+void Robot::MoveArmForShooting()
+{
+  m_Arm.SetArmPosition( m_Arm.SPEAKER );
+  m_Intake.ChangeIntakeState( m_Intake.Intake_Stopped );
+  m_autoStateDone = true;
+}
+
+
+
+void Robot::AimAndPrepShoot( units::second_t maxTime )
+{
+  m_Arm.SetArmPosition( m_Arm.SPEAKER );
+  m_Intake.ChangeIntakeState( m_Intake.Intake_Stopped );
+  m_Shooter.changeShooterState( true );
+
+  if ( m_Arm.ArmReadyForShooting() ||
+       m_autoTimer.Get() > maxTime )
+  {
+    m_autoStateDone = true;
+  }
+#if 0
+  double tx = LimelightHelpers::getTX();
+  double angleToTurnTo = tx / 180.0 * std::numbers::pi;
+
+  DriveForDistance( 0.0_m, 0.0_m, angleToTurnTo );
+  m_autoStateDone = true;
+#endif
+}
+
+
+void Robot::Shoot( units::second_t maxTime )
+{
+  m_Intake.ChangeIntakeState( m_Intake.Intake_Outtaking );
+
+  if ( m_autoTimer.Get() > maxTime )
+  {
+    m_Intake.ChangeIntakeState( m_Intake.Intake_Stopped );
+    m_autoStateDone = true;
+  }
+}
+
+
+
+void Robot::AutonomousStateInit()
+{
+  m_xDirPid.Reset(0.0_m);
+  m_yDirPid.Reset(0.0_m);
+  m_rotPid.Reset(0.0_rad);
+
+  m_autoTimer.Stop();
+  m_autoTimer.Reset();
+  m_autoTimer.Start();
+  m_initialPose = m_Drivetrain.m_odometry.GetPose();
+  m_Drivetrain.m_odometry.ResetPosition(
+    frc::Rotation2d{units::degree_t {m_Drivetrain.m_imu.GetYaw()}},
+    {m_Drivetrain.m_frontLeft.GetPosition(), m_Drivetrain.m_frontRight.GetPosition(),
+     m_Drivetrain.m_backLeft.GetPosition(),  m_Drivetrain.m_backRight.GetPosition()},
+    frc::Pose2d{}
+  );
+  m_atRotateSetpointCount = 0;
+}
+
+
+void Robot::AutonomousStateUpdate()
+{
+
+}
+
+
+
+void Robot::RunAutoSequence()
+{
+  if ( m_autoStateDone )
+  {
+    m_autoState++;
+    m_autoStateDone = false;
+    AutonomousStateInit();
   }
 
-
-bool Robot::RunDriveAuto()
-{
-frc::Pose2d pose = m_swerve.m_odometry.GetPose();
-    bool sequenceDone = false;
-    bool stateDone = false;
-  
-    switch( m_autoState )
-    {
-      case 0:
-      {
-        if ( m_initState )
-        {
-          m_autoTimer.Stop();
-          m_autoTimer.Reset();
-          m_autoTimer.Start();
-          m_initialAngle = m_swerve.m_imu.GetAngle();
-          m_startDistance = pose.X();
-        }
-        //SetLiftSetpoints( LIFT_POSITION_DRIVING );
-        stateDone = DriveForDistance( 0.5_mps, 1.0_m, 6.0_s );
-        break;
-      }
-
-      default:
-      {
-        Drivetrain_Stop();
-        sequenceDone = true;
-
-        // Done, do nothing
-        break;
-      }
-    }
-
-    if ( m_initState )
-    {
-      m_initState = false;
-    }
-
-    if ( stateDone )
-    {
-      //fmt::print( "stateDone {}\n", m_autoState );
-      m_autoState++;
-      m_initState = true;
-    }
-
-    return sequenceDone;
+  if ( m_autoState < (*autoSequence).size() )
+  {
+    (*autoSequence)[m_autoState]();
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

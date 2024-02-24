@@ -28,9 +28,14 @@ class Drivetrain {
  public:
   Drivetrain() {m_imu.ResetDisplacement(); }
 
-  void Drive(units::meters_per_second_t xSpeed,
-             units::meters_per_second_t ySpeed, units::radians_per_second_t rot,
-             bool fieldRelative, units::second_t period);
+  void updateDrivetrain( units::second_t period );
+
+  void SetSpeeds(
+    units::meters_per_second_t  xSpeed,
+    units::meters_per_second_t  ySpeed, 
+    units::radians_per_second_t rot
+    );
+
   void UpdateOdometry();
 
   static constexpr units::meters_per_second_t kMaxSpeed =
@@ -39,6 +44,9 @@ class Drivetrain {
       std::numbers::pi};  // 1/2 rotation per second
 
  
+   units::meters_per_second_t  m_xSpeed{ 0.0 };
+   units::meters_per_second_t  m_ySpeed{ 0.0 };
+   units::radians_per_second_t m_rot   { 0.0 };
 
 
    //-----------|Front|------------
