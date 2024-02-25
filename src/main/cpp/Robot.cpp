@@ -51,7 +51,7 @@ void Robot::RobotPeriodic()
   m_Intake.UpdateSmartDashboardData();
   m_Climber.UpdateSmartDashboardData();
   m_Shooter.UpdateSmartDashboardData();
-  m_swerve.UpdateSmartDashboardData();
+  m_Drivetrain.UpdateSmartDashboardData();
 
   frc::SmartDashboard::PutBoolean( "m_controlModeEndGame", m_controlModeEndGame );
 }
@@ -71,10 +71,10 @@ void Robot::RobotPeriodic()
 
     if ( m_driveController.GetAButtonPressed() )
     {
-      m_swerve.m_odometry.ResetPosition(
-        frc::Rotation2d{units::degree_t {m_swerve.m_imu.GetYaw()}},
-        {m_swerve.m_frontLeft.GetPosition(), m_swerve.m_frontRight.GetPosition(),
-        m_swerve.m_backLeft.GetPosition(),  m_swerve.m_backRight.GetPosition()},
+      m_Drivetrain.m_odometry.ResetPosition(
+        frc::Rotation2d{units::degree_t {m_Drivetrain.m_imu.GetYaw()}},
+        {m_Drivetrain.m_frontLeft.GetPosition(), m_Drivetrain.m_frontRight.GetPosition(),
+        m_Drivetrain.m_backLeft.GetPosition(),  m_Drivetrain.m_backRight.GetPosition()},
         frc::Pose2d{}
       );
     }
