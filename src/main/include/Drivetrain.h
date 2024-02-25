@@ -33,7 +33,7 @@ class Drivetrain {
              bool fieldRelative, units::second_t period);
   void UpdateOdometry();
 
-
+  void UpdateSmartDashboardData();
 
   static constexpr units::meters_per_second_t kMaxSpeed =
       1.0_mps;  // 3 meters per second
@@ -82,6 +82,12 @@ class Drivetrain {
   frc::SwerveDriveKinematics<4> m_kinematics{
       m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation,
       m_backRightLocation};
+
+
+
+    // X Postive = Backwards
+    // Y Positive = Right
+    // Rot Positive = Clockwise
 
   frc::SwerveDriveOdometry<4> m_odometry{
       m_kinematics,

@@ -17,7 +17,7 @@ void Drivetrain::Drive(
   frc::ChassisSpeeds FieldRelativeChassisSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(xSpeed, ySpeed, rot, frc::Rotation2d{units::degree_t {m_imu.GetYaw()}});
   frc::ChassisSpeeds RobotRelativeChassisSpeeds = frc::ChassisSpeeds{xSpeed, ySpeed, rot};
   frc::ChassisSpeeds ChassisSpeeds = frc::ChassisSpeeds::Discretize( RobotRelativeChassisSpeeds, period );
-
+  UpdateOdometry();
   auto states = m_kinematics.ToSwerveModuleStates( ChassisSpeeds );
 
   m_kinematics.DesaturateWheelSpeeds( &states, kMaxSpeed );
@@ -40,6 +40,14 @@ void Drivetrain::Drive(
   m_backLeft.SetDesiredState(bl);
   m_backRight.SetDesiredState(br);
 }
+
+void Drivetrain::UpdateSmartDashboardData()
+{
+  frc::SmartDashboard::PutNumber( "Drive_X", double{m_odometry.GetPose().X()} );
+  frc::SmartDashboard::PutNumber( "Drive_y", double{m_odometry.GetPose().Y()} );
+  frc::SmartDashboard::PutNumber( "Drive_Rot", double{m_odometry.GetPose().Rotation().Degrees()} );
+}
+
 
 void Drivetrain::UpdateOdometry() {
   m_odometry.Update(frc::Rotation2d{units::degree_t {m_imu.GetYaw()}},
