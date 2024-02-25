@@ -94,5 +94,6 @@
     "variant": "cpp",
     "xstddef": "cpp",
     "xtr1common": "cpp"
-  }
+  },
+  "wpilib.autoStartRioLog": false
 }

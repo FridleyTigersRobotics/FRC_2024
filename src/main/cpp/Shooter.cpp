@@ -49,6 +49,11 @@ void Shooter::changeShooterState( bool spinUpShooter )
 }
 
 
+bool Shooter::shooterReadyToShoot()
+{
+    return m_shooterEncoder.GetVelocity() > ( m_maxShooterSpeed - 500 );
+}
+
 void Shooter::updateShooter( )
 {
     double const shooterVelocity      = m_shooterEncoder.GetVelocity();

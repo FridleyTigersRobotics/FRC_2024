@@ -55,7 +55,7 @@ class Robot : public frc::TimedRobot {
    void MoveArmForShooting();
    void AimAndPrepShoot( units::second_t maxTime );
    void Shoot( units::second_t maxTime );
-
+   void Wait( units::second_t maxTime );
 
     void RunAutoSequence();
     void AutonomousStateInit();
@@ -97,12 +97,12 @@ class Robot : public frc::TimedRobot {
     //std::string  m_autoSelected { kAutoNameDefault };
     int          m_autoSequence { 0 };
     bool         m_initState    { true };
-    frc::Pose2d  m_initialPose;
+    //frc::Pose2d  m_initialPose;
 
 
 
-    double m_xyDirP      = 3.000;  
-    double m_rotP        = 3.000;  
+    double m_xyDirP      = 1.000;  
+    double m_rotP        = 1.000;  
     units::meters_per_second_t          m_xyMaxVel    { std::numbers::pi * 1_mps };
     units::meters_per_second_squared_t  m_xyMaxAccel  { std::numbers::pi * 2_mps / 1_s };
     units::radians_per_second_t         m_rotMaxVel   { std::numbers::pi * 1_rad_per_s };
@@ -164,17 +164,38 @@ class Robot : public frc::TimedRobot {
     [this] (void) -> void { Drivetrain_Stop(); },
   };
 
+
+  std::vector<std::function<void(void)>> DriveAutoTest = {
+    [this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 3.0_s ); },
+    [this] (void) -> void { DriveForDistance( -0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 3.0_s ); },
+    [this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 3.0_s ); },
+    [this] (void) -> void { Drivetrain_Stop(); },
+  };
+
   std::vector<std::function<void(void)>> DriveAuto = {
     [this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { Drivetrain_Stop(); },
   };
 
+  std::vector<std::function<void(void)>> IntakeAutoTest = {
+    [this] (void) -> void { MoveArmForPickup(); },
+    [this] (void) -> void { Wait( 1.0_s ); },
+    [this] (void) -> void { DriveForDistance( -1.0_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { MoveArmForShooting(); },
+    [this] (void) -> void { Wait( 1.0_s ); },
+    [this] (void) -> void { AimAndPrepShoot( 4.0_s ); },
+    [this] (void) -> void { Shoot( 1.0_s ); },
+    [this] (void) -> void { Drivetrain_Stop(); m_Shooter.changeShooterState( false ); },
+  };
+
+
+
 
   std::vector<std::function<void(void)>> ShootAuto = {
-    [this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
-    [this] (void) -> void { AimAndPrepShoot( 2.0_s ); },
-    [this] (void) -> void { Shoot( 2.0_s ); },
-    [this] (void) -> void { Drivetrain_Stop(); },
+    //[this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { AimAndPrepShoot( 4.0_s ); },
+    [this] (void) -> void { Shoot( 1.0_s ); },
+    [this] (void) -> void { Drivetrain_Stop(); m_Shooter.changeShooterState( false ); },
   };
 
 

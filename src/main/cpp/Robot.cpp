@@ -37,7 +37,7 @@ void Robot::RobotInit() {
   m_Climber.initClimber();
   m_Arm.initArm();
 
-  m_xDirPid.SetConstraints({100.0_mps, units::meters_per_second_squared_t{100.0}});
+  //m_xDirPid.SetConstraints({100.0_mps, units::meters_per_second_squared_t{100.0}});
   m_xDirPid.SetTolerance( kXyPosTolerance,  kXyVelTolerance );
   m_xDirPid.Reset( 0.0_m );
   m_xDirPid2.Reset();
@@ -333,6 +333,13 @@ void Robot::RobotPeriodic()
     m_autoStateDone = false; 
     m_autoState     = 0;
 
+    Drivetrain_Stop();
+    m_Arm.SetArmPosition( m_Arm.HOLD_START_POSITION );
+    m_Intake.ChangeIntakeState( m_Intake.Intake_Stopped );
+    m_Shooter.changeShooterState( false );
+    m_Climber.ChangeClimberState( m_Climber.ClimberStop );
+    
+
     TeleopInit(); 
     m_autoTimer.Stop();
     m_autoTimer.Reset();
@@ -397,9 +404,27 @@ void Robot::Drivetrain_Stop() {
 
   units::meters_per_second_t  xSpeed  { m_xDirPid.Calculate( pose.X() ) };
   units::meters_per_second_t  ySpeed  { m_yDirPid.Calculate( pose.Y() ) };
-  units::radians_per_second_t rotSpeed{ m_rotPid.Calculate( pose.Rotation().Radians() ) };
+  units::radians_per_second_t rotSpeed{ -m_rotPid.Calculate( pose.Rotation().Radians() ) };
+
+  // fmt::printf( "dbg: %1d, %5.3f, %5.3f, %5.3f, %5.3f, %5.3f, %5.3f\n", 
+  //   m_autoState, 
+  //   float{pose.X() },
+  //   float{pose.Y()},
+  //   float{pose.Rotation().Radians()},
+  //   float{xSpeed},
+  //   float{ySpeed},
+  //   float{rotSpeed}
+  // );
+
+
+  /*frc::SmartDashboard::PutNumber( "Auto_xSpeed",   xSpeed );
+  frc::SmartDashboard::PutNumber( "Auto_ySpeed",   ySpeed );
+  frc::SmartDashboard::PutNumber( "Auto_rotSpeed", rotSpeed );*/
+
 
   m_Drivetrain.SetSpeeds( xSpeed, ySpeed, rotSpeed );
+  //Drivetrain_Stop();
+
 
   if ( ( m_xDirPid.AtGoal() &&  m_yDirPid.AtGoal() &&  m_rotPid.AtGoal() ) || 
        ( m_autoTimer.Get() > maxTime ) )
@@ -432,7 +457,7 @@ void Robot::AimAndPrepShoot( units::second_t maxTime )
   m_Intake.ChangeIntakeState( m_Intake.Intake_Stopped );
   m_Shooter.changeShooterState( true );
 
-  if ( m_Arm.ArmReadyForShooting() ||
+  if ( ( m_Arm.ArmReadyForShooting() && m_Shooter.shooterReadyToShoot() ) ||
        m_autoTimer.Get() > maxTime )
   {
     m_autoStateDone = true;
@@ -446,7 +471,6 @@ void Robot::AimAndPrepShoot( units::second_t maxTime )
 #endif
 }
 
-
 void Robot::Shoot( units::second_t maxTime )
 {
   m_Intake.ChangeIntakeState( m_Intake.Intake_Outtaking );
@@ -459,6 +483,13 @@ void Robot::Shoot( units::second_t maxTime )
 }
 
 
+void Robot::Wait( units::second_t maxTime )
+{
+  if ( m_autoTimer.Get() > maxTime )
+  {
+    m_autoStateDone = true;
+  }
+}
 
 void Robot::AutonomousStateInit()
 {
@@ -469,7 +500,7 @@ void Robot::AutonomousStateInit()
   m_autoTimer.Stop();
   m_autoTimer.Reset();
   m_autoTimer.Start();
-  m_initialPose = m_Drivetrain.m_odometry.GetPose();
+  //m_initialPose = m_Drivetrain.m_odometry.GetPose();
   m_Drivetrain.m_odometry.ResetPosition(
     frc::Rotation2d{units::degree_t {m_Drivetrain.m_imu.GetYaw()}},
     {m_Drivetrain.m_frontLeft.GetPosition(), m_Drivetrain.m_frontRight.GetPosition(),
@@ -496,6 +527,7 @@ void Robot::RunAutoSequence()
     AutonomousStateInit();
   }
 
+  frc::SmartDashboard::PutNumber("Auto_Idx",  m_autoState);
   if ( m_autoState < (*autoSequence).size() )
   {
     (*autoSequence)[m_autoState]();

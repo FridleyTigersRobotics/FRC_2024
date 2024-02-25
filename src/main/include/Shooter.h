@@ -16,6 +16,7 @@ public:
     bool ReadyToShoot();
     void changeShooterState ( bool spinUpShooter );
     void UpdateSmartDashboardData();
+    bool shooterReadyToShoot();
 
 private:
     rev::CANSparkMax          m_shooterMotor   { ConstantCrap::kShooterMotorID, rev::CANSparkLowLevel::MotorType::kBrushless };

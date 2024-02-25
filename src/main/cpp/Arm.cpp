@@ -197,7 +197,7 @@ bool Arm::ArmReadyForShooting()
 {   
     double wristEncoderVal = getWristEncoderValue();
     return ( m_ArmPosition   == SPEAKER &&
-             wristEncoderVal == std::clamp( wristEncoderVal, -m_WristSpeakerValue, m_WristSpeakerValue ) );
+             wristEncoderVal == std::clamp( wristEncoderVal, -(m_WristSpeakerValue+0.05), (m_WristSpeakerValue+0.05) ) );
 }
 
 void Arm::updateArm()
