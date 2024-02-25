@@ -8,19 +8,26 @@
 
 void Drivetrain::updateDrivetrain( units::second_t period ) 
 {
-  bool fieldRelative = false;
+  frc::ChassisSpeeds FieldRelativeChassisSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(m_xSpeed, m_ySpeed, m_rot, frc::Rotation2d{units::degree_t {m_imu.GetYaw()}});
+  frc::ChassisSpeeds RobotRelativeChassisSpeeds = frc::ChassisSpeeds{m_xSpeed, m_ySpeed, m_rot};
+  frc::ChassisSpeeds ChassisSpeeds = frc::ChassisSpeeds::Discretize( RobotRelativeChassisSpeeds, period );
   UpdateOdometry();
+  auto states = m_kinematics.ToSwerveModuleStates( ChassisSpeeds );
 
-  auto states =
-      m_kinematics.ToSwerveModuleStates(frc::ChassisSpeeds::Discretize(
-          fieldRelative ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-                              m_xSpeed, m_ySpeed, m_rot, frc::Rotation2d{units::degree_t {m_imu.GetYaw()}})
-                        : frc::ChassisSpeeds{m_xSpeed, m_ySpeed, m_rot},
-          period));
-
-  m_kinematics.DesaturateWheelSpeeds(&states, kMaxSpeed);
+  m_kinematics.DesaturateWheelSpeeds( &states, kMaxSpeed );
 
   auto [fl, fr, bl, br] = states;
+
+  // Check if the wheels don't have a drive velocity to maintain the current wheel orientation.
+  bool hasVelocity = fl.speed != 0_mps || fr.speed != 0_mps || bl.speed != 0_mps || br.speed != 0_mps;
+
+  if ( !hasVelocity )
+  {
+    fl.angle = m_frontLeft.GetState().angle;
+    fr.angle = m_frontRight.GetState().angle;
+    bl.angle = m_backLeft.GetState().angle;
+    br.angle = m_backRight.GetState().angle;
+  }
 
   m_frontLeft.SetDesiredState(fl);
   m_frontRight.SetDesiredState(fr);
@@ -40,6 +47,14 @@ void Drivetrain::SetSpeeds(
   m_rot    = rot;
 }
 
+
+
+void Drivetrain::UpdateSmartDashboardData()
+{
+  frc::SmartDashboard::PutNumber( "Drive_X", double{m_odometry.GetPose().X()} );
+  frc::SmartDashboard::PutNumber( "Drive_y", double{m_odometry.GetPose().Y()} );
+  frc::SmartDashboard::PutNumber( "Drive_Rot", double{m_odometry.GetPose().Rotation().Degrees()} );
+}
 
 
 void Drivetrain::UpdateOdometry() {

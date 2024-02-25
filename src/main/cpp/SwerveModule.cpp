@@ -11,15 +11,19 @@
 #include <fmt/printf.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
-SwerveModule::SwerveModule(const int driveMotorChannel,
-                           const int turningMotorChannel,
-                           const int turningEncoderChannel,
-                           const double turningEncoderOffset)
+SwerveModule::SwerveModule(
+    const int driveMotorChannel,
+    const int turningMotorChannel,
+    const int turningEncoderChannel,
+    const double turningEncoderOffset,
+    units::meters_per_second_t maxSpeed
+)
     : m_driveMotor(driveMotorChannel,rev::CANSparkLowLevel::MotorType::kBrushless),
       m_turningMotor(turningMotorChannel,rev::CANSparkLowLevel::MotorType::kBrushless),
+      m_turningEncoder(turningEncoderChannel) 
+{
 
-      
-      m_turningEncoder(turningEncoderChannel) {
+  m_maxSpeed = maxSpeed;
   // Set the distance per pulse for the drive encoder. We can simply use the
   // distance traveled for one rotation of the wheel divided by the encoder
   // resolution.
@@ -31,8 +35,10 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
 
   m_drivechannel=driveMotorChannel;
   //m_encodername=fmt::sprintf("turnencoder %d",m_drivechannel);
-
-
+    m_driveMotor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
+    m_turningMotor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
+    m_driveMotor.EnableVoltageCompensation(12.0);
+    m_turningMotor.EnableVoltageCompensation(12.0);
   // Set the distance (in this case, angle) per pulse for the turning encoder.
   // This is the the angle through an entire rotation (2 * std::numbers::pi)
   // divided by the encoder resolution.
@@ -58,39 +64,27 @@ frc::SwerveModulePosition SwerveModule::GetPosition() const {
 
 
 void SwerveModule::SetDesiredState(
-    const frc::SwerveModuleState& referenceState) {
+    const frc::SwerveModuleState& referenceState
+) 
+{
 
   frc::Rotation2d encoderRotation{
       units::radian_t{m_turningEncoder.GetDistance()}};
 
   // Optimize the reference state to avoid spinning further than 90 degrees
-  auto state =
-      frc::SwerveModuleState::Optimize(referenceState, encoderRotation);
+  auto state = frc::SwerveModuleState::Optimize(referenceState, encoderRotation);
 
   // Scale speed by cosine of angle error. This scales down movement
   // perpendicular to the desired direction of travel that can occur when
   // modules change directions. This results in smoother driving.
-  state.speed *= (state.angle - encoderRotation).Cos();
-
-  // Calculate the drive output from the drive PID controller.
-
-  const auto posConvFact = m_PositionConversionFactor; //m_driveEncoder.GetPositionConversionFactor();
-
-  const auto stateSpeedVal = state.speed.value();
-
-  const auto driveOutput = m_drivePIDController.Calculate(
-      posConvFact, stateSpeedVal);
-
-  const auto driveFeedforward = m_driveFeedforward.Calculate(state.speed);
+  //state.speed *= (state.angle - encoderRotation).Cos();
 
   // Calculate the turning motor output from the turning PID controller.
   const auto turnOutput = m_turningPIDController.Calculate(
       units::radian_t{m_turningEncoder.GetDistance()}, state.angle.Radians());
 
-  const auto turnFeedforward = m_turnFeedforward.Calculate(
-      m_turningPIDController.GetSetpoint().velocity);
+   // Set the motor outputs.
+   m_driveMotor.Set( state.speed.value() / double{m_maxSpeed} );
+   m_turningMotor.Set( turnOutput );
 
-  // Set the motor outputs.
-  m_driveMotor.SetVoltage(units::volt_t{driveOutput} + driveFeedforward);
-  m_turningMotor.SetVoltage(units::volt_t{turnOutput} + turnFeedforward);
 }

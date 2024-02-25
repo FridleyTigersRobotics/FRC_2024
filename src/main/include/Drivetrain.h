@@ -38,8 +38,12 @@ class Drivetrain {
 
   void UpdateOdometry();
 
+  void UpdateSmartDashboardData();
+
   static constexpr units::meters_per_second_t kMaxSpeed =
       1.0_mps;  // 3 meters per second
+
+
   static constexpr units::radians_per_second_t kMaxAngularSpeed{
       1.0 * std::numbers::pi};  // 1/2 rotation per second
 
@@ -76,16 +80,22 @@ class Drivetrain {
 //4.980153 Drive motor #16
 
 
-  SwerveModule m_backRight { kBackRightDriveID,  kBackRightSpinID,  kDriveEncoderBackRight,  1.230863 / (2*std::numbers::pi)};
-  SwerveModule m_frontRight{ kFrontRightDriveID, kFrontRightSpinID, kDriveEncoderFrontRight, 0.5 + 0.909437 / (2*std::numbers::pi)};
-  SwerveModule m_backLeft  { kBackLeftDriveID,   kBackLeftSpinID,   kDriveEncoderBackLeft,   0.255626 / (2*std::numbers::pi)};
-  SwerveModule m_frontLeft { kFrontLeftDriveID,  kFrontLeftSpinID,  kDriveEncoderFrontLeft,  4.980153 / (2*std::numbers::pi)};
+  SwerveModule m_backRight { kBackRightDriveID,  kBackRightSpinID,  kDriveEncoderBackRight,  1.230863 / (2*std::numbers::pi),       kMaxSpeed };
+  SwerveModule m_frontRight{ kFrontRightDriveID, kFrontRightSpinID, kDriveEncoderFrontRight, 0.5 + 0.909437 / (2*std::numbers::pi), kMaxSpeed };
+  SwerveModule m_backLeft  { kBackLeftDriveID,   kBackLeftSpinID,   kDriveEncoderBackLeft,   0.255626 / (2*std::numbers::pi),       kMaxSpeed };
+  SwerveModule m_frontLeft { kFrontLeftDriveID,  kFrontLeftSpinID,  kDriveEncoderFrontLeft,  4.980153 / (2*std::numbers::pi),       kMaxSpeed };
 
   AHRS m_imu { frc::SPI::Port::kMXP };
 
   frc::SwerveDriveKinematics<4> m_kinematics{
       m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation,
       m_backRightLocation};
+
+
+
+    // X Postive = Backwards
+    // Y Positive = Right
+    // Rot Positive = Clockwise
 
   frc::SwerveDriveOdometry<4> m_odometry{
       m_kinematics,
