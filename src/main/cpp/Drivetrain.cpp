@@ -48,6 +48,17 @@ void Drivetrain::SetSpeeds(
 }
 
 
+void Drivetrain::AddToSpeeds(
+  units::meters_per_second_t  xSpeed,
+  units::meters_per_second_t  ySpeed, 
+  units::radians_per_second_t rot
+)
+{
+  m_xSpeed += xSpeed;
+  m_ySpeed += ySpeed;
+  m_rot    += rot;
+}
+
 
 void Drivetrain::UpdateSmartDashboardData()
 {

@@ -114,6 +114,13 @@ class Robot : public frc::TimedRobot {
     units::radian_t             kRotPosTolerance{ 0.05_rad };
     units::radians_per_second_t kRotVelTolerance{ 0.5_rad_per_s };
 
+    units::meter_t m_startXArmPosition{ 0.0 };
+
+    frc::PIDController m_xDirPid2{
+      1.0,
+      0.0,
+      0.0
+    };
 
     frc::ProfiledPIDController<units::meter> m_xDirPid{
       m_xyDirP,

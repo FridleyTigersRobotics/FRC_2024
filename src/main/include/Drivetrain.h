@@ -36,6 +36,12 @@ class Drivetrain {
     units::radians_per_second_t rot
     );
 
+  void AddToSpeeds(
+    units::meters_per_second_t  xSpeed,
+    units::meters_per_second_t  ySpeed, 
+    units::radians_per_second_t rot
+    );
+
   void UpdateOdometry();
 
   void UpdateSmartDashboardData();

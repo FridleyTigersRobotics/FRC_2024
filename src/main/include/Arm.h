@@ -48,8 +48,12 @@ public:
     void UpdateSmartDashboardData();
     bool ArmReadyForGroundIntake();
     bool ArmReadyForShooting();
+    bool ArmReadyForMoveForwardPreClimb();
     void armManualControl( double speed );
     void wristManualControl( double speed );
+
+    units::meter_t ArmEndPosition();
+
 private:
     double getWristEncoderValue();
 
@@ -88,7 +92,7 @@ private:
     double m_ArmSourceValue     = 0.32;          
     double m_ArmSpeakerValue    = 0.51;           
     double m_ArmAmpValue        = 0.25;       
-    double m_ArmTrapValue       = 0.3;
+    double m_ArmTrapValue       = 0.15;
     double m_ArmMaxOutputValue  = 0.8;             
     double m_ArmP               = 0.2;
     double m_ArmMaxVel          = 1.8;     
@@ -103,7 +107,8 @@ private:
     double kMaxVel = m_ArmMaxVel, kMinVel = 0, kMaxAcc = m_ArmMaxAccel, kAllErr = 0;
 
 
-
+    static constexpr units::meter_t  kArmLength      = 0.559_m;
+    static constexpr units::radian_t kArmGroundAngle = -0.68977_rad;
 
 #if WRIST_USE_MOTOR_ENCODER
     // default PID coefficients

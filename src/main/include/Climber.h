@@ -58,7 +58,7 @@ class Climber
     double kAngleToEncoderCounts = 0.0;
 
     double m_ClimberLMaxOutputValue = 1.000;               
-    double m_ClimberLP              = 0.0001;  
+    double m_ClimberLP              = 0.00015;  
 
     frc::PIDController m_ClimberLeftPidController{
       m_ClimberLP,
@@ -66,7 +66,7 @@ class Climber
       0.0};
 
     double m_ClimberRMaxOutputValue = 1.000;               
-    double m_ClimberRP              = 0.0001;  
+    double m_ClimberRP              = 0.00015;  
 
     frc::PIDController m_ClimberRightPidController{
       m_ClimberRP,

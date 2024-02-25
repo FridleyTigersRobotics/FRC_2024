@@ -19,26 +19,39 @@
 
 
 void Robot::RobotInit() {
+        frc::SmartDashboard::PutNumber( "Move_x",                  double{0} );
+        frc::SmartDashboard::PutNumber( "Move_ArmEndPosition",     double{0} );
+        frc::SmartDashboard::PutNumber( "Move_m_startXArmPosition",double{0} );
+        frc::SmartDashboard::PutNumber( "Move_Goal",               double{0} );
+        frc::SmartDashboard::PutNumber( "Move_Out",                double{0} );
+        frc::SmartDashboard::PutNumber( "Move_Angle",              double{0} );
+
 }
 
  void Robot::TestInit() {
+  m_Arm.disableArm();
+
  }
 
  void Robot::TeleopInit() {
   m_Climber.initClimber();
   m_Arm.initArm();
 
+  m_xDirPid.SetConstraints({100.0_mps, units::meters_per_second_squared_t{100.0}});
+  m_xDirPid.SetTolerance( kXyPosTolerance,  kXyVelTolerance );
+  m_xDirPid.Reset( 0.0_m );
+  m_xDirPid2.Reset();
  }
 
 
 
- void Robot::TestPeriodic() {
-
+void Robot::TestPeriodic() {
+  m_Drivetrain.SetSpeeds( 0.0_mps, 0.0_mps, 0.0_rad_per_s );
 }
 
 void Robot::DisabledInit()
 {
-  m_Arm.disableArm();
+
 }
 
 
@@ -69,15 +82,15 @@ void Robot::RobotPeriodic()
       m_driveController.GetRightX()
     ); 
 
-    if ( m_driveController.GetAButtonPressed() )
-    {
-      m_Drivetrain.m_odometry.ResetPosition(
-        frc::Rotation2d{units::degree_t {m_Drivetrain.m_imu.GetYaw()}},
-        {m_Drivetrain.m_frontLeft.GetPosition(), m_Drivetrain.m_frontRight.GetPosition(),
-        m_Drivetrain.m_backLeft.GetPosition(),  m_Drivetrain.m_backRight.GetPosition()},
-        frc::Pose2d{}
-      );
-    }
+    // if ( m_driveController.GetAButtonPressed() )
+    // {
+    //   m_Drivetrain.m_odometry.ResetPosition(
+    //     frc::Rotation2d{units::degree_t {m_Drivetrain.m_imu.GetYaw()}},
+    //     {m_Drivetrain.m_frontLeft.GetPosition(), m_Drivetrain.m_frontRight.GetPosition(),
+    //     m_Drivetrain.m_backLeft.GetPosition(),  m_Drivetrain.m_backRight.GetPosition()},
+    //     frc::Pose2d{}
+    //   );
+    // }
     
 
 
@@ -89,18 +102,45 @@ void Robot::RobotPeriodic()
 
     if ( m_controlModeEndGame )
     {
-      m_Arm.SetArmPosition( m_Arm.SPEAKER );
-      
+      if( m_coController.GetAButtonPressed() )
+      {
+        m_Drivetrain.m_odometry.ResetPosition(
+          frc::Rotation2d{units::degree_t {m_Drivetrain.m_imu.GetYaw()}},
+          {m_Drivetrain.m_frontLeft.GetPosition(), m_Drivetrain.m_frontRight.GetPosition(),
+          m_Drivetrain.m_backLeft.GetPosition(),  m_Drivetrain.m_backRight.GetPosition()},
+          frc::Pose2d{}
+        );
+        m_xDirPid.Reset( 0.0_m );
+        m_xDirPid2.Reset();
+        m_startXArmPosition = m_Arm.ArmEndPosition();
+      }
+
       if( m_coController.GetAButton() )
       {
+        frc::Pose2d pose = m_Drivetrain.m_odometry.GetPose();
+        m_Arm.SetArmPosition( m_Arm.TRAP );
+        double setpoint =  double{m_startXArmPosition - m_Arm.ArmEndPosition()};
+        m_xDirPid2.SetSetpoint( setpoint );
 
+        double  xSpeed{ m_xDirPid2.Calculate( double{pose.X()} ) };
+
+        frc::SmartDashboard::PutNumber( "Move_x",                  double{pose.X()} );
+        frc::SmartDashboard::PutNumber( "Move_ArmEndPosition",     double{m_Arm.ArmEndPosition()} );
+        frc::SmartDashboard::PutNumber( "Move_m_startXArmPosition",double{m_startXArmPosition} );
+        frc::SmartDashboard::PutNumber( "Move_Goal",               double{setpoint} );
+        frc::SmartDashboard::PutNumber( "Move_Out",                double{xSpeed} );
+
+        m_Drivetrain.AddToSpeeds( units::meters_per_second_t{xSpeed}, 0.0_mps, 0.0_rad_per_s );
+
+        // if ( m_Arm.ArmReadyForMoveForwardPreClimb() )
+        // {
+        //   m_Drivetrain.AddToSpeeds( -0.1_mps, 0.0_mps, 0.0_rad_per_s );
+        // }
       }
       else
       {
-        //m_Arm.SetArmPosition( m_Arm.SPEAKER );
+        m_Arm.SetArmPosition( m_Arm.HOLD_START_POSITION );
       }
-
-
 
       // Climber
       if( m_coController.GetRightBumper() )

@@ -154,9 +154,9 @@ double Arm::getWristEncoderValue()
 void Arm::disableArm()
 {
     // Nice to be able to move the arm/wrist, but will slam down when disabled....
-    // m_ArmMotorRight.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
-    // m_ArmMotorLeft.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
-    // m_WristMotor.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
+    m_ArmMotorRight.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
+    m_ArmMotorLeft.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
+    m_WristMotor.SetIdleMode(rev::CANSparkBase::IdleMode::kCoast);
 }
 
 void Arm::SetArmPosition (arm_position_t DesiredPosition)
@@ -173,6 +173,24 @@ bool Arm::ArmReadyForGroundIntake()
 {
     return ( m_ArmPosition == GROUND_PICKUP &&
             getWristEncoderValue() > 0.9 );
+}
+
+bool Arm::ArmReadyForMoveForwardPreClimb()
+{
+    return ( m_ArmPosition == TRAP &&
+            m_ArmEncoder.GetAbsolutePosition() < 0.2 );
+}
+
+
+units::meter_t Arm::ArmEndPosition()
+{
+    double armAngleFromStartingConfig = 2.0 * std::numbers::pi * ( m_ArmGroundValue - m_ArmEncoder.GetAbsolutePosition() );
+    double armAngleFromLevel = double{kArmGroundAngle} + armAngleFromStartingConfig;
+    double armEndPosition = cos( double{kArmGroundAngle} ) - cos( double{armAngleFromLevel} );
+
+    frc::SmartDashboard::PutNumber( "Move_Angle",                double{180.0*armAngleFromLevel/std::numbers::pi} );
+
+    return ( armEndPosition * kArmLength );
 }
 
 bool Arm::ArmReadyForShooting()
