@@ -54,7 +54,7 @@ class Climber
     double m_ClimberPosition = 0.0;
 
     // Number of encoder counts to change climber position each update.
-    double kCLimberSpeed = 2000.0;
+    double kCLimberSpeed = 1000.0;
     double kAngleToEncoderCounts = 0.0;
 
     double m_ClimberLMaxOutputValue = 1.000;               
