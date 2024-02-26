@@ -62,9 +62,11 @@ void Drivetrain::AddToSpeeds(
 
 void Drivetrain::UpdateSmartDashboardData()
 {
+  #if 0
   frc::SmartDashboard::PutNumber( "Drive_X", double{m_odometry.GetPose().X()} );
   frc::SmartDashboard::PutNumber( "Drive_y", double{m_odometry.GetPose().Y()} );
   frc::SmartDashboard::PutNumber( "Drive_Rot", double{m_odometry.GetPose().Rotation().Degrees()} );
+  #endif
 }
 
 

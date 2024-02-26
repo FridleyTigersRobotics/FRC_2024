@@ -126,10 +126,12 @@ void Shooter::updateShooter( )
 
 void Shooter::UpdateSmartDashboardData()
 {
+    #if 0
     frc::SmartDashboard::PutNumber( "Shooter_Speed",        m_shooterEncoder.GetVelocity() );
     frc::SmartDashboard::PutNumber( "Shooter_Output",       m_shooterMotor.GetAppliedOutput() );
     frc::SmartDashboard::PutNumber( "Shooter_Current",      m_shooterMotor.GetOutputCurrent() );
     frc::SmartDashboard::PutNumber( "Shooter_ReadyToShoot", ReadyToShoot() );
+    #endif
 }
 
 

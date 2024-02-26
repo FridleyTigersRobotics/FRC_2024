@@ -19,12 +19,24 @@
 
 
 void Robot::RobotInit() {
+
+    // Autonomous Chooser
+    m_autoChooser.SetDefaultOption( kAutoNameDefault,  kAutoNameDefault );
+    m_autoChooser.AddOption       ( kAutoDrive,        kAutoDrive );
+    m_autoChooser.AddOption       ( kAutoShoot,        kAutoShoot );
+
+    frc::SmartDashboard::PutData("Auto Modes", &m_autoChooser);
+
+
+
+  #if 0
         frc::SmartDashboard::PutNumber( "Move_x",                  double{0} );
         frc::SmartDashboard::PutNumber( "Move_ArmEndPosition",     double{0} );
         frc::SmartDashboard::PutNumber( "Move_m_startXArmPosition",double{0} );
         frc::SmartDashboard::PutNumber( "Move_Goal",               double{0} );
         frc::SmartDashboard::PutNumber( "Move_Out",                double{0} );
         frc::SmartDashboard::PutNumber( "Move_Angle",              double{0} );
+  #endif
 
 }
 
@@ -124,11 +136,13 @@ void Robot::RobotPeriodic()
 
         double  xSpeed{ m_xDirPid2.Calculate( double{pose.X()} ) };
 
+      #if 0
         frc::SmartDashboard::PutNumber( "Move_x",                  double{pose.X()} );
         frc::SmartDashboard::PutNumber( "Move_ArmEndPosition",     double{m_Arm.ArmEndPosition()} );
         frc::SmartDashboard::PutNumber( "Move_m_startXArmPosition",double{m_startXArmPosition} );
         frc::SmartDashboard::PutNumber( "Move_Goal",               double{setpoint} );
         frc::SmartDashboard::PutNumber( "Move_Out",                double{xSpeed} );
+      #endif
 
         m_Drivetrain.AddToSpeeds( units::meters_per_second_t{xSpeed}, 0.0_mps, 0.0_rad_per_s );
 
@@ -282,6 +296,7 @@ void Robot::RobotPeriodic()
                          frc::ApplyDeadband(rotInput, 0.25)) *
                      Drivetrain::kMaxAngularSpeed;
 
+  #if 0
     frc::SmartDashboard::PutNumber("m_driveController.GetLeftY",double{m_driveController.GetLeftY()});
     frc::SmartDashboard::PutNumber("m_driveController.GetLeftX()",double{m_driveController.GetLeftX()});
     frc::SmartDashboard::PutNumber("m_driveController.GetRightX()",double{m_driveController.GetRightX()});
@@ -290,7 +305,7 @@ void Robot::RobotPeriodic()
     frc::SmartDashboard::PutNumber("Xspeed",double{xSpeed});
     frc::SmartDashboard::PutNumber("Yspeed",double{ySpeed});
     frc::SmartDashboard::PutNumber("Rot",double{rot});
-
+  #endif
     m_Drivetrain.SetSpeeds( xSpeed, ySpeed, rot );
 
   }
@@ -329,6 +344,20 @@ void Robot::RobotPeriodic()
 
 
  void Robot::AutonomousInit() {
+    m_autoSelected = m_autoChooser.GetSelected();
+    fmt::print("Auto selected: {}\n", m_autoSelected);
+
+
+    if (m_autoSelected == kAutoDrive) 
+    {
+      autoSequence = &DriveAuto;
+    }
+    else if (m_autoSelected == kAutoShoot) 
+    {
+      autoSequence = &ShootAuto;
+    }
+
+
     AutonomousStateInit();
     m_autoStateDone = false; 
     m_autoState     = 0;
@@ -527,7 +556,7 @@ void Robot::RunAutoSequence()
     AutonomousStateInit();
   }
 
-  frc::SmartDashboard::PutNumber("Auto_Idx",  m_autoState);
+  // frc::SmartDashboard::PutNumber("Auto_Idx",  m_autoState);
   if ( m_autoState < (*autoSequence).size() )
   {
     (*autoSequence)[m_autoState]();

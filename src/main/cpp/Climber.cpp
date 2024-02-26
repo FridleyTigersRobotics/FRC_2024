@@ -143,6 +143,7 @@ void Climber::ChangeClimberState( ClimberState_t ClimberState )
 
 void Climber::UpdateSmartDashboardData( )
 {
+#if 0
     frc::SmartDashboard::PutNumber( "Climber_State", m_ClimberState );
     frc::SmartDashboard::PutNumber( "Climber_OutputL", m_leftClimberMotor.Get() );
     frc::SmartDashboard::PutNumber( "Climber_OutputR", m_rightClimberMotor.Get() );
@@ -153,12 +154,12 @@ void Climber::UpdateSmartDashboardData( )
     frc::SmartDashboard::PutNumber( "Climber_EncoderR", m_motorEncoderR.Get() );
     frc::SmartDashboard::PutNumber( "Climber_prevRoll", m_prevRoll );
     frc::SmartDashboard::PutNumber( "Climber_roll",     m_roll );
+#endif
 
 
 
 
-
-   #if CLIMBER_ENCODER_SYNC_ENABLED
+   #if 0 && CLIMBER_ENCODER_SYNC_ENABLED
    frc::SmartDashboard::PutNumber( "Climber_LeftError", m_ClimberLeftPidController.GetPositionError() );
    frc::SmartDashboard::PutNumber( "Climber_RightError", m_ClimberRightPidController.GetPositionError() );
     frc::SmartDashboard::PutNumber( "Climber_ClimberPosition", m_ClimberPosition );

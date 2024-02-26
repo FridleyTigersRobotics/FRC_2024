@@ -6,6 +6,7 @@
 #include <frc/XboxController.h>
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/smartdashboard/SendableChooser.h>
 #include <Phoenix5.h>
 #include <Drivetrain.h>
 #include <Shooter.h>
@@ -86,6 +87,9 @@ class Robot : public frc::TimedRobot {
     Shooter    m_Shooter;
 
 
+
+
+
     //int m_Count=0;
     // std::string m_smart="idk";
     // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0
@@ -93,8 +97,16 @@ class Robot : public frc::TimedRobot {
     frc::SlewRateLimiter<units::scalar> m_xspeedLimiter{2 / 1_s};
     frc::SlewRateLimiter<units::scalar> m_yspeedLimiter{2 / 1_s};
     frc::SlewRateLimiter<units::scalar> m_rotLimiter{2 / 1_s};
+
+
+    // Auto
+    const std::string kAutoNameDefault  { "DO NOTHING" };
+    const std::string kAutoDrive        { "Drive" };
+    const std::string kAutoShoot        { "Shoot" };
+
+    frc::SendableChooser<std::string> m_autoChooser;
+    std::string  m_autoSelected { kAutoNameDefault };
     frc::Timer   m_autoTimer;
-    //std::string  m_autoSelected { kAutoNameDefault };
     int          m_autoSequence { 0 };
     bool         m_initState    { true };
     //frc::Pose2d  m_initialPose;
@@ -161,14 +173,6 @@ class Robot : public frc::TimedRobot {
 
 
   std::vector<std::function<void(void)>> defaultAutoSequence = {
-    [this] (void) -> void { Drivetrain_Stop(); },
-  };
-
-
-  std::vector<std::function<void(void)>> DriveAutoTest = {
-    [this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 3.0_s ); },
-    [this] (void) -> void { DriveForDistance( -0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 3.0_s ); },
-    [this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 3.0_s ); },
     [this] (void) -> void { Drivetrain_Stop(); },
   };
 
