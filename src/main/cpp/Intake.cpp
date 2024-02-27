@@ -60,6 +60,7 @@ void Intake::updateIntake()
 
 void Intake::UpdateSmartDashboardData()
 {
+    frc::SmartDashboard::PutNumber( "Intake_Detc", m_RingDetector.GetValue() );
     #if 0
     frc::SmartDashboard::PutNumber( "Intake_State", m_intake_movement );
     frc::SmartDashboard::PutNumber( "Intake_Detc", m_RingDetector.GetValue() );

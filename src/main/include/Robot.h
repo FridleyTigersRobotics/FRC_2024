@@ -100,9 +100,7 @@ class Robot : public frc::TimedRobot {
 
 
     // Auto
-    const std::string kAutoNameDefault  { "DO NOTHING" };
-    const std::string kAutoDrive        { "Drive" };
-    const std::string kAutoShoot        { "Shoot" };
+
 
     frc::SendableChooser<std::string> m_autoChooser;
     std::string  m_autoSelected { kAutoNameDefault };
@@ -156,31 +154,6 @@ class Robot : public frc::TimedRobot {
     };
 
 
-
-
-    unsigned int m_autoState    { 0 }; 
-    bool m_autoStateDone    { false }; 
-
-    double m_prevAngle             { 0 };
-    double m_currentAngle          { 0 };
-    double m_angleDelta            { 0 };
-    double m_currentAvgAngle       { 0 };
-    double m_avgAngleDelta         { 0 };
-    double m_prevAvgAngle          { 0 };
-    int m_atRotateSetpointCount    { 0 };
-
-
-
-
-  std::vector<std::function<void(void)>> defaultAutoSequence = {
-    [this] (void) -> void { Drivetrain_Stop(); },
-  };
-
-  std::vector<std::function<void(void)>> DriveAuto = {
-    [this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
-    [this] (void) -> void { Drivetrain_Stop(); },
-  };
-
   std::vector<std::function<void(void)>> IntakeAutoTest = {
     [this] (void) -> void { MoveArmForPickup(); },
     [this] (void) -> void { Wait( 1.0_s ); },
@@ -195,12 +168,88 @@ class Robot : public frc::TimedRobot {
 
 
 
-  std::vector<std::function<void(void)>> ShootAuto = {
+
+
+    unsigned int m_autoState    { 0 }; 
+    bool m_autoStateDone    { false }; 
+
+    double m_prevAngle             { 0 };
+    double m_currentAngle          { 0 };
+    double m_angleDelta            { 0 };
+    double m_currentAvgAngle       { 0 };
+    double m_avgAngleDelta         { 0 };
+    double m_prevAvgAngle          { 0 };
+    int m_atRotateSetpointCount    { 0 };
+
+
+    const std::string kAutoNameDefault  { "DO NOTHING" };
+    const std::string kAutoDrive        { "Drive" };
+    const std::string kShootCenter        { "ShootCenter" };
+    const std::string kShootCenterPickupCenter { "ShootCenterPickupCenter" };
+    const std::string kShootLeftPickupLeft { "ShootLeftPickupLeft" };
+
+
+  std::vector<std::function<void(void)>> defaultAutoSequence = {
+    [this] (void) -> void { Drivetrain_Stop(); },
+  };
+
+  // TESTED
+  std::vector<std::function<void(void)>> Auto_Drive = {
+    [this] (void) -> void { DriveForDistance( -2.0_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { Drivetrain_Stop(); },
+  };
+
+  // TESTED
+  std::vector<std::function<void(void)>> Auto_ShootCenter = {
     //[this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { AimAndPrepShoot( 4.0_s ); },
     [this] (void) -> void { Shoot( 1.0_s ); },
     [this] (void) -> void { Drivetrain_Stop(); m_Shooter.changeShooterState( false ); },
   };
+
+//TESTED :D :D :D
+  std::vector<std::function<void(void)>> Auto_ShootCenterPickupCenter = {
+    //[this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { AimAndPrepShoot( 4.0_s ); },
+    [this] (void) -> void { Shoot( 1.0_s ); },
+    [this] (void) -> void { m_Shooter.changeShooterState( false ); m_autoStateDone = true; },
+    [this] (void) -> void { MoveArmForPickup(); },
+    [this] (void) -> void { Wait( 1.0_s ); },
+    [this] (void) -> void { DriveForDistance( -1.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { MoveArmForShooting(); },
+    [this] (void) -> void { DriveForDistance( 1.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s); },
+    [this] (void) -> void { AimAndPrepShoot( 4.0_s ); },
+    [this] (void) -> void { Shoot( 1.0_s ); },
+    [this] (void) -> void { Drivetrain_Stop(); m_Shooter.changeShooterState( false ); },
+  };
+
+
+  std::vector<std::function<void(void)>> ShootLeftPickupLeft = {
+    //[this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { AimAndPrepShoot( 4.0_s ); },
+    [this] (void) -> void { Shoot( 1.0_s ); },
+    [this] (void) -> void { m_Shooter.changeShooterState( false ); m_autoStateDone = true; },
+    //[this] (void) -> void { Wait( 1.0_s ); },
+    [this] (void) -> void { DriveForDistance( -0.7_m, 0.0_m, 0.0_rad, 0.85_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { DriveForDistance( 0.0_m, 0.0_m, 1.15_rad, 0.0_mps, 0.0_mps, 1.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { MoveArmForPickup(); },
+    [this] (void) -> void { DriveForDistance( -0.2_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { DriveForDistance( -1.33_m, 0.0_m, 0.0_rad, 1.0_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { DriveForDistance( 0.0_m, -0.1_m, 0.0_rad, 0.0_mps, 0.8_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { DriveForDistance( 0.0_m,   0.1_m, 0.0_rad, 0.0_mps, 0.8_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { MoveArmForShooting(); },
+    [this] (void) -> void { DriveForDistance( 1.53_m, 0.0_m, 0.0_rad, 1.0_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { DriveForDistance( 0.0_m, 0.0_m, -1.15_rad, 0.0_mps, 0.0_mps, 1.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { DriveForDistance( 0.61_m, 0.0_m, 0.0_rad, 0.85_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { DriveForDistance( 0.0_m, -0.1_m, 0.0_rad, 0.0_mps, 0.5_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { AimAndPrepShoot( 2.0_s ); },
+    [this] (void) -> void { Shoot( 1.0_s ); },
+    [this] (void) -> void { Drivetrain_Stop(); m_Shooter.changeShooterState( false ); },
+
+  };
+
+
+
 
 
   std::vector<std::function<void(void)>> *autoSequence{ &defaultAutoSequence };

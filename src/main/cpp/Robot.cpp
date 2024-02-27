@@ -23,7 +23,9 @@ void Robot::RobotInit() {
     // Autonomous Chooser
     m_autoChooser.SetDefaultOption( kAutoNameDefault,  kAutoNameDefault );
     m_autoChooser.AddOption       ( kAutoDrive,        kAutoDrive );
-    m_autoChooser.AddOption       ( kAutoShoot,        kAutoShoot );
+    m_autoChooser.AddOption       ( kShootCenter,        kShootCenter );
+    m_autoChooser.AddOption       ( kShootCenterPickupCenter,   kShootCenterPickupCenter );
+    m_autoChooser.AddOption       ( kShootLeftPickupLeft,  kShootLeftPickupLeft );
 
     frc::SmartDashboard::PutData("Auto Modes", &m_autoChooser);
 
@@ -350,12 +352,21 @@ void Robot::RobotPeriodic()
 
     if (m_autoSelected == kAutoDrive) 
     {
-      autoSequence = &DriveAuto;
+      autoSequence = &Auto_Drive;
     }
-    else if (m_autoSelected == kAutoShoot) 
+    else if (m_autoSelected == kShootCenter) 
     {
-      autoSequence = &ShootAuto;
+      autoSequence = &Auto_ShootCenter;
     }
+    else if (m_autoSelected == kShootCenterPickupCenter) 
+    {
+      autoSequence = &Auto_ShootCenterPickupCenter;
+    }
+     else if (m_autoSelected == kShootLeftPickupLeft) 
+    {
+      autoSequence = &ShootLeftPickupLeft;
+    }
+
 
 
     AutonomousStateInit();
@@ -386,12 +397,13 @@ void Robot::RobotPeriodic()
   void Robot::AutonomousPeriodic() {
     AutonomousStateUpdate();
     RunAutoSequence();
-
+    
     m_Drivetrain.updateDrivetrain( GetPeriod() );
     m_Arm.updateArm();
     m_Climber.updateClimber();
     m_Shooter.updateShooter();
     m_Intake.updateIntake();
+    
   }
 
 
@@ -404,7 +416,6 @@ void Robot::RobotPeriodic()
 void Robot::Drivetrain_Stop() {
    m_Drivetrain.SetSpeeds( 0.0_mps, 0.0_mps, 0.0_rad_per_s );
 }
-
 
 
 
@@ -434,7 +445,7 @@ void Robot::Drivetrain_Stop() {
   units::meters_per_second_t  xSpeed  { m_xDirPid.Calculate( pose.X() ) };
   units::meters_per_second_t  ySpeed  { m_yDirPid.Calculate( pose.Y() ) };
   units::radians_per_second_t rotSpeed{ -m_rotPid.Calculate( pose.Rotation().Radians() ) };
-
+  frc::SmartDashboard::PutNumber("Auto_angle", double{pose.Rotation().Radians()});
   // fmt::printf( "dbg: %1d, %5.3f, %5.3f, %5.3f, %5.3f, %5.3f, %5.3f\n", 
   //   m_autoState, 
   //   float{pose.X() },
