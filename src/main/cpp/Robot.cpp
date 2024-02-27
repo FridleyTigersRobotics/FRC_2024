@@ -26,6 +26,7 @@ void Robot::RobotInit() {
     m_autoChooser.AddOption       ( kShootCenter,        kShootCenter );
     m_autoChooser.AddOption       ( kShootCenterPickupCenter,   kShootCenterPickupCenter );
     m_autoChooser.AddOption       ( kShootLeftPickupLeft,  kShootLeftPickupLeft );
+    m_autoChooser.AddOption       ( kShootRightPickupRight,   kShootRightPickupRight );
 
     frc::SmartDashboard::PutData("Auto Modes", &m_autoChooser);
 
@@ -366,6 +367,10 @@ void Robot::RobotPeriodic()
     {
       autoSequence = &ShootLeftPickupLeft;
     }
+    else if (m_autoSelected == kShootRightPickupRight) 
+    {
+      autoSequence = &ShootRightPickupRight;
+    }
 
 
 
@@ -485,8 +490,12 @@ void Robot::MoveArmForPickup()
 void Robot::MoveArmForShooting()
 {
   m_Arm.SetArmPosition( m_Arm.SPEAKER );
-  m_Intake.ChangeIntakeState( m_Intake.Intake_Stopped );
-  m_autoStateDone = true;
+
+  if ( m_autoTimer.Get() > 0.5_s )
+  {
+    m_Intake.ChangeIntakeState( m_Intake.Intake_Stopped );
+    m_autoStateDone = true;
+  }
 }
 
 
