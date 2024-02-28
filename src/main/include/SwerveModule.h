@@ -57,7 +57,7 @@ class SwerveModule {
   frc::AnalogEncoder m_turningEncoder;
 //Line fourty-nine??? That's CRAZY
   frc::ProfiledPIDController<units::radians> m_turningPIDController{
-      0.1,
+      0.2,
       0.0,
       0.0,
       {kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration}};

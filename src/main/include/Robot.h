@@ -96,7 +96,7 @@ class Robot : public frc::TimedRobot {
     // to 1.
     frc::SlewRateLimiter<units::scalar> m_xspeedLimiter{2 / 1_s};
     frc::SlewRateLimiter<units::scalar> m_yspeedLimiter{2 / 1_s};
-    frc::SlewRateLimiter<units::scalar> m_rotLimiter{2 / 1_s};
+    frc::SlewRateLimiter<units::scalar> m_rotLimiter{5 / 1_s};
 
 
     // Auto

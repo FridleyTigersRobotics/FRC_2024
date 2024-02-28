@@ -72,5 +72,5 @@ void Intake::UpdateSmartDashboardData()
 bool Intake::IsRingDetected() 
 {   
     // TODO : determine the correct value to detect note
-    return (m_RingDetector.GetValue() > 1000);
+    return (m_RingDetector.GetValue() > 1200);
 }
