@@ -32,6 +32,18 @@ void Climber::initClimber()
 
 void Climber::manualControl( double speedL, double speedR )
 {
+
+    if ( speedL > 0.0 && m_leftLimitSwitch.Get() )
+    {
+        speedL = 0;
+    }
+
+    if ( speedR > 0.0 && m_rightLimitSwitch.Get() )
+    {
+        speedR = 0;
+    }
+
+
     m_leftClimberMotor.Set(  0.4 * speedL );
     m_rightClimberMotor.Set( 0.4 * speedR );  
 }

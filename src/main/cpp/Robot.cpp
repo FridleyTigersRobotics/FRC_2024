@@ -61,7 +61,33 @@ void Robot::RobotInit() {
 
 
 void Robot::TestPeriodic() {
+  
+  m_Arm.SetArmPosition( m_Arm.HOLD_START_POSITION );
+  m_Intake.ChangeIntakeState( m_Intake.Intake_Stopped );
   m_Drivetrain.SetSpeeds( 0.0_mps, 0.0_mps, 0.0_rad_per_s );
+
+  double speedL = 0;
+  double speedR = 0;
+
+  if ( m_coController.GetLeftBumper() )
+  {
+    speedL = 1.0;
+  }
+  if ( m_coController.GetRightBumper() )
+  {
+    speedR = 1.0;
+  }
+
+  if ( m_coController.GetLeftTriggerAxis() > 0.2 )
+  {
+    speedL = -1.0;
+  }
+  if ( m_coController.GetRightTriggerAxis() > 0.2 )
+  {
+    speedR = -1.0;
+  }
+
+  m_Climber.manualControl( speedL, speedR );
 }
 
 void Robot::DisabledInit()
