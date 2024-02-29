@@ -114,15 +114,15 @@ class Robot : public frc::TimedRobot {
     double m_xyDirP      = 1.000;  
     double m_rotP        = 1.000;  
     units::meters_per_second_t          m_xyMaxVel    { std::numbers::pi * 1_mps };
-    units::meters_per_second_squared_t  m_xyMaxAccel  { std::numbers::pi * 2_mps / 1_s };
+    units::meters_per_second_squared_t  m_xyMaxAccel  { std::numbers::pi * 1_mps / 1_s };
     units::radians_per_second_t         m_rotMaxVel   { std::numbers::pi * 1_rad_per_s };
-    units::radians_per_second_squared_t m_rotMaxAccel { std::numbers::pi * 2_rad_per_s / 1_s };
+    units::radians_per_second_squared_t m_rotMaxAccel { std::numbers::pi * 1_rad_per_s / 1_s };
 
-    units::meter_t             kXyPosTolerance{ 0.05_m };
-    units::meters_per_second_t kXyVelTolerance{ 0.5_mps };
+    units::meter_t             kXyPosTolerance{ 0.025_m };
+    units::meters_per_second_t kXyVelTolerance{ 0.05_mps };
 
     units::radian_t             kRotPosTolerance{ 0.05_rad };
-    units::radians_per_second_t kRotVelTolerance{ 0.5_rad_per_s };
+    units::radians_per_second_t kRotVelTolerance{ 0.05_rad_per_s };
 
     units::meter_t m_startXArmPosition{ 0.0 };
 

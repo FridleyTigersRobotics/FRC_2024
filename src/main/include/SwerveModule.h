@@ -53,11 +53,11 @@ class SwerveModule {
   std::string m_encodername;
 
 
-  rev::SparkRelativeEncoder m_driveEncoder=m_driveMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor);
+  rev::SparkRelativeEncoder m_driveEncoder = m_driveMotor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor);
   frc::AnalogEncoder m_turningEncoder;
 //Line fourty-nine??? That's CRAZY
   frc::ProfiledPIDController<units::radians> m_turningPIDController{
-      0.2,
+      0.4,
       0.0,
       0.0,
       {kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration}};
