@@ -67,9 +67,9 @@ void Climber::updateClimber()
         {
            #if CLIMBER_ENCODER_SYNC_ENABLED
             m_ClimberPosition += kCLimberSpeed;
-            if ( m_ClimberPosition > 0.0 )
+            if ( m_ClimberPosition > kMaxClimberHeight )
             {
-                m_ClimberPosition = 0.0;
+                m_ClimberPosition = kMaxClimberHeight;
             }
            #else
             ClimberMotorSpeed = -1.0;

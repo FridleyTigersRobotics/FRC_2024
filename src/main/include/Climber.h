@@ -50,6 +50,9 @@ class Climber
     double m_prevRoll = 0;
     double m_roll     = 0;
 
+
+    static constexpr double kMaxClimberHeight = 2.9e5;
+
   #if CLIMBER_ENCODER_SYNC_ENABLED
     double m_ClimberPosition = 0.0;
 
