@@ -18,6 +18,20 @@
 #include <LimelightHelpers.h>
 
 
+// 02-29-24 Tasks
+// [x] Field Oriented Driving, (double check this looks good)
+// [ ] Rotate robot with driver controller triggers.
+// [ ] Teleop Mode: Climber faster (to note waste time)
+// [ ] Output boolean to smartdashboard that is true when shooter speed greater than about 95% of max (so we know when to shoot)
+// [ ] Test mode: Slow down climber. (so we can position the hooks easier)
+
+
+
+
+
+
+
+
 void Robot::RobotInit() {
 
     // Autonomous Chooser
@@ -27,6 +41,7 @@ void Robot::RobotInit() {
     m_autoChooser.AddOption       ( kShootCenterPickupCenter,   kShootCenterPickupCenter );
     m_autoChooser.AddOption       ( kShootLeftPickupLeft,  kShootLeftPickupLeft );
     m_autoChooser.AddOption       ( kShootRightPickupRight,   kShootRightPickupRight );
+    m_autoChooser.AddOption       ( kCenterShootRun,   kCenterShootRun );
 
     frc::SmartDashboard::PutData("Auto Modes", &m_autoChooser);
 
@@ -108,6 +123,7 @@ void Robot::RobotPeriodic()
   m_Drivetrain.UpdateSmartDashboardData();
 
   frc::SmartDashboard::PutBoolean( "m_controlModeEndGame", m_controlModeEndGame );
+  
 }
 
 
@@ -115,13 +131,39 @@ void Robot::RobotPeriodic()
 
   void Robot::TeleopPeriodic() 
   { 
+    double rotateSpeed = m_driveController.GetRightX();
+  //Test area just to set it up, not quite sure were to actually put it ;-;
+  frc::SmartDashboard::PutBoolean( "Field relative?", m_fieldRelative );
+
+  if (m_driveController.GetAButtonPressed())
+  {
+    if (m_fieldRelative == false)
+    {
+      m_fieldRelative=true;
+    }
+    else
+    {
+      m_fieldRelative=false;
+    }
+  }
+
+  if (m_driveController.GetYButtonPressed())
+  {
+    m_Drivetrain.m_imu.ZeroYaw();
+  }
+
+
+
     // Driver Control
     DriveWithJoystick(
       false,
       -m_driveController.GetLeftY(),
       -m_driveController.GetLeftX(),
-      m_driveController.GetRightX()
+      rotateSpeed
     ); 
+
+
+
 
     // if ( m_driveController.GetAButtonPressed() )
     // {
@@ -246,7 +288,7 @@ void Robot::RobotPeriodic()
     }
 
 
-    m_Drivetrain.updateDrivetrain( GetPeriod() );
+    m_Drivetrain.updateDrivetrain( GetPeriod(), m_fieldRelative );
     m_Arm.updateArm();
     m_Climber.updateClimber();
     m_Shooter.updateShooter();
@@ -393,9 +435,13 @@ void Robot::RobotPeriodic()
     {
       autoSequence = &ShootLeftPickupLeft;
     }
-    else if (m_autoSelected == kShootRightPickupRight) 
+     else if (m_autoSelected == kShootRightPickupRight) 
     {
       autoSequence = &ShootRightPickupRight;
+    }
+     else if (m_autoSelected == kCenterShootRun) 
+    {
+      autoSequence = &Auto_CenterShootRun;
     }
 
 
@@ -429,7 +475,7 @@ void Robot::RobotPeriodic()
     AutonomousStateUpdate();
     RunAutoSequence();
     
-    m_Drivetrain.updateDrivetrain( GetPeriod() );
+    m_Drivetrain.updateDrivetrain( GetPeriod(), m_fieldRelative );
     m_Arm.updateArm();
     m_Climber.updateClimber();
     m_Shooter.updateShooter();

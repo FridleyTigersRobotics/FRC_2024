@@ -97,7 +97,7 @@ class Robot : public frc::TimedRobot {
     frc::SlewRateLimiter<units::scalar> m_xspeedLimiter{2 / 1_s};
     frc::SlewRateLimiter<units::scalar> m_yspeedLimiter{2 / 1_s};
     frc::SlewRateLimiter<units::scalar> m_rotLimiter{5 / 1_s};
-
+    bool m_fieldRelative{false};
 
     // Auto
 
@@ -188,6 +188,7 @@ class Robot : public frc::TimedRobot {
     const std::string kShootCenterPickupCenter { "ShootCenterPickupCenter" };
     const std::string kShootLeftPickupLeft { "ShootLeftPickupLeft" };
     const std::string kShootRightPickupRight { "ShootRightPickupRight" };
+    const std::string kCenterShootRun { "CenterShootRun" };
 
 
   std::vector<std::function<void(void)>> defaultAutoSequence = {
@@ -215,10 +216,10 @@ class Robot : public frc::TimedRobot {
     [this] (void) -> void { Shoot( 1.0_s ); },
     [this] (void) -> void { m_Shooter.changeShooterState( false ); m_autoStateDone = true; },
     [this] (void) -> void { MoveArmForPickup(); },
-    [this] (void) -> void { Wait( 1.0_s ); },
-    [this] (void) -> void { DriveForDistance( -1.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    //[this] (void) -> void { Wait( 1.0_s ); },
+    [this] (void) -> void { DriveForDistance( -1.5_m, 0.0_m, 0.0_rad, 0.9_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { MoveArmForShooting(); },
-    [this] (void) -> void { DriveForDistance( 1.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s); },
+    [this] (void) -> void { DriveForDistance( 1.5_m, 0.0_m, 0.0_rad, 0.8_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s); },
     [this] (void) -> void { AimAndPrepShoot( 4.0_s ); },
     [this] (void) -> void { Shoot( 1.0_s ); },
     [this] (void) -> void { Drivetrain_Stop(); m_Shooter.changeShooterState( false ); },
@@ -231,16 +232,16 @@ class Robot : public frc::TimedRobot {
     [this] (void) -> void { Shoot( 1.0_s ); },
     [this] (void) -> void { m_Shooter.changeShooterState( false ); m_autoStateDone = true; },
     //[this] (void) -> void { Wait( 1.0_s ); },
-    [this] (void) -> void { DriveForDistance( -0.7_m, 0.0_m, 0.0_rad, 0.85_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
-    [this] (void) -> void { DriveForDistance( 0.0_m, 0.0_m, 1.15_rad, 0.0_mps, 0.0_mps, 1.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { DriveForDistance( -0.7_m, 0.0_m, 1.15_rad, 0.85_mps, 0.0_mps, 1.0_rad_per_s, 5.0_s ); },
+    //[this] (void) -> void { DriveForDistance( 0.0_m, 0.0_m, 1.15_rad, 0.0_mps, 0.0_mps, 1.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { MoveArmForPickup(); },
     [this] (void) -> void { DriveForDistance( -0.2_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { DriveForDistance( -1.33_m, 0.0_m, 0.0_rad, 1.0_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
-    [this] (void) -> void { DriveForDistance( 0.0_m, -0.1_m, 0.0_rad, 0.0_mps, 0.8_mps, 0.0_rad_per_s, 5.0_s ); },
-    [this] (void) -> void { DriveForDistance( 0.0_m,   0.1_m, 0.0_rad, 0.0_mps, 0.8_mps, 0.0_rad_per_s, 5.0_s ); },
+    // [this] (void) -> void { DriveForDistance( 0.0_m, -0.1_m, 0.0_rad, 0.0_mps, 0.8_mps, 0.0_rad_per_s, 5.0_s ); },
+    // [this] (void) -> void { DriveForDistance( 0.0_m,   0.1_m, 0.0_rad, 0.0_mps, 0.8_mps, 0.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { MoveArmForShooting(); },
-    [this] (void) -> void { DriveForDistance( 1.53_m, 0.0_m, 0.0_rad, 1.0_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
-    [this] (void) -> void { DriveForDistance( 0.0_m, 0.0_m, -1.15_rad, 0.0_mps, 0.0_mps, 1.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { DriveForDistance( 1.53_m, 0.0_m, -1.15_rad, 1.0_mps, 0.0_mps, 1.0_rad_per_s, 5.0_s ); },
+    //[this] (void) -> void { DriveForDistance( 0.0_m, 0.0_m, -1.15_rad, 0.0_mps, 0.0_mps, 1.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { DriveForDistance( 0.61_m, 0.0_m, 0.0_rad, 0.85_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { DriveForDistance( 0.0_m, -0.1_m, 0.0_rad, 0.0_mps, 0.5_mps, 0.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { AimAndPrepShoot( 2.0_s ); },
@@ -255,22 +256,38 @@ class Robot : public frc::TimedRobot {
     [this] (void) -> void { Shoot( 1.0_s ); },
     [this] (void) -> void { m_Shooter.changeShooterState( false ); m_autoStateDone = true; },
     //[this] (void) -> void { Wait( 1.0_s ); },
-    [this] (void) -> void { DriveForDistance( -0.7_m, 0.0_m, 0.0_rad, 0.85_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
-    [this] (void) -> void { DriveForDistance( 0.0_m, 0.0_m, -1.15_rad, 0.0_mps, 0.0_mps, 1.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { DriveForDistance( -0.7_m, 0.0_m, -1.15_rad, 0.85_mps, 0.0_mps, 1.0_rad_per_s, 5.0_s ); },
+    //[this] (void) -> void { DriveForDistance( 0.0_m, 0.0_m, -1.15_rad, 0.0_mps, 0.0_mps, 1.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { MoveArmForPickup(); },
     [this] (void) -> void { DriveForDistance( -0.2_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { DriveForDistance( -1.33_m, 0.0_m, 0.0_rad, 1.0_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
     //[this] (void) -> void { DriveForDistance( 0.0_m, -0.1_m, 0.0_rad, 0.0_mps, 0.8_mps, 0.0_rad_per_s, 5.0_s ); },
     //[this] (void) -> void { DriveForDistance( 0.0_m,   0.1_m, 0.0_rad, 0.0_mps, 0.8_mps, 0.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { MoveArmForShooting(); },
-    [this] (void) -> void { DriveForDistance( 1.55_m, 0.0_m, 0.0_rad, 1.0_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
-    [this] (void) -> void { DriveForDistance( 0.0_m, 0.0_m, 1.15_rad, 0.0_mps, 0.0_mps, 1.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { DriveForDistance( 1.55_m, 0.0_m, 1.15_rad, 1.0_mps, 0.0_mps, 1.0_rad_per_s, 5.0_s ); },
+    //[this] (void) -> void { DriveForDistance( 0.0_m, 0.0_m, 1.15_rad, 0.0_mps, 0.0_mps, 1.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { DriveForDistance( 0.61_m, 0.0_m, 0.0_rad, 0.85_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { DriveForDistance( 0.0_m, -0.1_m, 0.0_rad, 0.0_mps, 0.5_mps, 0.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { AimAndPrepShoot( 2.0_s ); },
     [this] (void) -> void { Shoot( 1.0_s ); },
     [this] (void) -> void { Drivetrain_Stop(); m_Shooter.changeShooterState( false ); },
+  };
 
+  std::vector<std::function<void(void)>> Auto_CenterShootRun = {
+    //[this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { AimAndPrepShoot( 4.0_s ); },
+    [this] (void) -> void { Shoot( 1.0_s ); },
+    [this] (void) -> void { m_Shooter.changeShooterState( false ); m_autoStateDone = true; },
+    [this] (void) -> void { MoveArmForPickup(); },
+    //[this] (void) -> void { Wait( 1.0_s ); },
+    [this] (void) -> void { DriveForDistance( -1.5_m, 0.0_m, 0.0_rad, 0.9_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { MoveArmForShooting(); },
+    [this] (void) -> void { DriveForDistance( 1.5_m, 0.0_m, 0.0_rad, 0.8_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s); },
+    [this] (void) -> void { AimAndPrepShoot( 4.0_s ); },
+    [this] (void) -> void { Shoot( 1.0_s ); },
+    [this] (void) -> void {m_Shooter.changeShooterState( false ); m_autoStateDone = true; },
+    [this] (void) -> void {DriveForDistance( -1.5_m, 0.0_m, 0.0_rad, 0.9_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s); },
+    [this] (void) -> void { Drivetrain_Stop();},
   };
 
 

@@ -6,11 +6,14 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <fmt/printf.h>
 
-void Drivetrain::updateDrivetrain( units::second_t period ) 
+void Drivetrain::updateDrivetrain( units::second_t period, bool fieldRelative ) 
 {
   frc::ChassisSpeeds FieldRelativeChassisSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(m_xSpeed, m_ySpeed, m_rot, frc::Rotation2d{units::degree_t {m_imu.GetYaw()}});
   frc::ChassisSpeeds RobotRelativeChassisSpeeds = frc::ChassisSpeeds{m_xSpeed, m_ySpeed, m_rot};
-  frc::ChassisSpeeds ChassisSpeeds = frc::ChassisSpeeds::Discretize( RobotRelativeChassisSpeeds, period );
+
+   frc::ChassisSpeeds ChassisSpeedsToUse = fieldRelative ? FieldRelativeChassisSpeeds : RobotRelativeChassisSpeeds;
+
+  frc::ChassisSpeeds ChassisSpeeds = frc::ChassisSpeeds::Discretize( ChassisSpeedsToUse, period );
   UpdateOdometry();
   auto states = m_kinematics.ToSwerveModuleStates( ChassisSpeeds );
 
