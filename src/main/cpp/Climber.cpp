@@ -74,11 +74,11 @@ void Climber::updateClimber()
                 m_ClimberPosition = kMaxClimberHeight;
             }
            #else
-            if ( m_motorEncoderL.Get() < kMaxClimberHeight )
+            if ( m_motorEncoderL.Get() < 260000 )
             {
                 ClimberMotorSpeedL = -1.0;
             }
-            if ( m_motorEncoderR.Get() < kMaxClimberHeight )
+            if ( m_motorEncoderR.Get() < 230000 )
             {
                 ClimberMotorSpeedR = -1.0;
             }
@@ -164,18 +164,18 @@ void Climber::ChangeClimberState( ClimberState_t ClimberState )
 
 void Climber::UpdateSmartDashboardData( )
 {
-#if 0
-    frc::SmartDashboard::PutNumber( "Climber_State", m_ClimberState );
-    frc::SmartDashboard::PutNumber( "Climber_OutputL", m_leftClimberMotor.Get() );
-    frc::SmartDashboard::PutNumber( "Climber_OutputR", m_rightClimberMotor.Get() );
-    frc::SmartDashboard::PutNumber( "Climber_LimitL", m_leftLimitSwitch.Get() );
-    frc::SmartDashboard::PutNumber( "Climber_LimitR", m_rightLimitSwitch.Get() );
+
+    // frc::SmartDashboard::PutNumber( "Climber_State", m_ClimberState );
+    // frc::SmartDashboard::PutNumber( "Climber_OutputL", m_leftClimberMotor.Get() );
+    // frc::SmartDashboard::PutNumber( "Climber_OutputR", m_rightClimberMotor.Get() );
+    // frc::SmartDashboard::PutNumber( "Climber_LimitL", m_leftLimitSwitch.Get() );
+    // frc::SmartDashboard::PutNumber( "Climber_LimitR", m_rightLimitSwitch.Get() );
 
     frc::SmartDashboard::PutNumber( "Climber_EncoderL", m_motorEncoderL.Get() );
     frc::SmartDashboard::PutNumber( "Climber_EncoderR", m_motorEncoderR.Get() );
-    frc::SmartDashboard::PutNumber( "Climber_prevRoll", m_prevRoll );
-    frc::SmartDashboard::PutNumber( "Climber_roll",     m_roll );
-#endif
+    // frc::SmartDashboard::PutNumber( "Climber_prevRoll", m_prevRoll );
+    // frc::SmartDashboard::PutNumber( "Climber_roll",     m_roll );
+
 
 
 

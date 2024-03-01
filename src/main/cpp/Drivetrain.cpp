@@ -8,7 +8,7 @@
 
 void Drivetrain::updateDrivetrain( units::second_t period, bool fieldRelative ) 
 {
-  frc::ChassisSpeeds FieldRelativeChassisSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(m_xSpeed, m_ySpeed, m_rot, frc::Rotation2d{units::degree_t {m_imu.GetYaw()}});
+  frc::ChassisSpeeds FieldRelativeChassisSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(m_xSpeed, m_ySpeed, m_rot, frc::Rotation2d{units::degree_t {-m_imu.GetYaw()}});
   frc::ChassisSpeeds RobotRelativeChassisSpeeds = frc::ChassisSpeeds{m_xSpeed, m_ySpeed, m_rot};
 
    frc::ChassisSpeeds ChassisSpeedsToUse = fieldRelative ? FieldRelativeChassisSpeeds : RobotRelativeChassisSpeeds;

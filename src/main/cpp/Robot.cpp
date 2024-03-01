@@ -16,7 +16,7 @@
 #include <Climber.h>
 #include <networktables/NetworkTable.h>
 #include <LimelightHelpers.h>
-
+#include <cameraserver/CameraServer.h>
 
 // 02-29-24 Tasks
 // [x] Field Oriented Driving, (double check this looks good)
@@ -33,7 +33,7 @@
 
 
 void Robot::RobotInit() {
-
+    frc::CameraServer::StartAutomaticCapture();
     // Autonomous Chooser
     m_autoChooser.SetDefaultOption( kAutoNameDefault,  kAutoNameDefault );
     m_autoChooser.AddOption       ( kAutoDrive,        kAutoDrive );
@@ -127,7 +127,7 @@ void Robot::RobotPeriodic()
 }
 
 
-#define TRIGGERS_FOR_ROTATION ( 0 )
+#define TRIGGERS_FOR_ROTATION ( 1 )
 
   void Robot::TeleopPeriodic() 
   { 
