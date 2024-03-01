@@ -22,7 +22,7 @@
 // [x] Field Oriented Driving, (double check this looks good)
 // [ ] Rotate robot with driver controller triggers.
 // [x] Teleop Mode: Climber faster (to note waste time)
-// [ ] Output boolean to smartdashboard that is true when shooter speed greater than about 95% of max (so we know when to shoot)
+// [x] Output boolean to smartdashboard that is true when shooter speed greater than about 95% of max (so we know when to shoot)
 // [x] Test mode: Slow down climber. (so we can position the hooks easier)
 
 

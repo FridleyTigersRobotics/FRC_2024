@@ -11,7 +11,7 @@
 #include <fmt/printf.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
-
+#define BURN_FLASH           ( 0 ) 
 #define SMART_CURRENT_LIMITS ( 1 )
 
 SwerveModule::SwerveModule(
@@ -56,6 +56,11 @@ SwerveModule::SwerveModule(
   // to be continuous.
   m_turningPIDController.EnableContinuousInput(
       -units::radian_t{std::numbers::pi}, units::radian_t{std::numbers::pi});
+
+#if BURN_FLASH
+  m_driveMotor.BurnFlash();
+  m_turningMotor.BurnFlash();
+#endif
 }
 
 frc::SwerveModuleState SwerveModule::GetState() const {

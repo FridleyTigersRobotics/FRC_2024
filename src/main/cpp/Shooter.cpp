@@ -62,6 +62,8 @@ void Shooter::updateShooter( )
     double const speedDeltaForPidControl = 200;
 
 
+    frc::SmartDashboard::PutBoolean( "ShooterUpToSpeed", ( shooterVelocity / m_maxShooterSpeed ) > 0.95 );
+
 #if 0
     double p = frc::SmartDashboard::GetNumber("P Gain", 0);
     double i = frc::SmartDashboard::GetNumber("I Gain", 0);
