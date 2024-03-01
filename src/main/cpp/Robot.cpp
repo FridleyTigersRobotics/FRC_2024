@@ -349,7 +349,6 @@ void Robot::RobotPeriodic()
     double rotInput
   ) 
   {
-c
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     const auto xSpeed = -m_xspeedLimiter.Calculate(
