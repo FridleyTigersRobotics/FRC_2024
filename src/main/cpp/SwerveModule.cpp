@@ -11,6 +11,9 @@
 #include <fmt/printf.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
+
+#define SMART_CURRENT_LIMITS ( 1 )
+
 SwerveModule::SwerveModule(
     const int driveMotorChannel,
     const int turningMotorChannel,
@@ -39,6 +42,10 @@ SwerveModule::SwerveModule(
     m_turningMotor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
     m_driveMotor.EnableVoltageCompensation(12.0);
     m_turningMotor.EnableVoltageCompensation(12.0);
+
+  m_driveMotor.SetSmartCurrentLimit(40, 60);
+  m_turningMotor.SetSmartCurrentLimit(20);
+
   // Set the distance (in this case, angle) per pulse for the turning encoder.
   // This is the the angle through an entire rotation (2 * std::numbers::pi)
   // divided by the encoder resolution.
@@ -80,7 +87,7 @@ void SwerveModule::SetDesiredState(
   // Scale speed by cosine of angle error. This scales down movement
   // perpendicular to the desired direction of travel that can occur when
   // modules change directions. This results in smoother driving.
-  //state.speed *= (state.angle - encoderRotation).Cos();
+  state.speed *= (state.angle - encoderRotation).Cos();
 
   // Calculate the turning motor output from the turning PID controller.
   const auto turnOutput = m_turningPIDController.Calculate(
