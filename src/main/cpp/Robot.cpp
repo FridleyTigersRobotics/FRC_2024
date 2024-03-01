@@ -154,7 +154,7 @@ void Robot::RobotPeriodic()
 
   #if TRIGGERS_FOR_ROTATION
     rotateSpeed += frc::ApplyDeadband(m_driveController.GetRightTriggerAxis(), 0.1 );
-    rotateSpeed -= frc::ApplyDeadband(m_driveController.GetRightTriggerAxis(), 0.1 );
+    rotateSpeed -= frc::ApplyDeadband(m_driveController.GetLeftTriggerAxis(), 0.1 );
   #endif
 
 
