@@ -127,7 +127,7 @@ void Robot::RobotPeriodic()
 }
 
 
-
+#define TRIGGERS_FOR_ROTATION ( 0 )
 
   void Robot::TeleopPeriodic() 
   { 
@@ -152,6 +152,10 @@ void Robot::RobotPeriodic()
     m_Drivetrain.m_imu.ZeroYaw();
   }
 
+  #if TRIGGERS_FOR_ROTATION
+    rotateSpeed += frc::ApplyDeadband(m_driveController.GetRightTriggerAxis(), 0.1 );
+    rotateSpeed -= frc::ApplyDeadband(m_driveController.GetRightTriggerAxis(), 0.1 );
+  #endif
 
 
     // Driver Control
@@ -345,7 +349,7 @@ void Robot::RobotPeriodic()
     double rotInput
   ) 
   {
-
+c
     // Get the x speed. We are inverting this because Xbox controllers return
     // negative values when we push forward.
     const auto xSpeed = -m_xspeedLimiter.Calculate(
