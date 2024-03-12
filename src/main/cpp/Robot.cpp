@@ -157,7 +157,8 @@ void Robot::RobotPeriodic()
     rotateSpeed -= frc::ApplyDeadband(m_driveController.GetLeftTriggerAxis(), 0.1 );
   #endif
 
-
+if (m_driveController.GetBButtonPressed()==0)
+{
     // Driver Control
     DriveWithJoystick(
       false,
@@ -165,7 +166,20 @@ void Robot::RobotPeriodic()
       -m_driveController.GetLeftX(),
       rotateSpeed
     ); 
+}
+else
+{
+double tx = LimelightHelpers::getTX();
+double angleToTurnTo = tx / 180.0 * (std::numbers::pi*2);
+  DriveWithJoystick(
+    false,
+    -m_driveController.GetLeftY(),
+    0,
+    angleToTurnTo
 
+
+  );
+}
 
 
 
@@ -587,8 +601,8 @@ void Robot::AimAndPrepShoot( units::second_t maxTime )
     m_autoStateDone = true;
   }
 #if 0
-  double tx = LimelightHelpers::getTX();
-  double angleToTurnTo = tx / 180.0 * std::numbers::pi;
+
+  double angleToTurnTo = tx / 180.0 * (std::numbers::pi*2);
 
   DriveForDistance( 0.0_m, 0.0_m, angleToTurnTo );
   m_autoStateDone = true;
