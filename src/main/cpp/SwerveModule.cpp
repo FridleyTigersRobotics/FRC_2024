@@ -43,7 +43,7 @@ SwerveModule::SwerveModule(
     m_driveMotor.EnableVoltageCompensation(12.0);
     m_turningMotor.EnableVoltageCompensation(12.0);
 
-  m_driveMotor.SetSmartCurrentLimit(40, 60);
+  m_driveMotor.SetSmartCurrentLimit(30, 60);
   m_turningMotor.SetSmartCurrentLimit(20);
 
   // Set the distance (in this case, angle) per pulse for the turning encoder.
