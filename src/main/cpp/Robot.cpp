@@ -157,7 +157,7 @@ void Robot::RobotPeriodic()
     rotateSpeed -= frc::ApplyDeadband(m_driveController.GetLeftTriggerAxis(), 0.1 );
   #endif
 
-if (m_driveController.GetBButtonPressed()==0)
+if (m_driveController.GetBButton()==0)
 {
     // Driver Control
     DriveWithJoystick(
@@ -170,11 +170,12 @@ if (m_driveController.GetBButtonPressed()==0)
 else
 {
 double tx = LimelightHelpers::getTX();
-double angleToTurnTo = tx / 180.0 * (std::numbers::pi*2);
+double P = 1;
+double angleToTurnTo = (tx / 180.0 * (std::numbers::pi*2)) * P;
   DriveWithJoystick(
     false,
     -m_driveController.GetLeftY(),
-    0,
+    -m_driveController.GetLeftX(),
     angleToTurnTo
 
 
