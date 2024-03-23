@@ -91,7 +91,7 @@ private:
     double m_ArmGroundValue     = 0.52;          
     double m_ArmSourceValue     = 0.32;          
     double m_ArmSpeakerValue    = 0.51;           
-    double m_ArmAmpValue        = 0.25;       
+    double m_ArmAmpValue        = 0.20;       
     double m_ArmTrapValue       = 0.15;
     double m_ArmMaxOutputValue  = 0.8;             
     double m_ArmP               = 0.2;

@@ -26,6 +26,7 @@ using namespace ConstantCrap;
 
 class Drivetrain {
  public:
+  double m_AngleOffset = 0;
   Drivetrain() {m_imu.ResetDisplacement(); }
 
   void updateDrivetrain( units::second_t period, bool fieldRelative );

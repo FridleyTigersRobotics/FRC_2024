@@ -96,9 +96,8 @@ class Robot : public frc::TimedRobot {
     // to 1.
     frc::SlewRateLimiter<units::scalar> m_xspeedLimiter{2 / 1_s};
     frc::SlewRateLimiter<units::scalar> m_yspeedLimiter{2 / 1_s};
-    frc::SlewRateLimiter<units::scalar> m_rotLimiter{5 / 1_s};
+    frc::SlewRateLimiter<units::scalar> m_rotLimiter{10 / 1_s};
     bool m_fieldRelative{true};
-
     // Auto
 
 
@@ -147,12 +146,37 @@ class Robot : public frc::TimedRobot {
     };
 
     frc::ProfiledPIDController<units::radians> m_rotPid{
-      m_rotP,
+      1.0,
       0.0,
       0.0,
       {units::radians_per_second_t{m_rotMaxVel}, units::radians_per_second_squared_t{m_rotMaxAccel}}
     };
 
+    frc::PIDController m_LimePid{
+      0.9,
+      0.0,
+      0.0//,
+      //{units::radians_per_second_t{1}, units::radians_per_second_squared_t{1}}
+    };
+
+    double m_RotP = 0.01;
+
+    frc::PIDController m_RotatePid{
+      m_RotP,
+      0.00,
+      0.0//,
+      //{units::degrees_per_second_t{90.0}, units::degrees_per_second_squared_t{90.0}}
+    };
+
+    double m_limeVelMax = 1;
+    double m_limeAccMax = 1;    
+    double m_limeP      = 1;
+    double m_limeI      = 0;
+    double m_limeD      = 0;
+    double m_limeMaxOutput = 0.6;
+    double m_limeMinOutput = 0.20;
+    double m_limeMinThresh = 0.02;
+    double m_limeAngleOffset = -11;
 
   std::vector<std::function<void(void)>> IntakeAutoTest = {
     [this] (void) -> void { MoveArmForPickup(); },

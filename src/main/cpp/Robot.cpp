@@ -43,10 +43,14 @@ void Robot::RobotInit() {
     m_autoChooser.AddOption       ( kShootRightPickupRight,   kShootRightPickupRight );
     m_autoChooser.AddOption       ( kCenterShootRun,   kCenterShootRun );
 
+    //m_RotatePid.EnableContinuousInput( units::radian_t{-180.0}, units::radian_t{180.0} );
+
     frc::SmartDashboard::PutData("Auto Modes", &m_autoChooser);
 
+    
 
 
+    frc::SmartDashboard::PutNumber("limeAngleOffset",            m_limeAngleOffset);
   #if 0
         frc::SmartDashboard::PutNumber( "Move_x",                  double{0} );
         frc::SmartDashboard::PutNumber( "Move_ArmEndPosition",     double{0} );
@@ -66,6 +70,27 @@ void Robot::RobotInit() {
  void Robot::TeleopInit() {
   m_Climber.initClimber();
   m_Arm.initArm();
+
+  frc::SmartDashboard::PutNumber("LimeVelocityMax", m_limeVelMax);
+  frc::SmartDashboard::PutNumber("LimeAccelMax",    m_limeAccMax);
+  frc::SmartDashboard::PutNumber("LimePValue",           m_limeP);
+  
+  frc::SmartDashboard::PutNumber("LimeMaxOut",            m_limeMaxOutput);
+  frc::SmartDashboard::PutNumber("LimeOutput",           0);
+  frc::SmartDashboard::PutNumber("LimeOutputUnclamped",           0);
+
+  frc::SmartDashboard::PutNumber("RotPValue2",            m_RotP);
+    frc::SmartDashboard::PutNumber("LimeMinOut",            m_limeMinOutput);
+    frc::SmartDashboard::PutNumber("LimeMinThresh",            m_limeMinThresh);
+
+  m_Drivetrain.m_imu.Reset();
+  m_Drivetrain.m_AngleOffset = 0;
+      /*m_Drivetrain.m_odometry.ResetPosition(
+        frc::Rotation2d{units::degree_t {m_Drivetrain.m_imu.GetYaw()}},
+        {m_Drivetrain.m_frontLeft.GetPosition(), m_Drivetrain.m_frontRight.GetPosition(),
+        m_Drivetrain.m_backLeft.GetPosition(),  m_Drivetrain.m_backRight.GetPosition()},
+        frc::Pose2d{}
+      );*/
 
   //m_xDirPid.SetConstraints({100.0_mps, units::meters_per_second_squared_t{100.0}});
   m_xDirPid.SetTolerance( kXyPosTolerance,  kXyVelTolerance );
@@ -124,6 +149,63 @@ void Robot::RobotPeriodic()
 
   frc::SmartDashboard::PutBoolean( "m_controlModeEndGame", m_controlModeEndGame );
   
+#if 0
+  double limeVelMax = frc::SmartDashboard::GetNumber("LimeVelocityMax",  m_limeVelMax);
+  double limeAccMax = frc::SmartDashboard::GetNumber("LimeAccelMax",     m_limeAccMax);
+  double limeP = frc::SmartDashboard::GetNumber("LimePValue",            m_limeP);
+  double limeMaxOutput = frc::SmartDashboard::GetNumber("LimeMaxOut",            m_limeMaxOutput);
+  double limeMinOutput = frc::SmartDashboard::GetNumber("LimeMinOut",            m_limeMinOutput);
+  double limeMinThresh = frc::SmartDashboard::GetNumber("LimeMinThresh",            m_limeMinThresh);
+  
+  double limeAngleOffset = frc::SmartDashboard::GetNumber("limeAngleOffset",            m_limeAngleOffset);
+  
+  if ( limeAngleOffset != m_limeAngleOffset )
+  {
+    m_limeAngleOffset = limeAngleOffset;
+  }
+
+    
+
+  if ( limeMinOutput != m_limeMinOutput )
+  {
+    m_limeMinOutput = limeMinOutput;
+  }
+
+  if ( limeMinThresh != m_limeMinThresh )
+  {
+    m_limeMinThresh = limeMinThresh;
+  }
+
+  if ( limeMaxOutput != m_limeMaxOutput )
+  {
+    m_limeMaxOutput = limeMaxOutput;
+  }
+
+
+  if (  
+    limeVelMax != m_limeVelMax ||
+    limeAccMax != m_limeAccMax ||
+    limeP != m_limeP
+  )
+  {
+     m_limeVelMax = limeVelMax;     
+     m_limeAccMax = limeAccMax; 
+     m_limeP = limeP;  
+
+    m_LimePid.SetP( m_limeP );
+    //m_LimePid.SetConstraints( { units::radians_per_second_t{limeVelMax}, units::radians_per_second_squared_t{limeAccMax} } );
+    m_LimePid.Reset();
+    m_LimePid.SetSetpoint( m_limeAngleOffset / 180.0 * (std::numbers::pi*2) );
+  }
+
+  double RotP = frc::SmartDashboard::GetNumber("RotPValue",            m_RotP);
+  if (m_RotP != RotP)
+  {
+    m_RotP = RotP;
+    m_RotatePid.SetP( m_RotP );
+  }
+#endif
+
 }
 
 
@@ -131,11 +213,11 @@ void Robot::RobotPeriodic()
 
   void Robot::TeleopPeriodic() 
   { 
-    double rotateSpeed = m_driveController.GetRightX();
+    double rotateSpeed = 0;
   //Test area just to set it up, not quite sure were to actually put it ;-;
   frc::SmartDashboard::PutBoolean( "Field relative?", m_fieldRelative );
 
-  if (m_driveController.GetAButtonPressed())
+  if (m_driveController.GetBackButtonPressed())
   {
     if (m_fieldRelative == false)
     {
@@ -147,17 +229,100 @@ void Robot::RobotPeriodic()
     }
   }
 
-  if (m_driveController.GetYButtonPressed())
+  if (m_driveController.GetStartButtonPressed())
   {
     m_Drivetrain.m_imu.ZeroYaw();
+    m_Drivetrain.m_AngleOffset = 0;
+    m_RotatePid.Reset();
   }
 
+  // if(m_driveController.GetYButtonPressed())
+  // {
+    // m_Drivetrain.m_AngleOffset=0;
+    // 
+  // }
+
+  if (m_driveController.GetBButtonPressed())
+  {
+    m_Drivetrain.m_AngleOffset+=90;
+  }
+
+  // if (m_driveController.GetAButtonPressed())
+  // {
+  //   m_Drivetrain.m_AngleOffset=180;
+  // }
+
+  if (m_driveController.GetXButtonPressed())
+  {
+    m_Drivetrain.m_AngleOffset-=90;
+  }
+
+  m_RotatePid.SetSetpoint( double{m_Drivetrain.m_AngleOffset} );
+
+
   #if TRIGGERS_FOR_ROTATION
-    rotateSpeed += frc::ApplyDeadband(m_driveController.GetRightTriggerAxis(), 0.1 );
-    rotateSpeed -= frc::ApplyDeadband(m_driveController.GetLeftTriggerAxis(), 0.1 );
+    m_Drivetrain.m_AngleOffset += frc::ApplyDeadband(m_driveController.GetRightTriggerAxis(), 0.05 );
+    m_Drivetrain.m_AngleOffset -= frc::ApplyDeadband(m_driveController.GetLeftTriggerAxis(), 0.05 );
   #endif
 
-if (m_driveController.GetBButton()==0)
+if (m_driveController.GetRightBumper())
+{
+  m_LimePid.Reset( );
+  m_LimePid.SetSetpoint( m_limeAngleOffset / 180.0 * (std::numbers::pi*2) );
+}
+
+
+double tx = LimelightHelpers::getTX();
+double angleToTurnTo = tx / 180.0 * (std::numbers::pi*2);
+double rotSpeedUnClamped = double{ -m_LimePid.Calculate( angleToTurnTo ) };
+double limeRotSpeed = std::clamp( double{rotSpeedUnClamped}, -m_limeMaxOutput, m_limeMaxOutput );
+if (LimelightHelpers::getFiducialID()<0)
+{
+  limeRotSpeed = 0;
+}
+/*if ( limeRotSpeed > m_limeMinThresh )
+{
+  limeRotSpeed += m_limeMinOutput;
+}
+else  if ( limeRotSpeed < -m_limeMinThresh )
+{
+  limeRotSpeed -= m_limeMinOutput;
+}
+else
+{
+  limeRotSpeed = 0;
+}*/
+
+
+double pidRotateSpeed = double{ m_RotatePid.Calculate( double{m_Drivetrain.m_imu.GetAngle()} ) };
+
+
+rotateSpeed = pidRotateSpeed;
+//rotateSpeed = DriveTrain.m_AngleOffset * (std::numbers::pi * 2);
+/*if ( rotateSpeed > m_limeMinThresh )
+{
+  rotateSpeed += m_limeMinOutput;
+}
+else  if ( rotateSpeed < -m_limeMinThresh )
+{
+  rotateSpeed -= m_limeMinOutput;
+}
+else
+{
+  rotateSpeed = 0;
+}*/
+rotateSpeed = std::clamp( double{rotateSpeed}, -0.5, 0.5 );
+
+frc::SmartDashboard::PutNumber( "tx",  double{tx} );
+frc::SmartDashboard::PutNumber( "angleToTurnTo",  double{angleToTurnTo} );
+frc::SmartDashboard::PutNumber("LimeOutputUnclamped",           double{rotSpeedUnClamped});
+frc::SmartDashboard::PutNumber("LimeOutput",           double{limeRotSpeed});
+frc::SmartDashboard::PutNumber("RotateSpeed",   rotateSpeed);
+frc::SmartDashboard::PutNumber("pidRotateSpeed",   pidRotateSpeed);
+frc::SmartDashboard::PutNumber("Yaw",   m_Drivetrain.m_imu.GetAngle());
+frc::SmartDashboard::PutNumber("AngleOffset",   m_Drivetrain.m_AngleOffset);
+
+if (m_driveController.GetRightBumper()==0)
 {
     // Driver Control
     DriveWithJoystick(
@@ -169,16 +334,11 @@ if (m_driveController.GetBButton()==0)
 }
 else
 {
-double tx = LimelightHelpers::getTX();
-double P = 1;
-double angleToTurnTo = (tx / 180.0 * (std::numbers::pi*2)) * P;
   DriveWithJoystick(
     false,
     -m_driveController.GetLeftY(),
     -m_driveController.GetLeftX(),
-    angleToTurnTo
-
-
+    limeRotSpeed
   );
 }
 
@@ -381,8 +541,7 @@ double angleToTurnTo = (tx / 180.0 * (std::numbers::pi*2)) * P;
     // positive value when we pull to the left (remember, CCW is positive in
     // mathematics). Xbox controllers return positive values when you pull to
     // the right by default.
-    const auto rot = -m_rotLimiter.Calculate(
-                         frc::ApplyDeadband(rotInput, 0.25)) *
+    const auto rot = -rotInput *
                      Drivetrain::kMaxAngularSpeed;
 
   #if 0
@@ -536,10 +695,13 @@ void Robot::Drivetrain_Stop() {
   m_xDirPid.SetGoal( xDistance );
   m_yDirPid.SetGoal( yDistance );
   m_rotPid.SetGoal(  rotRadians );
+  m_LimePid.SetSetpoint( m_limeAngleOffset / 180.0 * (std::numbers::pi*2) );
 
   units::meters_per_second_t  xSpeed  { m_xDirPid.Calculate( pose.X() ) };
   units::meters_per_second_t  ySpeed  { m_yDirPid.Calculate( pose.Y() ) };
   units::radians_per_second_t rotSpeed{ -m_rotPid.Calculate( pose.Rotation().Radians() ) };
+ 
+
   frc::SmartDashboard::PutNumber("Auto_angle", double{pose.Rotation().Radians()});
   // fmt::printf( "dbg: %1d, %5.3f, %5.3f, %5.3f, %5.3f, %5.3f, %5.3f\n", 
   //   m_autoState, 
