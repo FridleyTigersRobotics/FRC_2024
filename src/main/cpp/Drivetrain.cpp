@@ -12,7 +12,7 @@ void Drivetrain::updateDrivetrain( units::second_t period, bool fieldRelative )
     m_xSpeed, 
     m_ySpeed, 
     m_rot, 
-   frc::Rotation2d{units::degree_t {/* m_AngleOffset*/ - m_imu.GetYaw()}}
+   frc::Rotation2d{units::degree_t {/* m_AngleOffset */ - m_imu.GetYaw()}}
   );
   frc::ChassisSpeeds RobotRelativeChassisSpeeds = frc::ChassisSpeeds{m_xSpeed, m_ySpeed, m_rot};
 
