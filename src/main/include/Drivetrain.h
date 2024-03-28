@@ -44,7 +44,7 @@ class Drivetrain {
     );
 
   void UpdateOdometry();
-
+  void Driveinit();
   void UpdateSmartDashboardData();
 
   static constexpr units::meters_per_second_t kMaxSpeed =
@@ -59,6 +59,7 @@ class Drivetrain {
    units::meters_per_second_t  m_ySpeed{ 0.0 };
    units::radians_per_second_t m_rot   { 0.0 };
 
+    double m_AngleOffset = 0;
 
    //-----------|Front|------------
   //  16----------------------12
@@ -67,7 +68,7 @@ class Drivetrain {
   //  |------------------------|
   //  |------Tom is smart------|
   //  |------Eli is smart------|
-  //  |-----Mina is smart------|
+  //  |----Mina is smartish----|
   //  |----Kewsar is smart-----|
   //  |----Hail Bing Skrong----|
   //  |-Bing Skrong is strong--|

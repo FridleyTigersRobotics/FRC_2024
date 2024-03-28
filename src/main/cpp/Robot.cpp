@@ -50,8 +50,8 @@ void Robot::RobotInit() {
  void Robot::TeleopInit() {
   m_Climber.initClimber();
   m_Arm.initArm();
+  m_Drivetrain.Driveinit();
 
-  m_Drivetrain.m_imu.Reset();
   m_DriveTargetAngle = 0;
 
   m_AutoXdirPid.SetTolerance( kXyPosTolerance,  kXyVelTolerance );
@@ -159,6 +159,8 @@ void Robot::RobotPeriodic()
 
   if ( m_driveController.GetStartButtonPressed() )
   {
+    m_Drivetrain.m_AngleOffset=0;
+    m_Drivetrain.m_imu.Reset();
     m_Drivetrain.m_imu.ZeroYaw();
     m_DriveTargetAngle = 0;
     m_DriveRotatePid.Reset();
@@ -205,7 +207,7 @@ void Robot::RobotPeriodic()
   double y     = m_driveController.GetRightY();
   double x     = m_driveController.GetRightX();
   double mag   = sqrt( x * x + y * y );
-  double angle = atan( x / y );
+  double angle = ((atan2( x , y ) * 180 / std::numbers::pi) +180) * -1;
   
   frc::SmartDashboard::PutNumber( "controler_mag",   mag );
   frc::SmartDashboard::PutNumber( "controler_angle", angle );
@@ -238,71 +240,45 @@ void Robot::RobotPeriodic()
   m_DriveTargetAngle += TriggerRotateSpeedMult * frc::ApplyDeadband( m_driveController.GetRightTriggerAxis(), 0.05 );
   m_DriveTargetAngle -= TriggerRotateSpeedMult * frc::ApplyDeadband( m_driveController.GetLeftTriggerAxis(),  0.05 );
 
-
-  m_DriveRotatePid.SetSetpoint( m_DriveTargetAngle );
-
-  double limeTx                = LimelightHelpers::getTX();
-  double limeRotSpeedUnClamped = m_LimeRotatePid.Calculate( limeTx );
-  double limeRotSpeed          = 0;
-
-  // ID will be -1 if no targets are seen.
-  if ( LimelightHelpers::getFiducialID() >= 0 )
+  if(m_driveController.GetRightBumper())
   {
-    limeRotSpeed = std::clamp( limeRotSpeedUnClamped, -m_limeMaxOutput, m_limeMaxOutput );
+    m_Drivetrain.m_AngleOffset += 1;
+  }
+  else
+  {  
+    if(m_driveController.GetLeftBumper())
+    {
+    m_Drivetrain.m_AngleOffset -= 1;
+    }
   }
 
+
+
+  m_DriveRotatePid.SetSetpoint( m_DriveTargetAngle );
 
   double driveRotSpeedUnClamped = -m_DriveRotatePid.Calculate( m_Drivetrain.m_imu.GetAngle() );
   double driveRotSpeed          = std::clamp( driveRotSpeedUnClamped, -0.5, 0.5 );
 
-  frc::SmartDashboard::PutNumber( "limeTx",                 limeTx );
-  frc::SmartDashboard::PutNumber( "limeRotSpeedUnClamped",  limeRotSpeedUnClamped);
-  frc::SmartDashboard::PutNumber( "limeRotSpeed",           limeRotSpeed);
+ 
   frc::SmartDashboard::PutNumber( "driveRotSpeedUnClamped", driveRotSpeedUnClamped);
   frc::SmartDashboard::PutNumber( "driveRotSpeed",          driveRotSpeed);
   frc::SmartDashboard::PutNumber( "RobotAngle",             m_Drivetrain.m_imu.GetAngle());
   frc::SmartDashboard::PutNumber( "DriveTargetAngle",       m_DriveTargetAngle);
-
+  frc::SmartDashboard::PutNumber( "AngleOffset", m_Drivetrain.m_AngleOffset);
 
   double DriveDeadband = 0.1;
-  double DriveY = frc::ApplyDeadband( -m_driveController.GetLeftY(), DriveDeadband );
-  double DriveX = frc::ApplyDeadband( -m_driveController.GetLeftX(), DriveDeadband );
+  double DriveX = frc::ApplyDeadband( -m_driveController.GetLeftY(), DriveDeadband );
+  double DriveY = frc::ApplyDeadband( -m_driveController.GetLeftX(), DriveDeadband );
 
-  double RotationSpeedRatio = 0;
-
-  if ( m_driveController.GetRightBumper() )
-  {
-    RotationSpeedRatio = limeRotSpeed;
-  }
-  else
-  {
-    RotationSpeedRatio = driveRotSpeed;
-  }
-
-
-    // Get the x speed. We are inverting this because Xbox controllers return
-    // negative values when we push forward.
-    const auto xSpeed = -m_xspeedLimiter.Calculate( DriveX ) * Drivetrain::kMaxSpeed;
-
-    // Get the y speed or sideways/strafe speed. We are inverting this because
-    // we want a positive value when we pull to the left. Xbox controllers
-    // return positive values when you pull to the right by default.
-    const auto ySpeed = -m_yspeedLimiter.Calculate( DriveY ) * Drivetrain::kMaxSpeed;
-
-    // Get the rate of angular rotation. We are inverting this because we want a
-    // positive value when we pull to the left (remember, CCW is positive in
-    // mathematics). Xbox controllers return positive values when you pull to
-    // the right by default.
-    const auto rotationSpeed = RotationSpeedRatio * Drivetrain::kMaxAngularSpeed;
-
-    m_Drivetrain.SetSpeeds( xSpeed, ySpeed, rotationSpeed );
 
 
 
 
 
     // Codriver Controls
-    if ( m_coController.GetBackButtonPressed() )
+    bool SwitchEndGameMode = m_coController.GetBackButtonPressed();
+    bool AimShooter = false;
+    if ( SwitchEndGameMode )
     {
       m_controlModeEndGame = !m_controlModeEndGame;
     }
@@ -367,9 +343,61 @@ void Robot::RobotPeriodic()
       }
 
       // Shooter
-      m_Shooter.changeShooterState( m_coController.GetRightTriggerAxis() > 0.2 );
+      if ( m_coController.GetRightTriggerAxis() > 0.2 )
+      {
+        AimShooter = true;
+        m_Shooter.changeShooterState( true );
+      }
+      else
+      {
+        m_Shooter.changeShooterState( false );
+      }
 
+      
     } // else // if ( m_controlModeEndGame )
+
+
+  
+  double limeTx                = LimelightHelpers::getTX();
+  double limeRotSpeedUnClamped = m_LimeRotatePid.Calculate( limeTx );
+  double limeRotSpeed          = 0;
+  double RotationSpeedRatio = 0;
+
+
+  // ID will be -1 if no targets are seen.
+  if ( LimelightHelpers::getFiducialID() >= 0 )
+  {
+    limeRotSpeed = std::clamp( limeRotSpeedUnClamped, -m_limeMaxOutput, m_limeMaxOutput );
+  }
+
+    if ( AimShooter )
+     {
+       RotationSpeedRatio = limeRotSpeed;
+     }
+     else
+     {
+        RotationSpeedRatio = driveRotSpeed;
+     }
+
+
+    // Get the x speed. We are inverting this because Xbox controllers return
+    // negative values when we push forward.
+    const auto xSpeed = -m_xspeedLimiter.Calculate( DriveX ) * Drivetrain::kMaxSpeed;
+
+    // Get the y speed or sideways/strafe speed. We are inverting this because
+    // we want a positive value when we pull to the left. Xbox controllers
+    // return positive values when you pull to the right by default.
+    const auto ySpeed = -m_yspeedLimiter.Calculate( DriveY ) * Drivetrain::kMaxSpeed;
+
+    // Get the rate of angular rotation. We are inverting this.
+    const auto rotationSpeed = RotationSpeedRatio * Drivetrain::kMaxAngularSpeed;
+
+    m_Drivetrain.SetSpeeds( xSpeed, ySpeed, rotationSpeed );
+
+  frc::SmartDashboard::PutNumber( "limeTx",                 limeTx );
+  frc::SmartDashboard::PutNumber( "limeRotSpeedUnClamped",  limeRotSpeedUnClamped);
+  frc::SmartDashboard::PutNumber( "limeRotSpeed",           limeRotSpeed);
+
 
 
     // Update all subsystems
