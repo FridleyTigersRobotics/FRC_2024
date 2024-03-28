@@ -221,7 +221,7 @@ void Robot::RobotPeriodic()
   if ( angleChanged )
   {
     double unwrappedRobotAngle = m_Drivetrain.m_imu.GetAngle();
-    double wrappedRobotAngle   = m_Drivetrain.m_imu.GetYaw();
+    double wrappedRobotAngle   = m_Drivetrain.GetYaw();
     double angleDelta = targetWrappedAngle - wrappedRobotAngle;
     if ( angleDelta > 180 )
     {

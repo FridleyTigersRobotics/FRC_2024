@@ -325,7 +325,7 @@ void Robot::AutonomousStateInit()
   m_autoTimer.Start();
   //m_initialPose = m_Drivetrain.m_odometry.GetPose();
   m_Drivetrain.m_odometry.ResetPosition(
-    frc::Rotation2d{units::degree_t {m_Drivetrain.m_imu.GetYaw()}},
+    frc::Rotation2d{units::degree_t {m_Drivetrain.GetYaw()}},
     {m_Drivetrain.m_frontLeft.GetPosition(), m_Drivetrain.m_frontRight.GetPosition(),
      m_Drivetrain.m_backLeft.GetPosition(),  m_Drivetrain.m_backRight.GetPosition()},
     frc::Pose2d{}

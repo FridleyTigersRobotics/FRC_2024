@@ -26,6 +26,7 @@ using namespace ConstantCrap;
 
 class Drivetrain {
  public:
+  double m_YawOffset=0;
   //double m_DriveTargetAngle = 0;
   Drivetrain() {m_imu.ResetDisplacement(); }
 
@@ -46,7 +47,7 @@ class Drivetrain {
   void UpdateOdometry();
   void Driveinit();
   void UpdateSmartDashboardData();
-
+  double GetYaw();
   static constexpr units::meters_per_second_t kMaxSpeed =
       1.0_mps;  // 3 meters per second
 
@@ -107,7 +108,7 @@ class Drivetrain {
 
   frc::SwerveDriveOdometry<4> m_odometry{
       m_kinematics,
-      frc::Rotation2d{units::degree_t {m_imu.GetYaw()}},//m_gyro.GetRotation2d(),
+      frc::Rotation2d{units::degree_t {GetYaw()}},//m_gyro.GetRotation2d(),
       {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
        m_backLeft.GetPosition(), m_backRight.GetPosition()}};
 
