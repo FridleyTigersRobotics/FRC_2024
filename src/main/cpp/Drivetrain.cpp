@@ -85,13 +85,17 @@ void Drivetrain::UpdateOdometry() {
 }
 
 void Drivetrain::Driveinit(){
-  m_YawOffset=0;
-  m_imu.ZeroYaw();
-  m_imu.Reset();
-  m_AngleOffset=0;
+  //m_YawOffset=0;
+  //m_imu.ZeroYaw();
+  //m_imu.Reset();
+  //m_AngleOffset=0;
 }
 
 double Drivetrain::GetYaw(){
   return ((m_imu.GetYaw()) + m_YawOffset);
 }
 
+
+double Drivetrain::GetAngle(){
+  return ((m_imu.GetAngle()) + m_YawOffset);
+}

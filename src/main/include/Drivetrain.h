@@ -26,7 +26,7 @@ using namespace ConstantCrap;
 
 class Drivetrain {
  public:
-  double m_YawOffset=0;
+  double m_YawOffset = 0;
   //double m_DriveTargetAngle = 0;
   Drivetrain() {m_imu.ResetDisplacement(); }
 
@@ -48,6 +48,7 @@ class Drivetrain {
   void Driveinit();
   void UpdateSmartDashboardData();
   double GetYaw();
+  double GetAngle();
   static constexpr units::meters_per_second_t kMaxSpeed =
       1.0_mps;  // 3 meters per second
 

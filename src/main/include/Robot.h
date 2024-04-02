@@ -19,6 +19,10 @@
 #include <units/voltage.h>
 #include "units/angular_acceleration.h"
 
+
+#define AUTO_ANGLE_TESTING ( 1 )
+
+
 class Robot : public frc::TimedRobot {
  public:
     void RobotInit() override;
@@ -56,7 +60,7 @@ class Robot : public frc::TimedRobot {
     void RunAutoSequence();
     void AutonomousStateInit();
     void AutonomousStateUpdate();
-
+    void AutoAngle(double AngleCrap);
 
  private:
     frc::XboxController m_driveController{0};
@@ -150,6 +154,7 @@ class Robot : public frc::TimedRobot {
 
     unsigned int m_autoState    { 0 }; 
     bool m_autoStateDone    { false }; 
+    bool m_AbortAuto        { false };
 
     double m_prevAngle       { 0 };
     double m_currentAngle    { 0 };
@@ -174,6 +179,7 @@ class Robot : public frc::TimedRobot {
 
   // TESTED
   std::vector<std::function<void(void)>> Auto_Drive = {
+    [this] (void) -> void { AutoAngle( 0 ); },
     [this] (void) -> void { DriveForDistance( -2.0_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { Drivetrain_Stop(); },
   };
@@ -181,6 +187,7 @@ class Robot : public frc::TimedRobot {
   // TESTED
   std::vector<std::function<void(void)>> Auto_ShootCenter = {
     //[this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { AutoAngle( 0 ); },
     [this] (void) -> void { AimAndPrepShoot( 4.0_s ); },
     [this] (void) -> void { Shoot( 1.0_s ); },
     [this] (void) -> void { Drivetrain_Stop(); m_Shooter.changeShooterState( false ); },
@@ -188,6 +195,7 @@ class Robot : public frc::TimedRobot {
 
 //TESTED :D :D :D
   std::vector<std::function<void(void)>> Auto_ShootCenterPickupCenter = {
+    [this] (void) -> void { AutoAngle( 0 ); },
     //[this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
     [this] (void) -> void { AimAndPrepShoot( 4.0_s ); },
     [this] (void) -> void { Shoot( 1.0_s ); },
@@ -205,6 +213,7 @@ class Robot : public frc::TimedRobot {
 
   std::vector<std::function<void(void)>> ShootLeftPickupLeft = {
     //[this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { AutoAngle( 60); },
     [this] (void) -> void { AimAndPrepShoot( 4.0_s ); },
     [this] (void) -> void { Shoot( 1.0_s ); },
     [this] (void) -> void { m_Shooter.changeShooterState( false ); m_autoStateDone = true; },
@@ -229,6 +238,7 @@ class Robot : public frc::TimedRobot {
 
   std::vector<std::function<void(void)>> ShootRightPickupRight = {
     //[this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { AutoAngle( -110 ); },
     [this] (void) -> void { AimAndPrepShoot( 4.0_s ); },
     [this] (void) -> void { Shoot( 1.0_s ); },
     [this] (void) -> void { m_Shooter.changeShooterState( false ); m_autoStateDone = true; },
@@ -252,6 +262,7 @@ class Robot : public frc::TimedRobot {
 
   std::vector<std::function<void(void)>> Auto_CenterShootRun = {
     //[this] (void) -> void { DriveForDistance( 0.5_m, 0.0_m, 0.0_rad, 0.5_mps, 0.0_mps, 0.0_rad_per_s, 5.0_s ); },
+    [this] (void) -> void { AutoAngle( 0 ); },
     [this] (void) -> void { AimAndPrepShoot( 4.0_s ); },
     [this] (void) -> void { Shoot( 1.0_s ); },
     [this] (void) -> void { m_Shooter.changeShooterState( false ); m_autoStateDone = true; },

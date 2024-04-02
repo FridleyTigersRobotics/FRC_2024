@@ -116,7 +116,7 @@ std::vector<std::function<void(void)>> Auto_Drive = {
  void Robot::AutonomousInit() {
     m_autoSelected = m_autoChooser.GetSelected();
     fmt::print("Auto selected: {}\n", m_autoSelected);
-
+    m_AbortAuto = false;
 
     if (m_autoSelected == kAutoDrive) 
     {
@@ -186,7 +186,17 @@ std::vector<std::function<void(void)>> Auto_Drive = {
 
 
 
+void Robot::AutoAngle(double AngleCrap) {
+  m_Drivetrain.m_YawOffset    = -AngleCrap;
+  m_Drivetrain.m_AngleOffset  = 0;
+  m_DriveTargetAngle          = -AngleCrap;//AngleCrap;
 
+  #if AUTO_ANGLE_TESTING
+    m_AbortAuto = true;
+  #endif
+
+  //Goal(facing away)=the current angle (if right (-1*120) jf left (+120))
+}
 
 
 void Robot::Drivetrain_Stop() {
@@ -277,6 +287,8 @@ void Robot::MoveArmForShooting()
 void Robot::AimAndPrepShoot( units::second_t maxTime )
 {
   m_Arm.SetArmPosition( m_Arm.SPEAKER );
+  //Drive for distance using the limlight aiming. We can use the same thing as we do in tele-op?
+  //Yoink the variables from teleop in robot? hmm...
   m_Intake.ChangeIntakeState( m_Intake.Intake_Stopped );
   m_Shooter.changeShooterState( true );
 
@@ -350,7 +362,7 @@ void Robot::RunAutoSequence()
   }
 
   // frc::SmartDashboard::PutNumber("Auto_Idx",  m_autoState);
-  if ( m_autoState < (*autoSequence).size() )
+  if ( m_autoState < (*autoSequence).size() && !m_AbortAuto )
   {
     (*autoSequence)[m_autoState]();
   }

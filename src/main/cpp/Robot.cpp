@@ -22,6 +22,7 @@
 
 
 void Robot::RobotInit() {
+  m_Drivetrain.m_imu.Reset();
   frc::CameraServer::StartAutomaticCapture();
   // Autonomous Chooser
   m_autoChooser.SetDefaultOption( kAutoNameDefault,         kAutoNameDefault );
@@ -52,7 +53,7 @@ void Robot::RobotInit() {
   m_Arm.initArm();
   m_Drivetrain.Driveinit();
 
-  m_DriveTargetAngle = 0;
+  //m_DriveTargetAngle = 0;
 
   m_AutoXdirPid.SetTolerance( kXyPosTolerance,  kXyVelTolerance );
   m_AutoXdirPid.Reset( 0.0_m );
@@ -160,8 +161,8 @@ void Robot::RobotPeriodic()
   if ( m_driveController.GetStartButtonPressed() )
   {
     m_Drivetrain.m_AngleOffset=0;
-    m_Drivetrain.m_imu.Reset();
-    m_Drivetrain.m_imu.ZeroYaw();
+    //m_Drivetrain.m_imu.Reset();
+    //m_Drivetrain.m_imu.ZeroYaw();
     m_DriveTargetAngle = 0;
     m_DriveRotatePid.Reset();
   }
@@ -220,7 +221,7 @@ void Robot::RobotPeriodic()
 
   if ( angleChanged )
   {
-    double unwrappedRobotAngle = m_Drivetrain.m_imu.GetAngle();
+    double unwrappedRobotAngle = m_Drivetrain.GetAngle();
     double wrappedRobotAngle   = m_Drivetrain.GetYaw();
     double angleDelta = targetWrappedAngle - wrappedRobotAngle;
     if ( angleDelta > 180 )
@@ -256,13 +257,13 @@ void Robot::RobotPeriodic()
 
   m_DriveRotatePid.SetSetpoint( m_DriveTargetAngle );
 
-  double driveRotSpeedUnClamped = -m_DriveRotatePid.Calculate( m_Drivetrain.m_imu.GetAngle() );
+  double driveRotSpeedUnClamped = -m_DriveRotatePid.Calculate( m_Drivetrain.GetAngle() );
   double driveRotSpeed          = std::clamp( driveRotSpeedUnClamped, -0.5, 0.5 );
 
  
   frc::SmartDashboard::PutNumber( "driveRotSpeedUnClamped", driveRotSpeedUnClamped);
   frc::SmartDashboard::PutNumber( "driveRotSpeed",          driveRotSpeed);
-  frc::SmartDashboard::PutNumber( "RobotAngle",             m_Drivetrain.m_imu.GetAngle());
+  frc::SmartDashboard::PutNumber( "RobotAngle",             m_Drivetrain.GetAngle());
   frc::SmartDashboard::PutNumber( "DriveTargetAngle",       m_DriveTargetAngle);
   frc::SmartDashboard::PutNumber( "AngleOffset", m_Drivetrain.m_AngleOffset);
 
