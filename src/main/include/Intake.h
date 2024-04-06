@@ -17,7 +17,7 @@ class Intake{
         Intake_Stopped,
     } intake_movement_t;
 
-
+    Intake();
     void initIntake();
     void ChangeIntakeState(intake_movement_t);
     void updateIntake ();

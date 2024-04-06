@@ -17,6 +17,8 @@ Arm::Arm()
     m_ArmMotorRight.SetInverted( false );
     m_ArmMotorLeft.SetInverted( true );
     m_WristMotor.SetInverted( true );
+
+    m_WristMotor.SetSmartCurrentLimit(20, 40);
     m_ArmMotorLeftEncoder.SetPositionConversionFactor(  1.0 / ( 20.0 * ( 74.0 / 14.0 ) ) );
     m_ArmMotorRightEncoder.SetPositionConversionFactor( 1.0 / ( 20.0 * ( 74.0 / 14.0 ) ) );
 
@@ -385,10 +387,15 @@ void Arm::updateArm()
    }
 
    #endif
+
 }
 
 void Arm::UpdateSmartDashboardData()
 {
+    frc::SmartDashboard::PutNumber( "WristEncoderAngle", getWristEncoderValue());
+    frc::SmartDashboard::PutNumber( "WristSetpointAngle", m_WristAngle);
+    frc::SmartDashboard::PutNumber( "WristControlOutput", m_WristControlOutput);
+
 #if 0
     //frc::SmartDashboard::PutNumber("Arm_ControlOutputL",   m_ArmMotorLeft.GetAppliedOutput());
     //frc::SmartDashboard::PutNumber("Arm_ControlOutputR",   m_ArmMotorRight.GetAppliedOutput());

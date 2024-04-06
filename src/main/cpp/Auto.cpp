@@ -114,9 +114,9 @@ std::vector<std::function<void(void)>> Auto_Drive = {
   
 
  void Robot::AutonomousInit() {
+    m_fieldRelative = false;
     m_autoSelected = m_autoChooser.GetSelected();
     fmt::print("Auto selected: {}\n", m_autoSelected);
-    m_AbortAuto = false;
 
     if (m_autoSelected == kAutoDrive) 
     {
@@ -141,6 +141,18 @@ std::vector<std::function<void(void)>> Auto_Drive = {
      else if (m_autoSelected == kCenterShootRun) 
     {
       autoSequence = &Auto_CenterShootRun;
+    }
+    else if (m_autoSelected == kShootRightPickupRightTest) 
+    {
+      autoSequence = &ShootRightPickupRightTest;
+    }
+    else if (m_autoSelected == kShootLeftPickupLeftTest) 
+    {
+      autoSequence = &ShootLeftPickupLeftTest;
+    }
+     else if (m_autoSelected == kShootRunLeft) 
+    {
+      autoSequence = &Auto_ShootRunLeft;
     }
 
 
@@ -190,10 +202,8 @@ void Robot::AutoAngle(double AngleCrap) {
   m_Drivetrain.m_YawOffset    = -AngleCrap;
   m_Drivetrain.m_AngleOffset  = 0;
   m_DriveTargetAngle          = -AngleCrap;//AngleCrap;
+  m_autoStateDone = true;
 
-  #if AUTO_ANGLE_TESTING
-    m_AbortAuto = true;
-  #endif
 
   //Goal(facing away)=the current angle (if right (-1*120) jf left (+120))
 }
@@ -362,7 +372,7 @@ void Robot::RunAutoSequence()
   }
 
   // frc::SmartDashboard::PutNumber("Auto_Idx",  m_autoState);
-  if ( m_autoState < (*autoSequence).size() && !m_AbortAuto )
+  if ( m_autoState < (*autoSequence).size() )
   {
     (*autoSequence)[m_autoState]();
   }

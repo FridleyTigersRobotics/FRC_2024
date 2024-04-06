@@ -32,6 +32,9 @@ void Robot::RobotInit() {
   m_autoChooser.AddOption       ( kShootLeftPickupLeft,     kShootLeftPickupLeft );
   m_autoChooser.AddOption       ( kShootRightPickupRight,   kShootRightPickupRight );
   m_autoChooser.AddOption       ( kCenterShootRun,          kCenterShootRun );
+  m_autoChooser.AddOption       ( kShootRightPickupRightTest, kShootRightPickupRightTest );
+  m_autoChooser.AddOption       ( kShootLeftPickupLeftTest, kShootLeftPickupLeftTest );
+  m_autoChooser.AddOption       ( kShootRunLeft,            kShootRunLeft );
 
   frc::SmartDashboard::PutData("Auto Modes", &m_autoChooser);
 
@@ -49,6 +52,7 @@ void Robot::RobotInit() {
 
 
  void Robot::TeleopInit() {
+  m_fieldRelative = true;
   m_Climber.initClimber();
   m_Arm.initArm();
   m_Drivetrain.Driveinit();
@@ -243,13 +247,13 @@ void Robot::RobotPeriodic()
 
   if(m_driveController.GetRightBumper())
   {
-    m_Drivetrain.m_AngleOffset += 1;
+    m_Drivetrain.m_YawOffset += 1;
   }
   else
   {  
     if(m_driveController.GetLeftBumper())
     {
-    m_Drivetrain.m_AngleOffset -= 1;
+    m_Drivetrain.m_YawOffset -= 1;
     }
   }
 
@@ -266,7 +270,6 @@ void Robot::RobotPeriodic()
   frc::SmartDashboard::PutNumber( "RobotAngle",             m_Drivetrain.GetAngle());
   frc::SmartDashboard::PutNumber( "DriveTargetAngle",       m_DriveTargetAngle);
   frc::SmartDashboard::PutNumber( "AngleOffset", m_Drivetrain.m_AngleOffset);
-
   double DriveDeadband = 0.1;
   double DriveX = frc::ApplyDeadband( -m_driveController.GetLeftY(), DriveDeadband );
   double DriveY = frc::ApplyDeadband( -m_driveController.GetLeftX(), DriveDeadband );

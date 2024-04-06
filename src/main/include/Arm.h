@@ -118,7 +118,7 @@ private:
     double kMaxVel2 = 1.8, kMinVel2 = 0, kMaxAcc2 = 1.2, kAllErr2 = 0;
 #else
     // TODO : Determine these
-    double m_WristGroundValue    = 1.160;            
+    double m_WristGroundValue    = 1.14;            
     double m_WristSourceValue    = 1.1;            
     double m_WristSpeakerValue   = 0.600;             
     double m_WristAmpValue       = 1.350;  
@@ -126,7 +126,7 @@ private:
     double m_WristMaxOutputValue = 0.600;               
     double m_WristP              = 3.000;  
     double m_WristMaxVel         = double{std::numbers::pi * 1_rad_per_s};
-    double m_WristMaxAccel       = double{std::numbers::pi * 2_rad_per_s / 1_s};
+    double m_WristMaxAccel       = double{std::numbers::pi * 1_rad_per_s / 1_s};
     double m_WristControlOutput = 0;
     double m_WristAngle = 0;
     frc::ProfiledPIDController<units::radians> m_WristPIDController{

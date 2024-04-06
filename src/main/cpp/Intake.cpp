@@ -2,6 +2,12 @@
 #include <Intake.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
+Intake::Intake()
+{
+    //m_IntakeMotor.SetSmartCurrentLimit(20, 40);
+}
+
+
 void Intake::initIntake()
 {
     m_intake_movement = Intake_Stopped;
@@ -22,7 +28,7 @@ void Intake::updateIntake()
         case (Intake_IntakingWithSensor):
         {
             // Might want to include an override for the ring detector 
-            // in case it stops working...
+            // in case it stops working... Because we already have that.
             if ( IsRingDetected() )
             {
                 IntakeSpeed = 0.0;
@@ -40,7 +46,7 @@ void Intake::updateIntake()
             break;
         }
         case (Intake_Outtaking):
-        { // TODO : Determine out speed & direction
+        { 
             IntakeSpeed = kOuttakeSpeed;
             break;
         }
@@ -71,6 +77,6 @@ void Intake::UpdateSmartDashboardData()
 
 bool Intake::IsRingDetected() 
 {   
-    // TODO : determine the correct value to detect note
-    return (m_RingDetector.GetValue() > 1200);
+    //Good range seems like it should be about 1600?
+    return (m_RingDetector.GetValue() > 1600);
 }
