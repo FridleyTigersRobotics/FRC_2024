@@ -146,6 +146,11 @@ void Arm::initArm()
     
 }
 
+void Arm::ResetWristEncoder()
+{
+    m_WristPIDController.Reset( units::radian_t{getWristEncoderValue()} );
+}
+
 
 double Arm::getWristEncoderValue()
 {

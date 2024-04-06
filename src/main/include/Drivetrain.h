@@ -61,8 +61,6 @@ class Drivetrain {
    units::meters_per_second_t  m_ySpeed{ 0.0 };
    units::radians_per_second_t m_rot   { 0.0 };
 
-    double m_AngleOffset = 0;
-
    //-----------|Front|------------
   //  16----------------------12
   //  |----YAY CODE TEAM!------|

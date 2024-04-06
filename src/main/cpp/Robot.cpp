@@ -51,6 +51,12 @@ void Robot::RobotInit() {
 }
 
 
+ void Robot::DisabledInit() {
+  m_Arm.disableArm();
+ }
+
+
+
  void Robot::TeleopInit() {
   m_fieldRelative = true;
   m_Climber.initClimber();
@@ -164,7 +170,6 @@ void Robot::RobotPeriodic()
 
   if ( m_driveController.GetStartButtonPressed() )
   {
-    m_Drivetrain.m_AngleOffset=0;
     //m_Drivetrain.m_imu.Reset();
     //m_Drivetrain.m_imu.ZeroYaw();
     m_DriveTargetAngle = 0;
@@ -269,7 +274,6 @@ void Robot::RobotPeriodic()
   frc::SmartDashboard::PutNumber( "driveRotSpeed",          driveRotSpeed);
   frc::SmartDashboard::PutNumber( "RobotAngle",             m_Drivetrain.GetAngle());
   frc::SmartDashboard::PutNumber( "DriveTargetAngle",       m_DriveTargetAngle);
-  frc::SmartDashboard::PutNumber( "AngleOffset", m_Drivetrain.m_AngleOffset);
   double DriveDeadband = 0.1;
   double DriveX = frc::ApplyDeadband( -m_driveController.GetLeftY(), DriveDeadband );
   double DriveY = frc::ApplyDeadband( -m_driveController.GetLeftX(), DriveDeadband );
@@ -360,7 +364,11 @@ void Robot::RobotPeriodic()
       
     } // else // if ( m_controlModeEndGame )
 
-
+  if ( m_coController.GetStartButtonPressed() )
+  {
+    m_Arm.ResetWristEncoder();
+    m_Arm.SetArmPosition( m_Arm.HOLD_START_POSITION );
+  }
   
   double limeTx                = LimelightHelpers::getTX();
   double limeRotSpeedUnClamped = m_LimeRotatePid.Calculate( limeTx );

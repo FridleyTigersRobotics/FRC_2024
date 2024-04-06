@@ -51,6 +51,7 @@ public:
     bool ArmReadyForMoveForwardPreClimb();
     void armManualControl( double speed );
     void wristManualControl( double speed );
+    void ResetWristEncoder();
 
     units::meter_t ArmEndPosition();
 
@@ -134,6 +135,9 @@ private:
       0.0,
       0.0,
       {units::radians_per_second_t{m_WristMaxVel}, units::radians_per_second_squared_t{m_WristMaxAccel}}};
+
+
+
 #endif
 
 

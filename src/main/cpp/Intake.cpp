@@ -4,7 +4,7 @@
 
 Intake::Intake()
 {
-    //m_IntakeMotor.SetSmartCurrentLimit(20, 40);
+    //m_IntakeMotor.SetSmartCurrentLimit(10, 30);
 }
 
 
@@ -67,6 +67,7 @@ void Intake::updateIntake()
 void Intake::UpdateSmartDashboardData()
 {
     frc::SmartDashboard::PutNumber( "Intake_Detc", m_RingDetector.GetValue() );
+    frc::SmartDashboard::PutBoolean("NoteDetected", IsRingDetected() );
     #if 0
     frc::SmartDashboard::PutNumber( "Intake_State", m_intake_movement );
     frc::SmartDashboard::PutNumber( "Intake_Detc", m_RingDetector.GetValue() );

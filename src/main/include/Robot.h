@@ -37,7 +37,7 @@ class Robot : public frc::TimedRobot {
     void TeleopInit() override;
     void TeleopPeriodic() override;
 
-
+    void DisabledInit() override;
 
 
     // Autonomous
