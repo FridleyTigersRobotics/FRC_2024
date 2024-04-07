@@ -252,13 +252,13 @@ void Robot::RobotPeriodic()
 
   if(m_driveController.GetRightBumper())
   {
-    m_Drivetrain.m_YawOffset += 1;
+    m_Drivetrain.m_YawOffset -= 3;
   }
   else
   {  
     if(m_driveController.GetLeftBumper())
     {
-    m_Drivetrain.m_YawOffset -= 1;
+    m_Drivetrain.m_YawOffset += 3;
     }
   }
 

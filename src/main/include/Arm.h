@@ -119,7 +119,7 @@ private:
     double kMaxVel2 = 1.8, kMinVel2 = 0, kMaxAcc2 = 1.2, kAllErr2 = 0;
 #else
     // TODO : Determine these
-    double m_WristGroundValue    = 1.14;            
+    double m_WristGroundValue    = 1.12;            
     double m_WristSourceValue    = 1.1;            
     double m_WristSpeakerValue   = 0.600;             
     double m_WristAmpValue       = 1.350;  

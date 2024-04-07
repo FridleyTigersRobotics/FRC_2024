@@ -4,10 +4,10 @@
 
 Intake::Intake()
 {
-    //m_IntakeMotor.SetSmartCurrentLimit(10, 30);
+    m_IntakeMotor.SetSmartCurrentLimit(20, 35);
 }
 
-
+ 
 void Intake::initIntake()
 {
     m_intake_movement = Intake_Stopped;

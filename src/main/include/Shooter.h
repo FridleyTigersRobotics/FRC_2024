@@ -28,7 +28,7 @@ private:
     double kP = 0.0002, kI = 0.0, kD = 0, kIz = 0, kFF = 0.0002, kMaxOutput = 1.0, kMinOutput = -0.1;
 
     // default smart motion coefficients
-    double kMaxVel = 1500, kMinVel = 0, kMaxAcc = 0.00001, kAllErr = 0;
+    double kMaxVel = 1750, kMinVel = 0, kMaxAcc = 0.00001, kAllErr = 0;
 
 
     // TODO : Determine the acceleration.
@@ -38,6 +38,6 @@ private:
     bool   m_shooterSpeedReadyToShoot { false };
 
     // TODO : Determine all thse values.
-    double const m_maxShooterSpeed{ 2800 };
+    double const m_maxShooterSpeed{ 3000 };
     double const m_maxAccelOutput { 1.0 };
 };

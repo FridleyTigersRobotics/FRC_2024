@@ -16,7 +16,7 @@
 
 
  void Robot::AutonomousInit() {
-    m_fieldRelative = false;
+   
     m_autoSelected = m_autoChooser.GetSelected();
     fmt::print("Auto selected: {}\n", m_autoSelected);
 
@@ -71,6 +71,7 @@
     
 
     TeleopInit(); 
+    m_fieldRelative = false;
     m_autoTimer.Stop();
     m_autoTimer.Reset();
     m_autoTimer.Start();
@@ -137,12 +138,14 @@ void Robot::Drivetrain_Stop() {
 
   m_AutoXdirPid.SetGoal( xDistance );
   m_AutoYdirPid.SetGoal( yDistance );
-  m_AutoRotatePid.SetGoal(  rotRadians );
+  m_AutoRotatePid.SetGoal( rotRadians );
   m_LimeRotatePid.SetSetpoint( m_limeAngleOffset );
 
   units::meters_per_second_t  xSpeed  { m_AutoXdirPid.Calculate( pose.X() ) };
   units::meters_per_second_t  ySpeed  { m_AutoYdirPid.Calculate( pose.Y() ) };
-  units::radians_per_second_t rotSpeed{ -m_AutoRotatePid.Calculate( pose.Rotation().Radians() ) };
+
+
+  units::radians_per_second_t rotSpeed{ -m_AutoRotatePid.Calculate( pose.Rotation().Radians() - m_initialPose.Rotation().Radians() ) };
  
 
   frc::SmartDashboard::PutNumber("Auto_angle", double{pose.Rotation().Radians()});
@@ -186,7 +189,7 @@ void Robot::MoveArmForShooting()
 {
   m_Arm.SetArmPosition( m_Arm.SPEAKER );
 
-  if ( m_autoTimer.Get() > 0.5_s )
+  if ( m_autoTimer.Get() > 1.0_s )
   {
     m_Intake.ChangeIntakeState( m_Intake.Intake_Stopped );
     m_autoStateDone = true;
@@ -246,13 +249,14 @@ void Robot::AutonomousStateInit()
   m_autoTimer.Stop();
   m_autoTimer.Reset();
   m_autoTimer.Start();
-  //m_initialPose = m_Drivetrain.m_odometry.GetPose();
+  
   m_Drivetrain.m_odometry.ResetPosition(
     frc::Rotation2d{units::degree_t {m_Drivetrain.GetYaw()}},
     {m_Drivetrain.m_frontLeft.GetPosition(), m_Drivetrain.m_frontRight.GetPosition(),
      m_Drivetrain.m_backLeft.GetPosition(),  m_Drivetrain.m_backRight.GetPosition()},
     frc::Pose2d{}
   );
+  m_initialPose = m_Drivetrain.m_odometry.GetPose();
 }
 
 

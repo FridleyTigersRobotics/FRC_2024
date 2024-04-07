@@ -178,8 +178,8 @@ bool Arm::ArmHold()
 
 bool Arm::ArmReadyForGroundIntake()
 {
-    return ( m_ArmPosition == GROUND_PICKUP &&
-            getWristEncoderValue() > 0.9 );
+    return ( m_ArmPosition == GROUND_PICKUP && getWristEncoderValue() > 0.9 ) ||
+           ( m_ArmPosition == SPEAKER && getWristEncoderValue() > 0.7 );
 }
 
 bool Arm::ArmReadyForMoveForwardPreClimb()
