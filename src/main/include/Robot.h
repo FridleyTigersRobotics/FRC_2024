@@ -65,6 +65,7 @@ class Robot : public frc::TimedRobot {
  private:
     frc::XboxController m_driveController{0};
     frc::XboxController m_coController   {1};
+    frc::GenericHID m_buttons {2};
 
     Drivetrain m_Drivetrain;
     Arm        m_Arm;

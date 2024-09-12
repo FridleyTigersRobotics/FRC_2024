@@ -284,7 +284,8 @@ void Robot::RobotPeriodic()
 
 
     // Codriver Controls
-    bool SwitchEndGameMode = m_coController.GetBackButtonPressed();
+    // bool SwitchEndGameMode = m_coController.GetBackButtonPressed();
+   bool SwitchEndGameMode = m_buttons.GetRawButtonPressed(7);
     bool AimShooter = false;
     if ( SwitchEndGameMode )
     {
@@ -296,11 +297,13 @@ void Robot::RobotPeriodic()
       m_Arm.SetArmPosition( m_Arm.HOLD_START_POSITION );
 
       // Climber
-      if( m_coController.GetRightBumper() )
+      //if( m_coController.GetRightBumper() )
+      if( m_buttons.GetRawButtonPressed(8) )
       {
         m_Climber.ChangeClimberState( m_Climber.ClimberDown );
       }
-      else if ( m_coController.GetLeftBumper() )
+      //else if ( m_coController.GetLeftBumper() )
+      else if ( m_buttons.GetRawButtonPressed(9) )
       {
         m_Climber.ChangeClimberState( m_Climber.ClimberUp );
       }
@@ -312,15 +315,18 @@ void Robot::RobotPeriodic()
     else // if ( m_controlModeEndGame )
     {
       // Arm / Wrist
-      if( m_coController.GetAButton() )
+      //if( m_coController.GetAButton() )
+      if( m_buttons.GetRawButtonPressed(4) )
       {
         m_Arm.SetArmPosition( m_Arm.GROUND_PICKUP );
       }
-      else if( m_coController.GetXButton() )
+      //else if( m_coController.GetXButton() )
+      else if( m_buttons.GetRawButtonPressed(5) )
       {
         m_Arm.SetArmPosition( m_Arm.AMP );
       }
-      else if( m_coController.GetYButton() )
+      //else if( m_coController.GetYButton() )
+      else if( m_buttons.GetRawButtonPressed(6) )
       {
         m_Arm.SetArmPosition( m_Arm.SOURCE );
       }
@@ -333,11 +339,13 @@ void Robot::RobotPeriodic()
       }
 
       // Intake
-      if ( m_coController.GetLeftBumper() )
+      //if ( m_coController.GetLeftBumper() )
+      if ( m_buttons.GetRawButtonPressed(1) )
       {
         m_Intake.ChangeIntakeState( m_Intake.Intake_Outtaking );
       }
-      else if( m_coController.GetRightBumper() )
+      //else if( m_coController.GetRightBumper() )
+      else if( m_buttons.GetRawButtonPressed(2) )
       {
         m_Intake.ChangeIntakeState( m_Intake.Intake_Intaking );
       }
@@ -351,7 +359,8 @@ void Robot::RobotPeriodic()
       }
 
       // Shooter
-      if ( m_coController.GetRightTriggerAxis() > 0.2 )
+      //if ( m_coController.GetRightTriggerAxis() > 0.2 )
+      if ( m_buttons.GetRawButtonPressed(3) > 0.2 )
       {
         AimShooter = true;
         m_Shooter.changeShooterState( true );
@@ -364,7 +373,8 @@ void Robot::RobotPeriodic()
       
     } // else // if ( m_controlModeEndGame )
 
-  if ( m_coController.GetStartButtonPressed() )
+  //if ( m_coController.GetStartButtonPressed() )
+  if ( m_buttons.GetRawButtonPressed(10) )
   {
     m_Arm.ResetWristEncoder();
     m_Arm.SetArmPosition( m_Arm.HOLD_START_POSITION );

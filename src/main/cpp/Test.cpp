@@ -29,20 +29,24 @@ void Robot::TestPeriodic()
     double speedL = 0;
     double speedR = 0;
 
-    if (m_coController.GetLeftBumper())
+    //if (m_coController.GetLeftBumper())
+    if (m_buttons.GetRawButtonPressed(1))
     {
         speedL = 1.0;
     }
-    if (m_coController.GetRightBumper())
+    //if (m_coController.GetRightBumper())
+    if (m_buttons.GetRawButtonPressed(2))
     {
         speedR = 1.0;
     }
 
-    if (m_coController.GetLeftTriggerAxis() > 0.2)
+    //if (m_coController.GetLeftTriggerAxis() > 0.2)
+    if (m_buttons.GetRawButtonPressed(3))
     {
         speedL = -1.0;
     }
-    if (m_coController.GetRightTriggerAxis() > 0.2)
+    //if (m_coController.GetRightTriggerAxis() > 0.2)
+    if (m_buttons.GetRawButtonPressed(4))
     {
         speedR = -1.0;
     }
