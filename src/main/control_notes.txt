@@ -1,0 +1,10 @@
+switch end game = 7
+climber down = 8
+climber up = 9
+ground pick up = 4
+arm amp = 5
+arm source = 6
+intake outtake = 1
+intake intaking = 2
+aim shooter = 3
+start position = 6
