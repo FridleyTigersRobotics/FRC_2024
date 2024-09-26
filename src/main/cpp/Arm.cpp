@@ -359,7 +359,7 @@ void Arm::updateArm()
     
     //PIDdly thing
     // const auto ArmControlOutput = m_ArmPIDController.Calculate(
-    //     units::radian_t{m_ArmEncoder.GetDistance()}, units::radian_t{ArmAngle});
+         //units::radian_t{m_ArmEncoder.GetDistance()}, units::radian_t{ArmAngle};
 
     m_ArmAngle   = ArmAngle;
     m_WristAngle = WristAngle;
@@ -400,8 +400,9 @@ void Arm::UpdateSmartDashboardData()
     frc::SmartDashboard::PutNumber( "WristEncoderAngle", getWristEncoderValue());
     frc::SmartDashboard::PutNumber( "WristSetpointAngle", m_WristAngle);
     frc::SmartDashboard::PutNumber( "WristControlOutput", m_WristControlOutput);
+    frc::SmartDashboard::PutNumber("Wrist_Encoder_AbsPos",   m_WristEncoder.GetAbsolutePosition());
+    frc::SmartDashboard::PutNumber("Wrist_MotorEncoder_Pos", m_WristMotorEncoder.GetPosition());
 
-#if 0
     //frc::SmartDashboard::PutNumber("Arm_ControlOutputL",   m_ArmMotorLeft.GetAppliedOutput());
     //frc::SmartDashboard::PutNumber("Arm_ControlOutputR",   m_ArmMotorRight.GetAppliedOutput());
 
@@ -415,7 +416,7 @@ void Arm::UpdateSmartDashboardData()
 
     //frc::SmartDashboard::PutNumber("Arm_NeoVelocityL",     m_ArmMotorLeftEncoder.GetVelocity());
     //frc::SmartDashboard::PutNumber("Arm_NeoVelocityR",     m_ArmMotorRightEncoder.GetVelocity());
-
+#if 0
     frc::SmartDashboard::PutNumber("Wrist_m_ArmPosition",    m_ArmPosition);    
     frc::SmartDashboard::PutNumber("Wrist_Encoder_Dist",     getWristEncoderValue());
     frc::SmartDashboard::PutNumber("Wrist_Encoder_AbsPos",   m_WristEncoder.GetAbsolutePosition());
