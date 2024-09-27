@@ -20,8 +20,7 @@
 #include "units/angular_acceleration.h"
 
 
-
-
+#define NEW_AUTO_CHOOSER ( 1 )
 
 class Robot : public frc::TimedRobot {
  public:
@@ -150,9 +149,10 @@ class Robot : public frc::TimedRobot {
 
 
   // Auto
-
+    std::string TranslateAutoModeToAutoString( uint32_t autoModeInt );
     frc::SendableChooser<std::string> m_autoChooser;
     std::string  m_autoSelected { kAutoNameDefault };
+    uint32_t     m_autoSelectedInteger { 0 };
     frc::Timer   m_autoTimer;
 
     unsigned int m_autoState    { 0 }; 

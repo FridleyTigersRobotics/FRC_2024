@@ -15,9 +15,43 @@
 #include <cameraserver/CameraServer.h>
 
 
+#if NEW_AUTO_CHOOSER
+std::vector<std::string> AutoModeNames = {
+    "DO NOTHING",
+    "Drive",
+    "ShootCenter",
+    "ShootCenterPickupCenter",
+    "ShootLeftPickupLeft",
+    "ShootRightPickupRight",
+    "CenterShootRun",
+    "ShootRightPickupRightTest",
+    "ShootLeftPickupLeftTest",
+    "ShootRunLeft"
+};
+
+std::string Robot::TranslateAutoModeToAutoString( uint32_t autoModeInt ) {
+    std::string autoString = kAutoNameDefault;
+    
+    if ( autoModeInt < AutoModeNames.size() )
+    {
+      autoString = AutoModeNames[autoModeInt];
+    }
+
+    return autoString;
+}
+
+#endif
+
  void Robot::AutonomousInit() {
    
+  #if NEW_AUTO_CHOOSER
+    m_autoSelectedInteger = frc::SmartDashboard::GetNumber("AutoModeInt", 0 );
+    fmt::print("Auto selected integer: {}\n", m_autoSelectedInteger);
+    m_autoSelected = TranslateAutoModeToAutoString( m_autoSelectedInteger );
+  #else
     m_autoSelected = m_autoChooser.GetSelected();
+  #endif
+
     fmt::print("Auto selected: {}\n", m_autoSelected);
 
     if (m_autoSelected == kAutoDrive) 
