@@ -336,7 +336,7 @@ void Robot::RobotPeriodic()
       if ( m_buttons.GetRawButton(2) || m_coController.GetLeftBumper() )
       {
         m_Intake.ChangeIntakeState( m_Intake.Intake_Outtaking );
-      })
+      }
       else if( m_buttons.GetRawButton(1) || m_coController.GetRightBumper() )
       {
         m_Intake.ChangeIntakeState( m_Intake.Intake_Intaking );
