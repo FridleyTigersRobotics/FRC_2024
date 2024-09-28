@@ -1,10 +1,30 @@
-switch end game = 7
-climber down = 8
-climber up = 9
-ground pick up = 4
-arm amp = 5
-arm source = 6
-intake outtake = 1
-intake intaking = 2
-aim shooter = 3
-start position = 6
+frc::XboxController m_driveController{0};
+frc::GenericHID m_buttons            {1};
+frc::XboxController m_coController   {2};
+
+Driver Controls
+    field relative change = back
+    set drive target angle to 0 = start
+    target 0 angle = Y
+    target 90 angle = B
+    target 180 angle = A
+    target -90 angle = X
+    adjust drive target angle plus = right trigger
+    adjust drive target angle minus = left trigger
+    drive angle = right stick
+    drive around = left stick
+    field orient offset - = right bumper
+    field orient offset + = left bumper
+
+
+CoController Controls - button, xbox
+    switch end game = 7, back
+    climber down = 8, right bumper
+    climber up = 9, left bumper
+    ground pick up = 4, A
+    arm amp = 5, X
+    arm source = 6, Y
+    intake outtake = 2, left bumper
+    intake intaking = 1, rght bumper
+    aim shooter = 3, right trigger
+    start position = 10, start
