@@ -25,6 +25,6 @@ CoController Controls - button, xbox
     arm amp = 5, X
     arm source = 6, Y
     intake outtake = 2, left bumper
-    intake intaking = 1, rght bumper
+    intake intaking = 1, right bumper
     aim shooter = 3, right trigger
     start position = 10, start
