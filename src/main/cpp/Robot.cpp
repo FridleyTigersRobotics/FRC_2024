@@ -35,7 +35,7 @@ void Robot::RobotInit() {
   m_autoChooser.AddOption       ( kShootRightPickupRightTest, kShootRightPickupRightTest );
   m_autoChooser.AddOption       ( kShootLeftPickupLeftTest, kShootLeftPickupLeftTest );
   m_autoChooser.AddOption       ( kShootRunLeft,            kShootRunLeft );
-
+  frc::SmartDashboard::PutNumber("AutoModeInt", 0 );
   frc::SmartDashboard::PutData("Auto Modes", &m_autoChooser);
 
   m_LimeRotatePid.SetSetpoint( m_limeAngleOffset );

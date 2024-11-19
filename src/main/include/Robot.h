@@ -20,7 +20,7 @@
 #include "units/angular_acceleration.h"
 
 
-#define NEW_AUTO_CHOOSER ( 1 )
+#define NEW_AUTO_CHOOSER ( 0 )
 
 class Robot : public frc::TimedRobot {
  public:
