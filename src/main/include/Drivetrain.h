@@ -46,6 +46,7 @@ class Drivetrain {
 
   void UpdateOdometry();
   void Driveinit();
+  void ResetYaw();
   void UpdateSmartDashboardData();
   double GetYaw();
   double GetAngle();

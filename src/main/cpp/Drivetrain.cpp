@@ -5,6 +5,7 @@
 #include "Drivetrain.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <fmt/printf.h>
+#include <math.h>
 
 void Drivetrain::updateDrivetrain( units::second_t period, bool fieldRelative ) 
 {
@@ -89,6 +90,17 @@ void Drivetrain::Driveinit(){
   //m_imu.ZeroYaw();
   //m_imu.Reset();
 }
+
+void Drivetrain::ResetYaw()
+{
+  double currentAngle = m_imu.GetAngle() + m_YawOffset;
+  double unwrappedAngle = std::remainder( currentAngle, 360.0 );
+  m_YawOffset=unwrappedAngle;
+  m_imu.ZeroYaw();
+  m_imu.Reset();
+}
+
+
 
 double Drivetrain::GetYaw(){
   return ((m_imu.GetYaw()) + m_YawOffset);

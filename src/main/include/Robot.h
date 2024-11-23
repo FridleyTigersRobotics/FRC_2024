@@ -21,6 +21,27 @@
 
 
 #define NEW_AUTO_CHOOSER ( 0 )
+#define DISABLE_SECONDARY_CONTROLLER ( 1 )
+
+
+
+class DummyController
+{
+public:
+  bool GetRightBumper(void);
+  bool GetLeftBumper(void);
+  bool GetAButton(void);
+  bool GetBButton(void);
+  bool GetXButton(void);
+  bool GetYButton(void);
+  float GetRightTriggerAxis(void);
+  bool GetStartButtonPressed(void);
+  bool GetBackButtonPressed(void);
+};
+
+
+
+
 
 class Robot : public frc::TimedRobot {
  public:
@@ -64,7 +85,11 @@ class Robot : public frc::TimedRobot {
  private:
     frc::XboxController m_driveController{0};
     frc::GenericHID m_buttons            {1};
+  #if DISABLE_SECONDARY_CONTROLLER
+    DummyController m_coController;
+  #else
     frc::XboxController m_coController   {2};
+  #endif
 
     Drivetrain m_Drivetrain;
     Arm        m_Arm;

@@ -21,6 +21,44 @@
 
 
 
+bool DummyController::GetRightBumper(void)
+{
+  return 0;
+}
+bool DummyController::GetLeftBumper(void)
+{
+  return 0;
+}
+bool DummyController::GetAButton(void)
+{
+  return 0;
+}
+bool DummyController::GetBButton(void)
+{
+  return 0;
+}
+bool DummyController::GetXButton(void)
+{
+  return 0;
+}
+bool DummyController::GetYButton(void)
+{
+  return 0;
+}
+float DummyController::GetRightTriggerAxis(void)
+{
+  return 0;
+}
+bool DummyController::GetStartButtonPressed(void)
+{
+  return 0;
+}
+bool DummyController::GetBackButtonPressed(void)
+{
+  return 0;
+}
+
+
 void Robot::RobotInit() {
   m_Drivetrain.m_imu.Reset();
   frc::CameraServer::StartAutomaticCapture();
@@ -172,6 +210,7 @@ void Robot::RobotPeriodic()
   {
     //m_Drivetrain.m_imu.Reset();
     //m_Drivetrain.m_imu.ZeroYaw();
+    m_Drivetrain.ResetYaw();
     m_DriveTargetAngle = 0;
     m_DriveRotatePid.Reset();
   }
@@ -243,6 +282,9 @@ void Robot::RobotPeriodic()
     }
 
     m_DriveTargetAngle = unwrappedRobotAngle + angleDelta;
+  frc::SmartDashboard::PutNumber( "HEADING_unwrappedRobotAngle",       unwrappedRobotAngle);
+  frc::SmartDashboard::PutNumber( "HEADING_angleDelta",       angleDelta);
+
   }
 #endif
 
@@ -272,8 +314,9 @@ void Robot::RobotPeriodic()
  
   frc::SmartDashboard::PutNumber( "driveRotSpeedUnClamped", driveRotSpeedUnClamped);
   frc::SmartDashboard::PutNumber( "driveRotSpeed",          driveRotSpeed);
-  frc::SmartDashboard::PutNumber( "RobotAngle",             m_Drivetrain.GetAngle());
-  frc::SmartDashboard::PutNumber( "DriveTargetAngle",       m_DriveTargetAngle);
+
+  frc::SmartDashboard::PutNumber( "HEADING_RobotAngle",             m_Drivetrain.GetAngle());
+  frc::SmartDashboard::PutNumber( "HEADING_DriveTargetAngle",       m_DriveTargetAngle);
   double DriveDeadband = 0.1;
   double DriveX = frc::ApplyDeadband( -m_driveController.GetLeftY(), DriveDeadband );
   double DriveY = frc::ApplyDeadband( -m_driveController.GetLeftX(), DriveDeadband );
@@ -284,7 +327,8 @@ void Robot::RobotPeriodic()
 
 
     // Codriver Controls
-    bool SwitchEndGameMode = m_buttons.GetRawButtonPressed(7) || m_coController.GetBackButtonPressed();
+    bool SwitchEndGameMode = m_buttons.GetRawButtonPressed(7) 
+    || m_coController.GetBackButtonPressed();
     bool AimShooter = false;
     if ( SwitchEndGameMode )
     {
