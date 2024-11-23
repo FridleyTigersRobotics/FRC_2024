@@ -78,7 +78,7 @@ void Climber::updateClimber()
             {
                 ClimberMotorSpeedL = -1.0;
             }
-            if ( m_motorEncoderR.Get() < 230000 )
+            if ( m_motorEncoderR.Get() < 260000 )
             {
                 ClimberMotorSpeedR = -1.0;
             }
